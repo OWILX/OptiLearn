@@ -1,0 +1,28 @@
+:root {
+    --primary-blue: #16248c;
+    --primary-blue-light: #eff2fe;
+    --primary-teal: #108080;
+    --primary-teal-light: #eff9f9;
+    --primary-purple: #6b21a8;
+    --primary-purple-light: #f7f0fa;
+    --text-dark: #1a1a1a;
+    --text-grey: #6b7280;
+    --bg-light: #fbfbfc;
+    --white: #ffffff;
+    --border-color: #f3f4f6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #e5e7eb;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
