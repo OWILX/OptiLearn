@@ -18,6 +18,7 @@
             --border-color: #E0E0E0;
             --input-bg: #F8F9FF;
             --link-blue: #2F55D4;
+            --transition-speed: 0.6s;
         }
 
         * {
@@ -56,40 +57,6 @@
             display: block;
         }
 
-        .logo-text {
-            font-size: 48px;
-            font-weight: 700;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            letter-spacing: -0.5px;
-        }
-
-        .logo-text span:first-child {
-            color: var(--primary-teal);
-        }
-
-        .logo-text span:last-child {
-            color: var(--primary-blue);
-        }
-
-        .dot-separator {
-            width: 12px;
-            height: 12px;
-            background-color: #FF9500;
-            border-radius: 50%;
-            margin: 0 8px;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .tagline {
-            color: var(--text-gray);
-            font-size: 14px;
-            margin-top: 8px;
-            font-weight: 400;
-        }
-
         /* Hero Text */
         .hero-text {
             margin-bottom: 40px;
@@ -114,20 +81,29 @@
             font-weight: 400;
         }
 
-        /* Login Card */
+        /* Login Card & Sliding Logic */
         .login-card {
             background: white;
             border-radius: 40px;
-            padding: 40px 30px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.03);
+            padding: 40px 0; /* Vertical padding only, horizontal handled by containers */
+            box-shadow: 0 25px 60px rgba(0, 32, 96, 0.08);
             margin-bottom: 40px;
             border: 1px solid #F0F0F0;
+            overflow: hidden; /* CRITICAL: Clips the sliding content */
+            position: relative;
         }
 
+        /* Hidden Checkbox for State Management */
+        #auth-toggle {
+            display: none;
+        }
+
+        /* Tab Navigation */
         .tabs {
             display: flex;
+            margin: 0 30px 30px;
+            position: relative;
             border-bottom: 1px solid #F0F0F0;
-            margin-bottom: 30px;
         }
 
         .tab {
@@ -138,17 +114,67 @@
             cursor: pointer;
             color: #999;
             text-align: center;
-            transition: color 0.3s;
+            transition: color 0.3s ease;
+            z-index: 2;
         }
 
-        .tab.active {
+        /* Animated Tab Underline */
+        .tab-underline {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 50%;
+            height: 3px;
+            background: var(--primary-blue);
+            transition: transform var(--transition-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
+            border-radius: 3px;
+        }
+
+        #auth-toggle:checked ~ .tabs .tab-underline {
+            transform: translateX(100%);
+        }
+
+        #auth-toggle:not(:checked) ~ .tabs .tab-login,
+        #auth-toggle:checked ~ .tabs .tab-signup {
             color: var(--primary-blue);
-            border-bottom: 3px solid var(--primary-blue);
+        }
+
+        /* Sliding Wrapper */
+        .forms-wrapper {
+            display: flex;
+            width: 200%; /* Two forms side by side */
+            transition: transform var(--transition-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        #auth-toggle:checked ~ .forms-wrapper {
+            transform: translateX(-50%);
+        }
+
+        .form-container {
+            width: 50%;
+            padding: 0 30px; /* Internal padding for each form */
+            transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+        }
+
+        /* Fade effect for inactive form */
+        #auth-toggle:not(:checked) ~ .forms-wrapper .signup-container,
+        #auth-toggle:checked ~ .forms-wrapper .login-container {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+
+        #auth-toggle:checked ~ .forms-wrapper .signup-container,
+        #auth-toggle:not(:checked) ~ .forms-wrapper .login-container {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
         }
 
         .form-group {
             position: relative;
             margin-bottom: 20px;
+            text-align: left;
         }
 
         .form-group i {
@@ -157,6 +183,7 @@
             top: 50%;
             transform: translateY(-50%);
             color: #999;
+            transition: color 0.3s;
         }
 
         .form-group .eye-icon {
@@ -169,20 +196,22 @@
             width: 100%;
             padding: 15px 15px 15px 45px;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             background-color: var(--input-bg);
             font-size: 15px;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
             font-family: 'Poppins', sans-serif;
-        }
-
-        .form-control::placeholder {
-            color: #999;
         }
 
         .form-control:focus {
             border-color: var(--primary-teal);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(0, 128, 128, 0.05);
+        }
+
+        .form-control:focus + i {
+            color: var(--primary-teal);
         }
 
         .forgot-password {
@@ -195,16 +224,12 @@
             font-weight: 500;
         }
 
-        .forgot-password:hover {
-            text-decoration: underline;
-        }
-
-        .btn-login {
+        .btn-action {
             width: 100%;
             padding: 18px;
             border: none;
-            border-radius: 12px;
-            background: linear-gradient(to right, #008080, #002060);
+            border-radius: 14px;
+            background: linear-gradient(135deg, #008080, #002060);
             color: white;
             font-size: 18px;
             font-weight: 600;
@@ -215,11 +240,14 @@
             gap: 10px;
             margin-bottom: 25px;
             font-family: 'Poppins', sans-serif;
-            transition: transform 0.2s;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 32, 96, 0.15);
         }
 
-        .btn-login:hover {
+        .btn-action:hover {
             transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(0, 32, 96, 0.2);
+            filter: brightness(1.1);
         }
 
         .separator {
@@ -237,19 +265,14 @@
             border-bottom: 1px solid #EEE;
         }
 
-        .separator:not(:empty)::before {
-            margin-right: 15px;
-        }
-
-        .separator:not(:empty)::after {
-            margin-left: 15px;
-        }
+        .separator:not(:empty)::before { margin-right: 15px; }
+        .separator:not(:empty)::after { margin-left: 15px; }
 
         .btn-social {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             background: white;
             color: #333;
             font-size: 15px;
@@ -261,34 +284,30 @@
             gap: 10px;
             margin-bottom: 15px;
             font-family: 'Poppins', sans-serif;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
 
-        .btn-social:hover {
+        .btn-social:hover { 
             background-color: #F8F9FF;
+            border-color: #D0D0D0;
         }
+        .btn-social img { width: 20px; height: 20px; }
 
-        .btn-social img {
-            width: 20px;
-            height: 20px;
-        }
-
-        .signup-text {
+        .switch-text {
             font-size: 14px;
             color: var(--text-gray);
             margin-top: 20px;
             font-weight: 400;
         }
 
-        .signup-text a {
+        .switch-text label {
             color: var(--link-blue);
             text-decoration: none;
             font-weight: 600;
+            cursor: pointer;
         }
 
-        .signup-text a:hover {
-            text-decoration: underline;
-        }
+        .switch-text label:hover { text-decoration: underline; }
 
         /* Features Section */
         .features {
@@ -300,10 +319,7 @@
             margin-bottom: 60px;
         }
 
-        .feature-item {
-            text-align: center;
-        }
-
+        .feature-item { text-align: center; }
         .feature-icon {
             width: 50px;
             height: 50px;
@@ -313,27 +329,17 @@
             align-items: center;
             margin: 0 auto 10px;
             font-size: 20px;
+            transition: transform 0.3s;
         }
 
-        .feature-item:nth-child(1) .feature-icon { 
-            background-color: #F3E5F5; 
-            color: #7B1FA2; 
+        .feature-item:hover .feature-icon {
+            transform: scale(1.1);
         }
 
-        .feature-item:nth-child(2) .feature-icon { 
-            background-color: #E0F2F1; 
-            color: #00796B; 
-        }
-
-        .feature-item:nth-child(3) .feature-icon { 
-            background-color: #FFF3E0; 
-            color: #E65100; 
-        }
-
-        .feature-item:nth-child(4) .feature-icon { 
-            background-color: #E3F2FD; 
-            color: #1976D2; 
-        }
+        .feature-item:nth-child(1) .feature-icon { background-color: #F3E5F5; color: #7B1FA2; }
+        .feature-item:nth-child(2) .feature-icon { background-color: #E0F2F1; color: #00796B; }
+        .feature-item:nth-child(3) .feature-icon { background-color: #FFF3E0; color: #E65100; }
+        .feature-item:nth-child(4) .feature-icon { background-color: #E3F2FD; color: #1976D2; }
 
         .feature-item p {
             font-size: 11px;
@@ -356,135 +362,100 @@
             padding-bottom: 30px;
         }
 
-        .footer-icon {
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 24px;
-        }
-
-        .footer-math {
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 18px;
-            font-weight: 500;
-        }
+        .footer-icon { color: rgba(255, 255, 255, 0.3); font-size: 24px; }
+        .footer-math { color: rgba(255, 255, 255, 0.3); font-size: 18px; font-weight: 500; }
 
         @media (max-width: 480px) {
-            .features {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-
-            .hero-text h1 {
-                font-size: 28px;
-            }
-
-            .logo-text {
-                font-size: 36px;
-            }
+            .features { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .hero-text h1 { font-size: 28px; }
+            .login-card { border-radius: 30px; }
         }
     </style>
 </head>
-<script src="https://jxdllmwdyvhcsdvodnbb/npm/@supabase/supabase-js"></script>
-
-<script>
-const supabaseUrl = "YOUR_PROJECT_URL";
-const supabaseKey = "project_;
-
-const supabase = window.supabase.createClient(supabaseUrl, project_);
-
-
-const loginBtn = document.getElementById("loginBtn");
-const signupBtn = document.getElementById("signupBtn");
-
-loginBtn.addEventListener("click", async () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-    });
-
-    if (error) {
-        alert(error.message);
-    } else {
-        alert("Login successful!");
-        window.location.href = "home.html";
-    }
-});
-
-
-signupBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    const { data, error } = await supabase.auth.signUp({
-        email,
-        password
-    });
-
-    if (error) {
-        alert(error.message);
-    } else {
-        alert("Account created! Check your email.");
-    }
-});
-</script>
 <body>
 
     <div class="container">
-        <!-- Logo Section -->
         <div class="logo-section">
             <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663584504305/jlXamgVcAIcxXRwJ.jpg" alt="OptiLearn Logo" class="logo-image">
         </div>
 
-        <!-- Hero Text -->
         <div class="hero-text">
             <h1>Ace Your UTME.<br><span>Achieve</span> Your Dream.</h1>
             <p>Smart practice, real progress,<br>better results.</p>
         </div>
 
-        <!-- Login Card -->
         <div class="login-card">
+            <!-- Checkbox for state management -->
+            <input type="checkbox" id="auth-toggle">
+
+            <!-- Tabs -->
             <div class="tabs">
-                <div class="tab active">Log In</div>
-                <div class="tab">Sign Up</div>
+                <label for="auth-toggle" class="tab tab-login">Log In</label>
+                <label for="auth-toggle" class="tab tab-signup">Sign up</label>
+                <div class="tab-underline"></div>
             </div>
 
-            <form>
-                <div class="form-group">
-                    <i class="fa-regular fa-envelope"></i>
-                    <input type="email" id="email" class="form-control" placeholder="Email or Phone">
+            <!-- Sliding Wrapper -->
+            <div class="forms-wrapper">
+                <!-- Login Form -->
+                <div class="form-container login-container">
+                    <form>
+                        <div class="form-group">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" class="form-control" id="login-email" placeholder="Email or Phone">
+                        </div>
+                        <div class="form-group">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="login-password" class="form-control" placeholder="Password">
+                            <i class="fa-regular fa-eye eye-icon"></i>
+                        </div>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                        <button type="submit" class="btn-action" id="login-btn">
+                            Log In <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <div class="separator">or</div>
+                        <button type="button" class="btn-social">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                            Continue with Google
+                        </button>
+                        <p class="switch-text">
+                            Don't have an account? <label for="auth-toggle">Sign up</label>
+                        </p>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="password" class="form-control" placeholder="Password">
-                    <i class="fa-regular fa-eye eye-icon"></i>
+
+                <!-- Sign Up Form -->
+                <div class="form-container signup-container">
+                    <form>
+                        <div class="form-group">
+                            <i class="fa-regular fa-user"></i>
+                            <input type="text" class="form-control" id="signup-name" placeholder="Full Name">
+                        </div>
+                        <div class="form-group">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" class="form-control" id="signup-email" placeholder="Email Address">
+                        </div>
+                        <div class="form-group">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" class="form-control" id="signup-password" placeholder="Create Password">
+                            <i class="fa-regular fa-eye eye-icon"></i>
+                        </div>
+                        <button type="submit" id="signup-btn" class="btn-action">
+                            Create Account <i class="fa-solid fa-user-plus"></i>
+                        </button>
+                        <div class="separator">or</div>
+                        <button type="button" class="btn-social">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                            Sign up with Google
+                        </button>
+                        <p class="switch-text">
+                            Already have an account? <label for="auth-toggle">Log In</label>
+                        </p>
+                    </form>
                 </div>
-
-                <a href="#" class="forgot-password">Forgot Password?</a>
-
-                <button type="submit" class="btn-login" id="loginBtn">
-                    Log In <i class="fa-solid fa-arrow-right"></i>
-                </button>
-
-                <div class="separator">or</div>
-
-                <button type="button" class="btn-social">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-                    Continue with Google
-                </button>
-
-                
-
-                <p class="signup-text">
-                    Don't have an account? <a href="#"id="signupBtn">Sign up</a>
-                </p>
-            </form>
+            </div>
         </div>
 
-        <!-- Features Section -->
         <div class="features">
             <div class="feature-item">
                 <div class="feature-icon"><i class="fa-solid fa-bullseye"></i></div>
@@ -505,13 +476,72 @@ signupBtn.addEventListener("click", async (e) => {
         </div>
     </div>
 
-    <!-- Footer Wave -->
     <div class="footer-wave">
         <i class="fa-solid fa-book-open footer-icon"></i>
         <span class="footer-math">E=mc<sup>2</sup></span>
         <i class="fa-solid fa-flask footer-icon"></i>
         <i class="fa-solid fa-graduation-cap footer-icon"></i>
     </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script>
+const supabaseUrl =  'https://jxdllmwdyvhcsdvodnbb.supabase.co/rest/v1/';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZGxsbXdkeXZoY3Nkdm9kbmJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDg2OTgsImV4cCI6MjA5Mjg4NDY5OH0.KlkSqiB_KRT6aQdN-olzIo6sYLZQ0ECA9KBoUs6F44g';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+document.getElementById("signup-btn").addEventListener("click", async (e) => {
+    e.preventDefault();
+        //Sign-up
+    const name = document.getElementById("signup-name").value;
+    const email = document.getElementById("signup-email").value;
+    const password = document.getElementById("signup-password").value;
+
+    const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+            data: {
+                full_name: name
+            }
+        }
+    });
+
+    if(error){
+        alert(error.message);
+    } else {
+        alert("Account created! Check your email.");
+    }
+});
+
+//Log-in
+
+document.getElementById("login-btn").addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if(error){
+        alert(error.message);
+    } else {
+        alert("Login successful!");
+
+        window.location.href = "index.html";
+    }
+});
+
+const { data } = await supabase.auth.getSession();
+
+if(data.session){
+   window.location.href = "home.html";
+}
+
+</script>
 </body>
 </html>
