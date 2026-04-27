@@ -1,6 +1,5 @@
 .app-container {
     width: 100%;
-    max-width: 414px;
     background-color: var(--white);
     position: relative;
     height: 100vh;
