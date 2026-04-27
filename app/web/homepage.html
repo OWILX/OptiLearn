@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiLearn Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #16248c;
+            --primary-blue-light: #eff2fe;
+            --primary-teal: #108080;
+            --primary-teal-light: #eff9f9;
+            --primary-purple: #6b21a8;
+            --primary-purple-light: #f7f0fa;
+            --text-dark: #1a1a1a;
+            --text-grey: #6b7280;
+            --bg-light: #fbfbfc;
+            --white: #ffffff;
+            --border-color: #f3f4f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            background-color: var(--white);
+            position: relative;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding-bottom: 80px;
+        }
+
+        .app-container::-webkit-scrollbar { display: none; }
+        .app-container { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* --- Header --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .menu-btn {
+            font-size: 20px;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-icon-small {
+            color: var(--primary-blue);
+            font-size: 24px;
+            position: relative;
+        }
+
+        .logo-icon-small .fa-chart-line {
+            color: var(--primary-teal);
+            font-size: 14px;
+            position: absolute;
+            right: -10px;
+            top: 5px;
+        }
+
+        .logo-text-small {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .logo-text-small span { color: var(--primary-teal); }
+
+        .logo-tagline {
+            font-size: 7px;
+            color: var(--text-grey);
+            margin-top: 2px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification {
+            font-size: 20px;
+            color: var(--text-dark);
+            position: relative;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #eee;
+        }
+
+        /* --- Welcome Banner --- */
+        .welcome-section {
+            padding: 0 20px 20px;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, #16248c 0%, #2a43d4 100%);
+            border-radius: 20px;
+            padding: 20px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-subtitle {
+            font-size: 13px;
+            color: #e0e7ff;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: left;
+        }
+
+        .stat-icon { font-size: 16px; margin-bottom: 8px; }
+        .stat-icon.blue { color: var(--primary-blue); }
+        .stat-icon.purple { color: var(--primary-purple); }
+        .stat-icon.teal { color: var(--primary-teal); }
+        .stat-icon.orange { color: #f97316; }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: var(--text-grey);
+            line-height: 1.2;
+        }
+
+        /* --- Section Title --- */
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 10px 20px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .view-all {
+            font-size: 12px;
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* --- Main Actions --- */
+        .actions-list {
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-card {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-radius: 16px;
+            text-decoration: none;
+        }
+
+        .action-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            margin-right: 15px;
+            background: var(--white);
+        }
+
+        .action-content { flex: 1; }
+
+        .action-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .action-desc {
+            font-size: 12px;
+            color: var(--text-grey);
+            line-height: 1.3;
+        }
+
+        .action-arrow {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            font-size: 14px;
+        }
+
+        .action-card.purple { background: var(--primary-purple-light); }
+        .action-card.purple .action-icon-wrapper { color: var(--primary-purple); }
+        .action-card.purple .action-title { color: var(--primary-purple); }
+        .action-card.purple .action-arrow { background: var(--primary-purple); }
+
+        .action-card.blue { background: var(--primary-blue-light); }
+        .action-card.blue .action-icon-wrapper { color: var(--primary-blue); }
+        .action-card.blue .action-title { color: var(--primary-blue); }
+        .action-card.blue .action-arrow { background: var(--primary-blue); }
+
+        .action-card.teal { background: var(--primary-teal-light); }
+        .action-card.teal .action-icon-wrapper { color: var(--primary-teal); }
+        .action-card.teal .action-title { color: var(--primary-teal); }
+        .action-card.teal .action-arrow { background: var(--primary-teal); }
+
+        /* ========== QUESTION OF THE DAY ========== */
+        .qotd-wrapper {
+            padding: 0 20px 25px;
+        }
+
+        .qotd-card {
+            background: var(--white);
+            border: 1.5px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(22, 36, 140, 0.07);
+        }
+
+        /* Top coloured banner */
+        .qotd-banner {
+            background: linear-gradient(135deg, #16248c 0%, #2a43d4 100%);
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .qotd-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qotd-badge {
+            background: rgba(255,255,255,0.18);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .qotd-badge i { font-size: 9px; }
+
+        .qotd-subject-pill {
+            background: rgba(255,255,255,0.13);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 10px;
+            color: #e0e7ff;
+        }
+
+        .qotd-timer {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #fbbf24;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Question body */
+        .qotd-body {
+            padding: 16px 16px 0;
+        }
+
+        .qotd-question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.55;
+            margin-bottom: 16px;
+        }
+
+        /* Options */
+        .qotd-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-bottom: 16px;
+        }
+
+        .qotd-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border-color);
+            background: var(--bg-light);
+            cursor: pointer;
+            transition: all 0.22s ease;
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .qotd-option:hover {
+            border-color: #a5b4fc;
+            background: #f5f7ff;
+        }
+
+        /* Selected state */
+        .qotd-option.selected {
+            border-color: var(--primary-blue);
+            background: var(--primary-blue-light);
+        }
+
+        /* Correct answer state */
+        .qotd-option.correct {
+            border-color: #059669;
+            background: #ecfdf5;
+        }
+
+        /* Wrong answer state */
+        .qotd-option.wrong {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .option-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 1.5px solid #d1d5db;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-grey);
+            flex-shrink: 0;
+            transition: all 0.22s ease;
+        }
+
+        .qotd-option.selected .option-letter {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: #fff;
+        }
+
+        .qotd-option.correct .option-letter {
+            background: #059669;
+            border-color: #059669;
+            color: #fff;
+        }
+
+        .qotd-option.wrong .option-letter {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: #fff;
+        }
+
+        .option-text {
+            font-size: 13px;
+            color: var(--text-dark);
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .qotd-option.selected .option-text { color: var(--primary-blue); font-weight: 500; }
+        .qotd-option.correct .option-text { color: #065f46; font-weight: 500; }
+        .qotd-option.wrong .option-text { color: #991b1b; font-weight: 500; }
+
+        .option-check {
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .qotd-option.correct .option-check { opacity: 1; color: #059669; }
+        .qotd-option.wrong .option-check { opacity: 1; color: #dc2626; }
+
+        /* Footer: Submit / Result */
+        .qotd-footer {
+            padding: 0 16px 16px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: var(--primary-blue);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .btn-submit:not(:disabled):active {
+            transform: scale(0.98);
+        }
+
+        /* Result banner shown after answer */
+        .qotd-result {
+            display: none;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .qotd-result.show { display: flex; }
+
+        .qotd-result.result-correct {
+            background: #ecfdf5;
+            border: 1px solid #6ee7b7;
+        }
+
+        .qotd-result.result-wrong {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+        }
+
+        .result-headline {
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-correct .result-headline { color: #065f46; }
+        .result-wrong .result-headline { color: #991b1b; }
+
+        .result-explanation {
+            font-size: 11.5px;
+            color: var(--text-grey);
+            line-height: 1.5;
+        }
+
+        .btn-next {
+            width: 100%;
+            padding: 13px;
+            background: var(--primary-teal);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.15s;
+        }
+
+        .btn-next.show { display: flex; }
+        .btn-next:active { transform: scale(0.98); }
+
+        /* Progress dots */
+        .qotd-progress {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 16px 14px;
+        }
+
+        .qotd-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--border-color);
+            transition: background 0.3s;
+        }
+
+        .qotd-dot.active { background: var(--primary-blue); }
+        .qotd-dot.done { background: var(--primary-teal); }
+
+        /* ========== SEP Promo ========== */
+        .sep-promo-wrapper {
+            padding: 0 20px 20px;
+        }
+
+        .sep-promo-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            gap: 15px;
+        }
+
+        .promo-illustration {
+            width: 80px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .promo-illustration i.fa-graduation-cap {
+            font-size: 30px;
+            color: #4f46e5;
+            margin-bottom: 5px;
+        }
+
+        .promo-illustration i.fa-list-check {
+            font-size: 20px;
+            color: #fb923c;
+        }
+
+        .promo-content { flex: 1; }
+
+        .promo-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .promo-features {
+            list-style: none;
+            margin-bottom: 12px;
+        }
+
+        .promo-features li {
+            font-size: 10px;
+            color: var(--text-grey);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .promo-features li i { color: var(--primary-teal); font-size: 10px; }
+
+        .btn-start-exam {
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 12px;
+            font-weight: 500;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding: 10px 5px 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-grey);
+            text-decoration: none;
+            font-size: 10px;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .nav-item.active { color: var(--primary-blue); }
+        .nav-item i { font-size: 20px; }
+
+        .nav-item-center {
+            position: relative;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .floating-btn {
+            position: absolute;
+            top: -45px;
+            width: 60px;
+            height: 60px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.08);
+            border: 4px solid var(--white);
+            text-decoration: none;
+        }
+
+        .floating-btn i { font-size: 22px; color: var(--primary-blue); }
+
+        .floating-btn span {
+            font-size: 9px;
+            color: var(--primary-blue);
+            margin-top: 2px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <header class="header">
+        <div class="menu-btn"><i class="fa-solid fa-bars"></i></div>
+        <div class="logo-container">
+            <div class="logo-icon-small">
+                <i class="fa-solid fa-book-open"></i>
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div class="logo-text-small"><span>Opti</span>Learn</div>
+            <div class="logo-tagline">Where Preparation Meets Excellence</div>
+        </div>
+        <div class="header-right">
+            <div class="notification"><i class="fa-regular fa-bell"></i></div>
+            <img src="https://i.pravatar.cc/100?img=11" alt="Profile" class="avatar">
+        </div>
+    </header>
+
+    <main>
+
+        <!-- Welcome Banner -->
+        <section class="welcome-section">
+            <div class="welcome-card">
+                <div class="welcome-title">Welcome back, Emeka! 👋</div>
+                <div class="welcome-subtitle">Let's keep building your success story.</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <i class="fa-solid fa-book-open stat-icon blue"></i>
+                        <div class="stat-value">42</div>
+                        <div class="stat-label">Topics Studied</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fa-solid fa-bullseye stat-icon purple"></i>
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">SEP Attempts</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fa-regular fa-square-check stat-icon teal"></i>
+                        <div class="stat-value">72%</div>
+                        <div class="stat-label">Avg. Score</div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fa-solid fa-fire stat-icon orange"></i>
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <div class="section-title">What would you like to do today?</div>
+        <section class="actions-list">
+            <a href="#" class="action-card purple">
+                <div class="action-icon-wrapper"><i class="fa-solid fa-book-open-reader"></i></div>
+                <div class="action-content">
+                    <div class="action-title">Study</div>
+                    <div class="action-desc">Access lessons, notes and practice questions by topic.</div>
+                </div>
+                <div class="action-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+            <a href="#" class="action-card blue">
+                <div class="action-icon-wrapper"><i class="fa-solid fa-bullseye"></i></div>
+                <div class="action-content">
+                    <div class="action-title">Simulated Exam Practice (SEP)</div>
+                    <div class="action-desc">Take full-length UTME simulated exams and improve your score.</div>
+                </div>
+                <div class="action-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+            <a href="#" class="action-card teal">
+                <div class="action-icon-wrapper"><i class="fa-regular fa-file-lines"></i></div>
+                <div class="action-content">
+                    <div class="action-title">Study Past Questions</div>
+                    <div class="action-desc">Practice past UTME questions by topic or year.</div>
+                </div>
+                <div class="action-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+        </section>
+
+        <!-- ======= QUESTION OF THE DAY ======= -->
+        <div class="section-title" style="margin-top: 25px;">
+            Question of the Day
+            <a href="#" class="view-all">View all</a>
+        </div>
+
+        <section class="qotd-wrapper">
+            <div class="qotd-card">
+
+                <!-- Coloured Banner -->
+                <div class="qotd-banner">
+                    <div class="qotd-banner-left">
+                        <div class="qotd-badge">
+                            <i class="fa-solid fa-star"></i> Daily Challenge
+                        </div>
+                        <div class="qotd-subject-pill" id="subjectPill">Physics</div>
+                    </div>
+                    <div class="qotd-timer">
+                        <i class="fa-regular fa-clock"></i>
+                        <span id="timerDisplay">02:00</span>
+                    </div>
+                </div>
+
+                <!-- Question Text -->
+                <div class="qotd-body">
+                    <p class="qotd-question-text" id="questionText">
+                        <!-- filled by JS -->
+                    </p>
+
+                    <!-- Options -->
+                    <div class="qotd-options" id="optionsContainer">
+                        <!-- filled by JS -->
+                    </div>
+                </div>
+
+                <!-- Progress dots -->
+                <div class="qotd-progress" id="progressDots"></div>
+
+                <!-- Footer -->
+                <div class="qotd-footer">
+                    <div class="qotd-result" id="resultBanner">
+                        <div class="result-headline" id="resultHeadline"></div>
+                        <div class="result-explanation" id="resultExplanation"></div>
+                    </div>
+                    <button class="btn-submit" id="submitBtn" disabled onclick="submitAnswer()">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Answer
+                    </button>
+                    <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                        Next Question <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SEP Promo -->
+        <div class="section-title" style="margin-top: 5px;">Boost Your Score</div>
+        <div class="sep-promo-wrapper">
+            <div class="sep-promo-card">
+                <div class="promo-illustration" style="min-height:90px;">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div class="promo-content">
+                    <div class="promo-title">Ready for a Full SEP?</div>
+                    <ul class="promo-features">
+                        <li><i class="fa-solid fa-check"></i> 180 questions, all 4 subjects</li>
+                        <li><i class="fa-solid fa-check"></i> Timed — just like the real UTME</li>
+                        <li><i class="fa-solid fa-check"></i> Instant score & detailed review</li>
+                    </ul>
+                    <button class="btn-start-exam">
+                        <i class="fa-solid fa-rocket"></i> Start Simulated Exam
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Study</span>
+        </a>
+        <div class="nav-item-center">
+            <a href="#" class="floating-btn">
+                <i class="fa-solid fa-bullseye"></i>
+                <span>SEP</span>
+            </a>
+        </div>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-chart-bar"></i>
+            <span>Progress</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-regular fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+</div>
+
+<script>
+    // ---- Question Bank ----
+    const questions = [
+        {
+            subject: "Physics",
+            subjectColor: "#1d4ed8",
+            text: "A convex lens of focal length 20 cm forms a real image of an object placed 30 cm in front of it. What is the image distance?",
+            options: ["40 cm", "60 cm", "15 cm", "120 cm"],
+            correct: 1,
+            explanation: "Using 1/v − 1/u = 1/f with u = −30 cm and f = +20 cm gives v = 60 cm."
+        },
+        {
+            subject: "Chemistry",
+            subjectColor: "#059669",
+            text: "Which of the following metals gives a brick-red flame colour in a flame test?",
+            options: ["Potassium (K)", "Sodium (Na)", "Calcium (Ca)", "Copper (Cu)"],
+            correct: 2,
+            explanation: "Calcium ions produce a characteristic brick-red flame. Potassium gives lilac, Sodium gives yellow, and Copper gives blue-green."
+        },
+        {
+            subject: "Mathematics",
+            subjectColor: "#7c3aed",
+            text: "If the mean of 5 numbers is 12, and four of the numbers are 10, 14, 8, and 16, what is the fifth number?",
+            options: ["10", "12", "14", "16"],
+            correct: 1,
+            explanation: "Sum = 5 × 12 = 60. Four numbers sum to 10+14+8+16 = 48. Fifth = 60 − 48 = 12."
+        },
+        {
+            subject: "English",
+            subjectColor: "#b45309",
+            text: "Choose the word that is closest in meaning to the word LOQUACIOUS.",
+            options: ["Silent", "Talkative", "Aggressive", "Intelligent"],
+            correct: 1,
+            explanation: "Loquacious means tending to talk a great deal; talkative. It comes from the Latin 'loquax'."
+        }
+    ];
+
+    let currentQ = 0;
+    let selectedOption = null;
+    let answered = false;
+    let timerInterval = null;
+    let timeLeft = 120;
+
+    // ---- Render ----
+    function renderQuestion() {
+        const q = questions[currentQ];
+        answered = false;
+        selectedOption = null;
+
+        // Banner
+        document.getElementById('subjectPill').textContent = q.subject;
+
+        // Question text
+        document.getElementById('questionText').textContent = q.text;
+
+        // Options
+        const container = document.getElementById('optionsContainer');
+        container.innerHTML = '';
+        const letters = ['A', 'B', 'C', 'D'];
+        q.options.forEach((opt, i) => {
+            const div = document.createElement('div');
+            div.className = 'qotd-option';
+            div.innerHTML = `
+                <div class="option-letter">${letters[i]}</div>
+                <div class="option-text">${opt}</div>
+                <i class="fa-solid fa-check option-check"></i>
+            `;
+            div.addEventListener('click', () => selectOption(i));
+            container.appendChild(div);
+        });
+
+        // Progress dots
+        const dots = document.getElementById('progressDots');
+        dots.innerHTML = '';
+        questions.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'qotd-dot' + (i < currentQ ? ' done' : (i === currentQ ? ' active' : ''));
+            dots.appendChild(dot);
+        });
+
+        // Buttons & result
+        document.getElementById('submitBtn').disabled = true;
+        document.getElementById('submitBtn').style.display = 'flex';
+        document.getElementById('nextBtn').classList.remove('show');
+        const rb = document.getElementById('resultBanner');
+        rb.className = 'qotd-result';
+        rb.classList.remove('show');
+
+        // Timer
+        clearInterval(timerInterval);
+        timeLeft = 120;
+        updateTimer();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimer();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                if (!answered) autoSubmit();
+            }
+        }, 1000);
+    }
+
+    function updateTimer() {
+        const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+        const s = String(timeLeft % 60).padStart(2, '0');
+        document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+    }
+
+    function selectOption(index) {
+        if (answered) return;
+        selectedOption = index;
+        const opts = document.querySelectorAll('.qotd-option');
+        opts.forEach((el, i) => {
+            el.classList.toggle('selected', i === index);
+            // reset wrong/correct classes in case of reselect
+            el.classList.remove('correct', 'wrong');
+        });
+        document.getElementById('submitBtn').disabled = false;
+    }
+
+    function submitAnswer() {
+        if (answered || selectedOption === null) return;
+        answered = true;
+        clearInterval(timerInterval);
+
+        const q = questions[currentQ];
+        const opts = document.querySelectorAll('.qotd-option');
+        const isCorrect = selectedOption === q.correct;
+
+        opts.forEach((el, i) => {
+            el.classList.remove('selected');
+            if (i === q.correct) {
+                el.classList.add('correct');
+                el.querySelector('.option-check').className = 'fa-solid fa-check option-check';
+            } else if (i === selectedOption && !isCorrect) {
+                el.classList.add('wrong');
+                el.querySelector('.option-check').className = 'fa-solid fa-xmark option-check';
+            }
+        });
+
+        // Show result
+        const rb = document.getElementById('resultBanner');
+        rb.classList.add('show');
+        rb.classList.add(isCorrect ? 'result-correct' : 'result-wrong');
+        document.getElementById('resultHeadline').innerHTML = isCorrect
+            ? '<i class="fa-solid fa-circle-check"></i> Correct! Well done.'
+            : '<i class="fa-solid fa-circle-xmark"></i> Not quite right.';
+        document.getElementById('resultExplanation').textContent = q.explanation;
+
+        // Swap buttons
+        document.getElementById('submitBtn').style.display = 'none';
+        if (currentQ < questions.length - 1) {
+            document.getElementById('nextBtn').classList.add('show');
+        } else {
+            document.getElementById('nextBtn').classList.add('show');
+            document.getElementById('nextBtn').innerHTML = '<i class="fa-solid fa-flag-checkered"></i> Finish';
+        }
+    }
+
+    function autoSubmit() {
+        // Time expired — mark as answered with no selection (show correct answer)
+        answered = true;
+        const q = questions[currentQ];
+        const opts = document.querySelectorAll('.qotd-option');
+        opts.forEach((el, i) => {
+            if (i === q.correct) el.classList.add('correct');
+        });
+        const rb = document.getElementById('resultBanner');
+        rb.classList.add('show', 'result-wrong');
+        document.getElementById('resultHeadline').innerHTML = '<i class="fa-solid fa-hourglass-end"></i> Time\'s up!';
+        document.getElementById('resultExplanation').textContent = q.explanation;
+        document.getElementById('submitBtn').style.display = 'none';
+        document.getElementById('nextBtn').classList.add('show');
+    }
+
+    function nextQuestion() {
+        if (currentQ < questions.length - 1) {
+            currentQ++;
+            renderQuestion();
+        } else {
+            // Loop back or show summary (simple reset for demo)
+            currentQ = 0;
+            renderQuestion();
+        }
+    }
+
+    // Boot
+    renderQuestion();
+</script>
+</body>
+</html>
