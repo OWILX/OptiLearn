@@ -383,6 +383,54 @@
         }
     </style>
 </head>
+<script src="https://jxdllmwdyvhcsdvodnbb/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabaseUrl = "YOUR_PROJECT_URL";
+const supabaseKey = "project_;
+
+const supabase = window.supabase.createClient(supabaseUrl, project_);
+
+
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
+
+loginBtn.addEventListener("click", async () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if (error) {
+        alert(error.message);
+    } else {
+        alert("Login successful!");
+        window.location.href = "home.html";
+    }
+});
+
+
+signupBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+    });
+
+    if (error) {
+        alert(error.message);
+    } else {
+        alert("Account created! Check your email.");
+    }
+});
+</script>
 <body>
 
     <div class="container">
@@ -407,17 +455,17 @@
             <form>
                 <div class="form-group">
                     <i class="fa-regular fa-envelope"></i>
-                    <input type="text" class="form-control" placeholder="Email or Phone Number">
+                    <input type="email" id="email" class="form-control" placeholder="Email or Phone">
                 </div>
                 <div class="form-group">
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" class="form-control" placeholder="Password">
+                    <input type="password" id="password" class="form-control" placeholder="Password">
                     <i class="fa-regular fa-eye eye-icon"></i>
                 </div>
 
                 <a href="#" class="forgot-password">Forgot Password?</a>
 
-                <button type="submit" class="btn-login">
+                <button type="submit" class="btn-login" id="loginBtn">
                     Log In <i class="fa-solid fa-arrow-right"></i>
                 </button>
 
@@ -431,7 +479,7 @@
                 
 
                 <p class="signup-text">
-                    Don't have an account? <a href="#">Sign up</a>
+                    Don't have an account? <a href="#"id="signupBtn">Sign up</a>
                 </p>
             </form>
         </div>
