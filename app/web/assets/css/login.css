@@ -27,14 +27,14 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    padding: 2.5rem 1rem; /* Responsive padding */
+    padding: clamp(1rem, 5vw, 2.5rem) clamp(0.5rem, 2vw, 1rem); /* Fluid padding */
     overflow-x: hidden;
 }
 
 .container {
     width: 100%;
     max-width: 450px;
-    padding: 1.25rem; /* Responsive padding */
+    padding: clamp(1rem, 4vw, 1.25rem); /* Fluid padding */
     text-align: center;
 }
 
@@ -77,8 +77,8 @@ body {
 /* Login Card & Sliding Logic */
 .login-card {
     background: white;
-    border-radius: 2.5rem; /* Responsive border-radius */
-    padding: 2.5rem 0; /* Responsive vertical padding */
+    border-radius: clamp(1.5rem, 6vw, 2.5rem); /* Fluid border-radius */
+    padding: clamp(1.5rem, 6vw, 2.5rem) 0; /* Fluid vertical padding */
     box-shadow: 0 1.5625rem 3.75rem rgba(0, 32, 96, 0.08); /* Responsive shadow */
     margin-bottom: 2.5rem; /* Responsive margin */
     border: 1px solid #F0F0F0;
@@ -94,7 +94,7 @@ body {
 /* Tab Navigation */
 .tabs {
     display: flex;
-    margin: 0 1.875rem 1.875rem; /* Responsive margin */
+    margin: 0 clamp(1rem, 5vw, 1.875rem) clamp(1rem, 5vw, 1.875rem); /* Fluid margin */
     position: relative;
     border-bottom: 1px solid #F0F0F0;
 }
@@ -145,7 +145,7 @@ body {
 
 .form-container {
     width: 50%;
-    padding: 0 1.875rem; /* Responsive padding */
+    padding: 0 clamp(1rem, 5vw, 1.875rem); /* Fluid padding */
     transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
 }
 
@@ -187,11 +187,11 @@ body {
 
 .form-control {
     width: 100%;
-    padding: 0.9375rem 0.9375rem 0.9375rem 2.8125rem; /* Responsive padding */
+    padding: clamp(0.75rem, 3vw, 0.9375rem) clamp(0.75rem, 3vw, 0.9375rem) clamp(0.75rem, 3vw, 0.9375rem) clamp(2.5rem, 8vw, 2.8125rem); /* Fluid padding */
     border: 1px solid var(--border-color);
     border-radius: 0.875rem; /* Responsive border-radius */
     background-color: var(--input-bg);
-    font-size: 0.9375rem; /* Responsive font size */
+    font-size: clamp(0.875rem, 2.5vw, 0.9375rem); /* Fluid font size */
     outline: none;
     transition: all 0.3s;
     font-family: 'Poppins', sans-serif;
@@ -268,7 +268,7 @@ body {
     border-radius: 0.875rem; /* Responsive border-radius */
     background: white;
     color: #333;
-    font-size: 0.9375rem; /* Responsive font size */
+    font-size: clamp(0.875rem, 2.5vw, 0.9375rem); /* Fluid font size */
     font-weight: 500;
     cursor: pointer;
     display: flex;
@@ -305,7 +305,7 @@ body {
 /* Features Section */
 .features {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 0.625rem; /* Responsive gap */
     width: 100%;
     max-width: 600px;
@@ -321,7 +321,7 @@ body {
     justify-content: center;
     align-items: center;
     margin: 0 auto 0.625rem; /* Responsive margin */
-    font-size: 1.25rem; /* Responsive font size */
+    font-size: clamp(1.2rem, 4vw, 1.5rem); /* Fluid font size */
     transition: transform 0.3s;
 }
 
@@ -345,21 +345,24 @@ body {
 .footer-wave {
     position: relative;
     width: 100%;
-    height: 11.25rem; /* Responsive height */
+    height: clamp(7rem, 20vw, 11.25rem); /* Fluid height */
     background: linear-gradient(to right, #2E1A8E, #002060, #008080);
     clip-path: ellipse(120% 100% at 50% 100%);
     margin-top: 2.5rem; /* Responsive margin */
     display: flex;
     justify-content: space-around;
     align-items: flex-end;
-    padding-bottom: 1.875rem; /* Responsive padding */
+    padding-bottom: clamp(1rem, 5vw, 1.875rem); /* Fluid padding */
 }
 
-.footer-icon { color: rgba(255, 255, 255, 0.3); font-size: 1.5rem; } /* Responsive font size */
-.footer-math { color: rgba(255, 255, 255, 0.3); font-size: 1.125rem; font-weight: 500; } /* Responsive font size */
-
+.footer-icon { color: rgba(255, 255, 255, 0.3); font-size: clamp(1.2rem, 4vw, 1.5rem); } /* Fluid font size */
+.footer-math { color: rgba(255, 255, 255, 0.3); font-size: clamp(0.9rem, 3vw, 1.125rem); font-weight: 500; } /* Fluid font size */
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
+    .features {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 1rem;
+    }
     html {
         font-size: 15px;
     }
@@ -394,6 +397,10 @@ body {
 }
 
 @media (max-width: 480px) {
+    .features {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 0.8rem;
+    }
     html {
         font-size: 14px;
     }
@@ -513,6 +520,10 @@ body {
 }
 
 @media (max-width: 320px) {
+    .features {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
     html {
         font-size: 13px;
     }
