@@ -17,41 +17,46 @@
     font-family: 'Poppins', sans-serif;
 }
 
+html {
+    font-size: 16px; /* Base font size for rem units */
+}
+
 body {
     background: linear-gradient(135deg, #F0F4FF 0%, #FFFFFF 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    padding-top: 40px;
+    padding: 2.5rem 1rem; /* Responsive padding */
     overflow-x: hidden;
 }
+
 .container {
     width: 100%;
     max-width: 450px;
-    padding: 20px;
+    padding: 1.25rem; /* Responsive padding */
     text-align: center;
 }
 
 /* Logo Section */
 .logo-section {
-    margin-bottom: 30px;
+    margin-bottom: 1.875rem; /* Responsive margin */
 }
 
 .logo-image {
-    width: 120px;
+    width: clamp(80px, 25vw, 120px); /* Fluid width */
     height: auto;
-    margin: 0 auto 105px;
+    margin: 0 auto 6.5625rem; /* Responsive margin */
     display: block;
 }
 
 /* Hero Text */
 .hero-text {
-    margin-bottom: 40px;
+    margin-bottom: 2.5rem; /* Responsive margin */
 }
 
 .hero-text h1 {
-    font-size: 36px;
+    font-size: clamp(1.75rem, 5vw, 2.25rem); /* Fluid font size */
     color: var(--text-dark);
     line-height: 1.1;
     font-weight: 700;
@@ -63,8 +68,8 @@ body {
 
 .hero-text p {
     color: var(--text-gray);
-    font-size: 16px;
-    margin-top: 10px;
+    font-size: clamp(0.875rem, 3vw, 1rem); /* Fluid font size */
+    margin-top: 0.625rem; /* Responsive margin */
     line-height: 1.5;
     font-weight: 400;
 }
@@ -72,12 +77,12 @@ body {
 /* Login Card & Sliding Logic */
 .login-card {
     background: white;
-    border-radius: 40px;
-    padding: 40px 0; /* Vertical padding only, horizontal handled by containers */
-    box-shadow: 0 25px 60px rgba(0, 32, 96, 0.08);
-    margin-bottom: 40px;
+    border-radius: 2.5rem; /* Responsive border-radius */
+    padding: 2.5rem 0; /* Responsive vertical padding */
+    box-shadow: 0 1.5625rem 3.75rem rgba(0, 32, 96, 0.08); /* Responsive shadow */
+    margin-bottom: 2.5rem; /* Responsive margin */
     border: 1px solid #F0F0F0;
-    overflow: hidden; /* CRITICAL: Clips the sliding content */
+    overflow: hidden;
     position: relative;
 }
 
@@ -89,15 +94,15 @@ body {
 /* Tab Navigation */
 .tabs {
     display: flex;
-    margin: 0 30px 30px;
+    margin: 0 1.875rem 1.875rem; /* Responsive margin */
     position: relative;
     border-bottom: 1px solid #F0F0F0;
 }
 
 .tab {
     flex: 1;
-    padding-bottom: 15px;
-    font-size: 18px;
+    padding-bottom: 0.9375rem; /* Responsive padding */
+    font-size: clamp(0.9rem, 3.5vw, 1.125rem); /* Fluid font size */
     font-weight: 600;
     cursor: pointer;
     color: #999;
@@ -130,7 +135,7 @@ body {
 /* Sliding Wrapper */
 .forms-wrapper {
     display: flex;
-    width: 200%; /* Two forms side by side */
+    width: 200%;
     transition: transform var(--transition-speed) cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
@@ -140,7 +145,7 @@ body {
 
 .form-container {
     width: 50%;
-    padding: 0 30px; /* Internal padding for each form */
+    padding: 0 1.875rem; /* Responsive padding */
     transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
 }
 
@@ -161,13 +166,13 @@ body {
 
 .form-group {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem; /* Responsive margin */
     text-align: left;
 }
 
 .form-group i {
     position: absolute;
-    left: 15px;
+    left: 0.9375rem; /* Responsive position */
     top: 50%;
     transform: translateY(-50%);
     color: #999;
@@ -176,17 +181,17 @@ body {
 
 .form-group .eye-icon {
     left: auto;
-    right: 15px;
+    right: 0.9375rem; /* Responsive position */
     cursor: pointer;
 }
 
 .form-control {
     width: 100%;
-    padding: 15px 15px 15px 45px;
+    padding: 0.9375rem 0.9375rem 0.9375rem 2.8125rem; /* Responsive padding */
     border: 1px solid var(--border-color);
-    border-radius: 14px;
+    border-radius: 0.875rem; /* Responsive border-radius */
     background-color: var(--input-bg);
-    font-size: 15px;
+    font-size: 0.9375rem; /* Responsive font size */
     outline: none;
     transition: all 0.3s;
     font-family: 'Poppins', sans-serif;
@@ -206,35 +211,35 @@ body {
     display: block;
     text-align: right;
     color: var(--link-blue);
-    font-size: 13px;
+    font-size: 0.8125rem; /* Responsive font size */
     text-decoration: none;
-    margin-bottom: 25px;
+    margin-bottom: 1.5625rem; /* Responsive margin */
     font-weight: 500;
 }
 
 .btn-action {
     width: 100%;
-    padding: 18px;
+    padding: 1.125rem; /* Responsive padding */
     border: none;
-    border-radius: 14px;
+    border-radius: 0.875rem; /* Responsive border-radius */
     background: linear-gradient(135deg, #008080, #002060);
     color: white;
-    font-size: 18px;
+    font-size: 1.125rem; /* Responsive font size */
     font-weight: 600;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 25px;
+    gap: 0.625rem; /* Responsive gap */
+    margin-bottom: 1.5625rem; /* Responsive margin */
     font-family: 'Poppins', sans-serif;
     transition: all 0.3s;
-    box-shadow: 0 10px 20px rgba(0, 32, 96, 0.15);
+    box-shadow: 0 0.625rem 1.25rem rgba(0, 32, 96, 0.15); /* Responsive shadow */
 }
 
 .btn-action:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 25px rgba(0, 32, 96, 0.2);
+    transform: translateY(-0.125rem); /* Responsive transform */
+    box-shadow: 0 0.9375rem 1.5625rem rgba(0, 32, 96, 0.2); /* Responsive shadow */
     filter: brightness(1.1);
 }
 
@@ -243,8 +248,8 @@ body {
     align-items: center;
     text-align: center;
     color: #999;
-    font-size: 14px;
-    margin-bottom: 25px;
+    font-size: 0.875rem; /* Responsive font size */
+    margin-bottom: 1.5625rem; /* Responsive margin */
 }
 
 .separator::before, .separator::after {
@@ -253,38 +258,38 @@ body {
     border-bottom: 1px solid #EEE;
 }
 
-.separator:not(:empty)::before { margin-right: 15px; }
-.separator:not(:empty)::after { margin-left: 15px; }
+.separator:not(:empty)::before { margin-right: 0.9375rem; } /* Responsive margin */
+.separator:not(:empty)::after { margin-left: 0.9375rem; } /* Responsive margin */
 
 .btn-social {
     width: 100%;
-    padding: 14px;
+    padding: 0.875rem; /* Responsive padding */
     border: 1px solid var(--border-color);
-    border-radius: 14px;
+    border-radius: 0.875rem; /* Responsive border-radius */
     background: white;
     color: #333;
-    font-size: 15px;
+    font-size: 0.9375rem; /* Responsive font size */
     font-weight: 500;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 0.625rem; /* Responsive gap */
+    margin-bottom: 0.9375rem; /* Responsive margin */
     font-family: 'Poppins', sans-serif;
     transition: all 0.2s;
 }
 
-.btn-social:hover { 
+.btn-social:hover {
     background-color: #F8F9FF;
     border-color: #D0D0D0;
 }
-.btn-social img { width: 20px; height: 20px; }
+.btn-social img { width: 1.25rem; height: 1.25rem; } /* Responsive image size */
 
 .switch-text {
-    font-size: 14px;
+    font-size: 0.875rem; /* Responsive font size */
     color: var(--text-gray);
-    margin-top: 20px;
+    margin-top: 1.25rem; /* Responsive margin */
     font-weight: 400;
 }
 
@@ -301,22 +306,22 @@ body {
 .features {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 0.625rem; /* Responsive gap */
     width: 100%;
     max-width: 600px;
-    margin-bottom: 60px;
+    margin-bottom: 3.75rem; /* Responsive margin */
 }
 
 .feature-item { text-align: center; }
 .feature-icon {
-    width: 50px;
-    height: 50px;
+    width: 3.125rem; /* Responsive width */
+    height: 3.125rem; /* Responsive height */
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto 10px;
-    font-size: 20px;
+    margin: 0 auto 0.625rem; /* Responsive margin */
+    font-size: 1.25rem; /* Responsive font size */
     transition: transform 0.3s;
 }
 
@@ -330,7 +335,7 @@ body {
 .feature-item:nth-child(4) .feature-icon { background-color: #E3F2FD; color: #1976D2; }
 
 .feature-item p {
-    font-size: 11px;
+    font-size: 0.6875rem; /* Responsive font size */
     font-weight: 600;
     color: #333;
     line-height: 1.2;
@@ -340,21 +345,219 @@ body {
 .footer-wave {
     position: relative;
     width: 100%;
-    height: 180px;
+    height: 11.25rem; /* Responsive height */
     background: linear-gradient(to right, #2E1A8E, #002060, #008080);
     clip-path: ellipse(120% 100% at 50% 100%);
-    margin-top: 40px;
+    margin-top: 2.5rem; /* Responsive margin */
     display: flex;
     justify-content: space-around;
     align-items: flex-end;
-    padding-bottom: 30px;
+    padding-bottom: 1.875rem; /* Responsive padding */
 }
 
-.footer-icon { color: rgba(255, 255, 255, 0.3); font-size: 24px; }
-.footer-math { color: rgba(255, 255, 255, 0.3); font-size: 18px; font-weight: 500; }
+.footer-icon { color: rgba(255, 255, 255, 0.3); font-size: 1.5rem; } /* Responsive font size */
+.footer-math { color: rgba(255, 255, 255, 0.3); font-size: 1.125rem; font-weight: 500; } /* Responsive font size */
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    html {
+        font-size: 15px;
+    }
+
+    .logo-image {
+        margin-bottom: 4rem;
+    }
+
+    .login-card {
+        padding: 2rem 0;
+        border-radius: 2rem;
+    }
+
+    .tabs {
+        margin: 0 1.5rem 1.5rem;
+    }
+
+    .form-container {
+        padding: 0 1.5rem;
+    }
+
+    .features {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+        max-width: 400px;
+    }
+
+    .footer-wave {
+        height: 9rem;
+        padding-bottom: 1.5rem;
+    }
+}
 
 @media (max-width: 480px) {
-    .features { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-    .hero-text h1 { font-size: 28px; }
-    .login-card { border-radius: 30px; }
+    html {
+        font-size: 14px;
+    }
+
+    body {
+        padding: 1.5rem 0.5rem;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    .logo-image {
+        margin-bottom: 2rem;
+    }
+
+    .hero-text h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-text p {
+        font-size: 0.9rem;
+    }
+
+    .login-card {
+        padding: 1.5rem 0;
+        border-radius: 1.5rem;
+    }
+
+    .tabs {
+        margin: 0 1rem 1rem;
+    }
+
+    .tab {
+        font-size: 1rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .form-container {
+        padding: 0 1rem;
+    }
+
+    .form-control {
+        padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+        font-size: 0.875rem;
+    }
+
+    .form-group i {
+        left: 0.75rem;
+    }
+
+    .form-group .eye-icon {
+        right: 0.75rem;
+    }
+
+    .forgot-password {
+        font-size: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .btn-action {
+        padding: 1rem;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .separator {
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .btn-social {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .btn-social img {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .switch-text {
+        font-size: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        max-width: 250px;
+        margin-bottom: 2rem;
+    }
+
+    .feature-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1rem;
+    }
+
+    .feature-item p {
+        font-size: 0.6rem;
+    }
+
+    .footer-wave {
+        height: 7rem;
+        padding-bottom: 1rem;
+    }
+
+    .footer-icon {
+        font-size: 1.2rem;
+    }
+
+    .footer-math {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 320px) {
+    html {
+        font-size: 13px;
+    }
+
+    .hero-text h1 {
+        font-size: 1.6rem;
+    }
+
+    .hero-text p {
+        font-size: 0.8rem;
+    }
+
+    .login-card {
+        border-radius: 1rem;
+    }
+
+    .tabs {
+        margin: 0 0.5rem 0.5rem;
+    }
+
+    .form-container {
+        padding: 0 0.5rem;
+    }
+
+    .form-control {
+        padding: 0.6rem 0.6rem 0.6rem 2rem;
+    }
+
+    .form-group i {
+        left: 0.6rem;
+    }
+
+    .form-group .eye-icon {
+        right: 0.6rem;
+    }
+
+    .btn-action {
+        padding: 0.8rem;
+    }
+
+    .btn-social {
+        padding: 0.6rem;
+    }
+
+    .footer-wave {
+        height: 6rem;
+    }
 }
