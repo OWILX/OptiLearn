@@ -83,7 +83,7 @@ button:disabled::after,
     display: none;
 }
 
-/* For action cards – ensure overlay doesn't break layout 
+/* For action cards – ensure overlay doesn't break layout */
 .action-card {
     z-index: 1;
 }
