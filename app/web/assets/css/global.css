@@ -34,6 +34,7 @@ body {
     display: flex;
     justify-content: center;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* ---------- MAIN APP CONTAINER ---------- */
