@@ -45,7 +45,7 @@ body {
    /* position: relative;*/
     min-height: 100vh;
     overflow-y: auto;
-    overflow-x: relative;
+    overflow-x: auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     padding-bottom: 80px;
 }
