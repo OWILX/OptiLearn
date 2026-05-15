@@ -1,0 +1,44 @@
+/* ========== RESPONSIVE (COMPONENTS) ========== */
+@media (min-width: 768px) {
+    /* Wrapper padding */
+    .welcome-section,
+    .actions-list,
+    .qotd-wrapper,
+    .sep-promo-wrapper,
+    .section-title {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+    /* Stats grid */
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    /* Actions grid */
+    .actions-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .action-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+        height: 100%;
+    }
+
+    .action-icon-wrapper {
+        margin-right: 0;
+        margin-bottom: 15px;
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+    }
+
+    .action-arrow {
+        margin-top: 15px;
+    }
+}

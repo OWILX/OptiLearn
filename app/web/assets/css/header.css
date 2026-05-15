@@ -1,0 +1,84 @@
+/* ---------- HEADER STYLES ---------- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.menu-btn {
+    font-size: 20px;
+    color: var(--text-dark);
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* Logo area */
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-icon-small {
+    color: var(--primary-blue);
+    font-size: 24px;
+    position: relative;
+}
+
+.logo-icon-small .fa-chart-line {
+    color: var(--primary-teal);
+    font-size: 14px;
+    position: absolute;
+    right: -10px;
+    top: 5px;
+}
+
+.logo-text-small {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary-blue);
+}
+
+.logo-text-small span {
+    color: var(--primary-teal);
+}
+
+.logo-tagline {
+    font-size: 7px;
+    color: var(--text-grey);
+    margin-top: 2px;
+}
+
+/* Right side icons */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.notification {
+    font-size: 20px;
+    color: var(--text-dark);
+    position: relative;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #eee;
+}
+
+/* ---------- RESPONSIVE (HEADER) ---------- */
+@media (min-width: 768px) {
+    .header {
+        border-radius: 24px 24px 0 0;
+        padding: 30px 40px;
+    }
+}
