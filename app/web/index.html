@@ -361,6 +361,7 @@
         const opts = document.querySelectorAll('.qotd-option');
         opts.forEach((el, i) => {
             if (i === q.correct) el.classList.add('correct');
+            clearInterval(timerInterval);
         });
         const rb = document.getElementById('resultBanner');
         rb.classList.add('show', 'result-wrong');
