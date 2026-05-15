@@ -103,7 +103,6 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
                 showError(error.message);
             }
         } else {
-            alert("Login successful!");
             window.location.href = "index.html";
         }
     } catch (err) {
@@ -112,7 +111,7 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
 });
 
 // ========== CHECK EXISTING SESSION ==========
-(async () => {
+/*(async () => {
     try {
         const { data } = await client.auth.getSession();
         if (data.session) {
