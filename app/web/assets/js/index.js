@@ -8,14 +8,13 @@
         if (studyCard) {
             studyCard.addEventListener('click', (e) => {
                 e.preventDefault();
-                alert('📚 Study module coming soon!');
-                // Later: window.location.href = 'study.html';
+                window.location.href = 'study.html';
             });
         }
         if (sepCard) {
             sepCard.addEventListener('click', (e) => {
                 e.preventDefault();
-                alert('🎯 Simulated Exam Practice will start soon.');
+                window.location.href = 'exam.html';
             });
         }
         if (pastQuestionsCard) {
@@ -29,8 +28,7 @@
         const startExamBtn = document.querySelector('.btn-start-exam');
         if (startExamBtn) {
             startExamBtn.addEventListener('click', () => {
-                alert('🚀 Mock exam loading...');
-                // window.location.href = 'exam.html';
+                window.location.href = 'exam.html';
             });
         }
 
