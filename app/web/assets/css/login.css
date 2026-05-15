@@ -31,7 +31,7 @@ body {
 }
 
 .logo-image {
-    width: clamp(1000px, 30vw, 140px);
+    width: clamp(100px, 30vw, 140px);
     height: auto;
     display: block;
     transition: transform 0.3s ease;
