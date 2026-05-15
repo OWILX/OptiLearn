@@ -1,48 +1,16 @@
+/* login.css – imports all needed styles for login page */
+@import url("global.css");
+@import url("header.css");
+@import url("footer.css");
+@import url("responsive.css");
+
 /* 
-   OptiLearn - Responsive Stylesheet
-   Beautiful, Modern, and Fully Responsive
+   OptiLearn - Login/Signup Styles
+   (original content continues below)
 */
 
-:root {
-    --primary-blue: #002060;
-    --primary-teal: #008080;
-    --bg-light: #F8F9FF;
-    --text-dark: #002060;
-    --text-gray: #666666;
-    --border-color: #E0E0E0;
-    --input-bg: #F8F9FF;
-    --link-blue: #2F55D4;
-    --transition-speed: 0.6s;
-    --shadow-soft: 0 10px 30px rgba(0, 32, 96, 0.05);
-    --shadow-strong: 0 20px 40px rgba(0, 32, 96, 0.12);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-body {
-    background: linear-gradient(135deg, #F0F4FF 0%, #FFFFFF 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding: clamp(1rem, 5vw, 3rem) 1rem;
-    overflow-x: hidden;
-    color: var(--text-dark);
-}
-
-.container {
-    width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+/* Note: The body, .app-container styles from global.css will apply.
+   We add login-specific overrides below. */
 
 /* Logo Section */
 .logo-section {
@@ -354,81 +322,4 @@ body {
     line-height: 1.3;
 }
 
-/* Footer Wave */
-.footer-wave {
-    width: 100%;
-    background: linear-gradient(135deg, #2E1A8E, #002060, #008080);
-    padding: 3rem 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    color: white;
-    margin-top: auto;
-    border-radius: 3rem 3rem 0 0;
-}
-
-.footer-icon {
-    font-size: 1.5rem;
-    opacity: 0.8;
-    transition: opacity 0.3s;
-}
-
-.footer-icon:hover {
-    opacity: 1;
-}
-
-.footer-math {
-    font-size: 1.2rem;
-    font-weight: 600;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 600px) {
-    body {
-        padding: 2rem 1rem;
-    }
-    
-    .login-card {
-        padding: 2rem 0;
-        border-radius: 1.5rem;
-    }
-
-    .tabs {
-        margin: 0 1.5rem 1.5rem;
-    }
-
-    .form-container {
-        padding: 0 1.5rem;
-    }
-
-    .features {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-        max-width: 320px;
-    }
-
-    .footer-wave {
-        gap: 1rem;
-        padding: 2rem 1rem;
-    }
-}
-
-@media (max-width: 400px) {
-    .hero-text h1 {
-        font-size: 1.8rem;
-    }
-
-    .features {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-
-    .feature-icon {
-        width: 3rem;
-        height: 3rem;
-        font-size: 1.2rem;
-    }
-}
+/* 
