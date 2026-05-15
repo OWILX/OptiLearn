@@ -110,8 +110,10 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
     }
 })();
 // Toggle password visibility for all eye icons
+// Toggle password visibility for all eye icons
 document.querySelectorAll('.eye-icon').forEach(icon => {
-    icon.addEventListener('click', function() {
+    icon.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent any unexpected form submission
         const input = this.parentElement.querySelector('input');
         if (input.type === 'password') {
             input.type = 'text';
