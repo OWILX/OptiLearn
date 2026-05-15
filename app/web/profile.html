@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OptiLearn Profile</title>
+
+<link rel="stylesheet" href="assets/css/profile.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="app-container">
+
+<header class="header">
+
+<div class="menu-btn">
+<i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="page-title">
+Profile
+</div>
+
+<div class="settings-btn">
+<i class="fa-solid fa-gear"></i>
+</div>
+
+</header>
+
+<main>
+
+<!-- PROFILE HERO -->
+<section class="profile-hero">
+
+<img
+src="https://i.pravatar.cc/150?img=12"
+class="profile-avatar"
+alt="User Avatar"
+>
+
+<h1 class="profile-name">Emeka Johnson</h1>
+
+<p class="profile-email">
+emeka@example.com
+</p>
+
+<div class="profile-badges">
+
+<div class="badge-pill purple">
+<i class="fa-solid fa-fire"></i>
+12 Day Streak
+</div>
+
+<div class="badge-pill teal">
+<i class="fa-solid fa-trophy"></i>
+Top 10%
+</div>
+
+</div>
+
+</section>
+
+<!-- STATS -->
+<section class="stats-grid">
+
+<div class="stat-card">
+<div class="stat-value">42</div>
+<div class="stat-label">Topics Studied</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-value">18</div>
+<div class="stat-label">SEP Attempts</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-value">78%</div>
+<div class="stat-label">Average Score</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-value">324</div>
+<div class="stat-label">Best Score</div>
+</div>
+
+</section>
+
+<!-- PERFORMANCE HEATMAP -->
+<section class="section-header">
+<h2 class="section-title">Study Activity</h2>
+<p class="section-subtitle">
+Your consistency over the last 30 days
+</p>
+</section>
+
+<section class="heatmap-wrapper">
+
+<div class="heat-day active"></div>
+<div class="heat-day active"></div>
+<div class="heat-day medium"></div>
+<div class="heat-day low"></div>
+<div class="heat-day empty"></div>
+<div class="heat-day active"></div>
+<div class="heat-day medium"></div>
+
+<div class="heat-day low"></div>
+<div class="heat-day active"></div>
+<div class="heat-day medium"></div>
+<div class="heat-day active"></div>
+<div class="heat-day empty"></div>
+<div class="heat-day active"></div>
+<div class="heat-day active"></div>
+
+<div class="heat-day medium"></div>
+<div class="heat-day low"></div>
+<div class="heat-day active"></div>
+<div class="heat-day active"></div>
+<div class="heat-day medium"></div>
+<div class="heat-day empty"></div>
+<div class="heat-day active"></div>
+
+<div class="heat-day active"></div>
+<div class="heat-day medium"></div>
+<div class="heat-day low"></div>
+<div class="heat-day active"></div>
+<div class="heat-day active"></div>
+<div class="heat-day medium"></div>
+<div class="heat-day active"></div>
+
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section class="section-header">
+<h2 class="section-title">Achievements</h2>
+</section>
+
+<section class="achievements-grid">
+
+<div class="achievement-card">
+<i class="fa-solid fa-fire"></i>
+<span>7 Day Streak</span>
+</div>
+
+<div class="achievement-card">
+<i class="fa-solid fa-medal"></i>
+<span>300+ Score</span>
+</div>
+
+<div class="achievement-card">
+<i class="fa-solid fa-book"></i>
+<span>50 Topics</span>
+</div>
+
+<div class="achievement-card">
+<i class="fa-solid fa-bolt"></i>
+<span>Speed Master</span>
+</div>
+
+</section>
+
+<!-- SETTINGS -->
+<section class="section-header">
+<h2 class="section-title">Preferences</h2>
+</section>
+
+<section class="settings-list">
+
+<div class="setting-item">
+<div class="setting-left">
+<i class="fa-solid fa-moon"></i>
+<span>Dark Mode</span>
+</div>
+
+<label class="switch">
+<input type="checkbox" id="darkToggle">
+<span class="slider"></span>
+</label>
+</div>
+
+<div class="setting-item">
+<div class="setting-left">
+<i class="fa-solid fa-bell"></i>
+<span>Notifications</span>
+</div>
+
+<label class="switch">
+<input type="checkbox" checked>
+<span class="slider"></span>
+</label>
+</div>
+
+<div class="setting-item logout">
+<div class="setting-left">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span>Log Out</span>
+</div>
+</div>
+
+</section>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+
+<a href="#" class="nav-item">
+<i class="fa-solid fa-house"></i>
+<span>Home</span>
+</a>
+
+<a href="#" class="nav-item">
+<i class="fa-solid fa-book-open"></i>
+<span>Study</span>
+</a>
+
+<a href="#" class="nav-item">
+<i class="fa-solid fa-bullseye"></i>
+<span>SEP</span>
+</a>
+
+<a href="#" class="nav-item">
+<i class="fa-regular fa-file-lines"></i>
+<span>Past Questions</span>
+</a>
+
+<a href="#" class="nav-item active">
+<i class="fa-regular fa-user"></i>
+<span>Profile</span>
+</a>
+
+</nav>
+
+</div>
+
+<script src="assets/js/profile.js"></script>
+</body>
+</html>
