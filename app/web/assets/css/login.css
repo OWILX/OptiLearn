@@ -32,7 +32,7 @@ body {
     justify-content: center; /* ← ADD THIS */
     min-height: 100vh;
     padding: clamp(1rem, 5vw, 3rem) 1rem;
-    overflow-x: hidden;
+    overflow-x: relative;
     color: var(--text-dark);
 }
 .container {
