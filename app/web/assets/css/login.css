@@ -94,7 +94,7 @@ body {
     box-shadow: var(--shadow-strong);
     margin-bottom: 3rem;
     border: 1px solid rgba(0, 32, 96, 0.05);
-    position: relative;
+    position: hidden;
     overflow: relative;
 }
 
