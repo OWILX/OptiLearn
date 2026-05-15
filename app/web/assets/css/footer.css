@@ -9,8 +9,8 @@
     background: var(--white);
     display: flex;
     justify-content: space-around;
-    align-items: flex-end;
-    padding: 10px 5px 20px;
+    align-items: center; /* center items vertically */
+    padding: 8px 5px 12px;
     box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
     border-top: 1px solid var(--border-color);
     z-index: 1000;
@@ -25,6 +25,7 @@
     font-size: 10px;
     gap: 5px;
     flex: 1;
+    transition: color 0.2s ease;
 }
 
 .nav-item.active {
@@ -35,33 +36,50 @@
     font-size: 20px;
 }
 
-/* Floating Action Button (center) */
+/* Container for the floating button – ensures perfect centering */
 .nav-item-center {
     position: relative;
     flex: 1;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
+/* Floating Action Button – beautifully aligned and interactive */
 .floating-btn {
     position: absolute;
-    top: -45px;
-    width: 60px;
-    height: 60px;
+    top: -32px; /* raised just enough to feel "floating" */
+    width: 64px;
+    height: 64px;
     background: var(--white);
     border-radius: 50%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.08);
-    border: 4px solid var(--white);
     text-decoration: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 3px solid var(--white);
+    transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.2s ease;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+}
+
+/* Hover effect: lift and grow slightly */
+.floating-btn:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Active press effect – subtle shrink */
+.floating-btn:active {
+    transform: translateY(2px) scale(0.96);
+    transition: transform 0.08s linear;
 }
 
 .floating-btn i {
-    font-size: 22px;
+    font-size: 24px;
     color: var(--primary-blue);
+    margin-bottom: 2px;
 }
 
 .floating-btn span {
@@ -69,14 +87,15 @@
     color: var(--primary-blue);
     margin-top: 2px;
     font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
 /* ---------- RESPONSIVE (FOOTER) ---------- */
 @media (min-width: 768px) {
     .bottom-nav {
         max-width: 100%;
-        border-radius: 0 0 24px 24px;
-        padding: 15px 40px 25px;
+        border-radius: 0 0 28px 28px;
+        padding: 12px 40px 18px;
     }
 
     .nav-item {
@@ -84,12 +103,41 @@
     }
 
     .nav-item i {
-        font-size: 24px;
+        font-size: 22px;
     }
 
     .floating-btn {
-        width: 70px;
-        height: 70px;
-        top: -50px;
+        width: 72px;
+        height: 72px;
+        top: -38px;
+    }
+
+    .floating-btn i {
+        font-size: 28px;
+    }
+
+    .floating-btn span {
+        font-size: 10px;
+    }
+}
+
+/* Small mobile adjustments – prevent overflow or squishing */
+@media (max-width: 480px) {
+    .bottom-nav {
+        padding: 6px 5px 12px;
+    }
+
+    .floating-btn {
+        width: 56px;
+        height: 56px;
+        top: -28px;
+    }
+
+    .floating-btn i {
+        font-size: 20px;
+    }
+
+    .floating-btn span {
+        font-size: 8px;
     }
 }
