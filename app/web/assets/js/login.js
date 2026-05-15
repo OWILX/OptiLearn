@@ -1,12 +1,27 @@
-// login.js - Cleaned up version
 import { client } from './supabase.js';
 
-// Helper function to show error messages
+// ========== EYE ICON TOGGLE ==========
+document.querySelectorAll('.eye-icon').forEach(icon => {
+    icon.addEventListener('click', function(e) {
+        e.preventDefault();
+        const input = this.parentElement.querySelector('input');
+        if (input.type === 'password') {
+            input.type = 'text';
+            this.classList.remove('fa-eye');
+            this.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            this.classList.remove('fa-eye-slash');
+            this.classList.add('fa-eye');
+        }
+    });
+});
+
+// ========== VALIDATION HELPERS ==========
 function showError(message) {
     alert(message);
 }
 
-// Helper function to validate inputs
 function validateSignup(name, email, password) {
     if (!name || !email || !password) {
         showError('Please fill in all fields');
@@ -27,7 +42,7 @@ function validateLogin(email, password) {
     return true;
 }
 
-// SIGN UP - Single clean handler
+// ========== SIGN UP ==========
 document.getElementById("signup-btn").addEventListener("click", async (e) => {
     e.preventDefault();
     
@@ -42,9 +57,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
             email: email,
             password: password,
             options: {
-                data: {
-                    full_name: name
-                }
+                data: { full_name: name }
             }
         });
 
@@ -55,7 +68,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
                 showError('User already exists. Please log in instead.');
             } else {
                 alert("Account created successfully! Please check your email to confirm your account.");
-                // Optionally switch to login tab
+                // Switch to login tab
                 document.getElementById('auth-toggle').checked = false;
                 // Clear signup form
                 document.getElementById("signup-name").value = '';
@@ -68,7 +81,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
     }
 });
 
-// LOG IN - Single clean handler
+// ========== LOGIN ==========
 document.getElementById("login-btn").addEventListener("click", async (e) => {
     e.preventDefault();
 
@@ -98,7 +111,7 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
     }
 });
 
-// Check if user is already logged in - redirect to home
+// ========== CHECK EXISTING SESSION ==========
 (async () => {
     try {
         const { data } = await client.auth.getSession();
@@ -109,20 +122,3 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
         console.error('Session check failed:', err);
     }
 })();
-// Toggle password visibility for all eye icons
-// Toggle password visibility for all eye icons
-document.querySelectorAll('.eye-icon').forEach(icon => {
-    icon.addEventListener('click', function(e) {
-        e.preventDefault(); // Prevent any unexpected form submission
-        const input = this.parentElement.querySelector('input');
-        if (input.type === 'password') {
-            input.type = 'text';
-            this.classList.remove('fa-eye');
-            this.classList.add('fa-eye-slash');
-        } else {
-            input.type = 'password';
-            this.classList.remove('fa-eye-slash');
-            this.classList.add('fa-eye');
-        }
-    });
-});
