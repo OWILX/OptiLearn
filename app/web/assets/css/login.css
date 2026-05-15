@@ -1,16 +1,48 @@
-/* login.css – imports all needed styles for login page */
-@import url("global.css");
-@import url("header.css");
-@import url("footer.css");
-@import url("responsive.css");
-
 /* 
-   OptiLearn - Login/Signup Styles
-   (original content continues below)
+   OptiLearn - Responsive Stylesheet
+   Beautiful, Modern, and Fully Responsive
 */
 
-/* Note: The body, .app-container styles from global.css will apply.
-   We add login-specific overrides below. */
+:root {
+    --primary-blue: #002060;
+    --primary-teal: #008080;
+    --bg-light: #F8F9FF;
+    --text-dark: #002060;
+    --text-gray: #666666;
+    --border-color: #E0E0E0;
+    --input-bg: #F8F9FF;
+    --link-blue: #2F55D4;
+    --transition-speed: 0.6s;
+    --shadow-soft: 0 10px 30px rgba(0, 32, 96, 0.05);
+    --shadow-strong: 0 20px 40px rgba(0, 32, 96, 0.12);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #F0F4FF 0%, #FFFFFF 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: clamp(1rem, 5vw, 3rem) 1rem;
+    overflow-x: hidden;
+    color: var(--text-dark);
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 /* Logo Section */
 .logo-section {
