@@ -1,3 +1,4 @@
+
 body {
     background: linear-gradient(135deg, #F0F4FF 0%, #FFFFFF 100%);
     min-height: 100vh;          /* fill viewport height */
@@ -5,6 +6,13 @@ body {
     justify-content: center;    /* horizontal centering */
     align-items: center;        /* vertical centering */
     padding: 1rem;              /* keep some breathing room on small screens */
+}
+
+/* The container holds all login content and centers inside body */
+.container {
+    width: 100%;
+    max-width: 480px;
+    margin: 0;                
 }
 
 /* Login container – replaces .app-container on this page */
@@ -17,7 +25,14 @@ body {
     align-items: center;
 }
 
-
+/* Logo (unique to login) */
+.logo-section { margin-bottom: 2rem; }
+.logo-image {
+    width: clamp(100px, 30vw, 140px);
+    height: auto;
+    transition: transform 0.3s ease;
+}
+.logo-image:hover { transform: scale(1.05); }
 
 /* Hero text */
 .hero-text {
