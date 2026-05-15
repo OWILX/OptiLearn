@@ -1,18 +1,10 @@
+/* login.css – only login page specific styles */
+/* Depends on global.css (resets, body flex, app-container, etc.) */
 
+/* Override global body background & padding for login page */
 body {
     background: linear-gradient(135deg, #F0F4FF 0%, #FFFFFF 100%);
-    min-height: 100vh;          /* fill viewport height */
-    display: flex;
-    justify-content: center;    /* horizontal centering */
-    align-items: center;        /* vertical centering */
-    padding: 1rem;              /* keep some breathing room on small screens */
-}
-
-/* The container holds all login content and centers inside body */
-.container {
-    width: 100%;
-    max-width: 480px;
-    margin: 0;                
+    padding: clamp(1rem, 5vw, 3rem) 1rem;
 }
 
 /* Login container – replaces .app-container on this page */
