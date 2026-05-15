@@ -14,11 +14,13 @@ body {
     background: linear-gradient(135deg, #F0F4FF 0%, #FFFFFF 100%);
     display: flex;
     flex-direction: column;
+    position: relative;
+    width: 100%
     align-items: center;
     min-height: 100vh;
     padding: clamp(1rem, 5vw, 3rem) 1rem;
     overflow-x: hidden;
-    color: var(--text-dark);
+    color: var(--text-dark)
 }
 
 .container {
