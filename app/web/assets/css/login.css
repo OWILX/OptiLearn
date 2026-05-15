@@ -2,7 +2,12 @@
    OptiLearn - Responsive Stylesheet
    Beautiful, Modern, and Fully Responsive
 */
-
+/* Add at the top of login.css - Prevent horizontal scroll */
+html{
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+}
 
 
 body {
