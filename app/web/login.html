@@ -8,9 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
     <link rel="stylesheet" href="assets/css/login.css"> 
+    <script type="module" src="assets/js/login.js"></script>
 </head>
 <body>
 
@@ -125,64 +126,6 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
-const supabaseUrl =  'https://jxdllmwdyvhcsdvodnbb.supabase.co/rest/v1/';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZGxsbXdkeXZoY3Nkdm9kbmJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDg2OTgsImV4cCI6MjA5Mjg4NDY5OH0.KlkSqiB_KRT6aQdN-olzIo6sYLZQ0ECA9KBoUs6F44g';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-document.getElementById("signup-btn").addEventListener("click", async (e) => {
-    e.preventDefault();
-        //Sign-up
-    const name = document.getElementById("signup-name").value;
-    const email = document.getElementById("signup-email").value;
-    const password = document.getElementById("signup-password").value;
-
-    const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-            data: {
-                full_name: name
-            }
-        }
-    });
-
-    if(error){
-        alert(error.message);
-    } else {
-        alert("Account created! Check your email.");
-    }
-});
-
-//Log-in
-
-document.getElementById("login-btn").addEventListener("click", async (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-password").value;
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-    });
-
-    if(error){
-        alert(error.message);
-    } else {
-        alert("Login successful!");
-
-        window.location.href = "index.html";
-    }
-});
-
-const { data } = await supabase.auth.getSession();
-
-if(data.session){
-   window.location.href = "index.html";
-}
-
-</script>
-    <script src="assets/js/login.js" type="module"></script>
 </body>
 </html>
