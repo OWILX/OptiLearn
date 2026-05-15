@@ -1,28 +1,52 @@
-/* ========== RESPONSIVE (COMPONENTS) ========== */
+/* ========== RESPONSIVE LAYOUT OVERRIDES ========== */
+/* Mobile-first — base styles are in other files. */
+/* This file adjusts spacing, grids, and flex directions for larger screens. */
+
+/* ---------- GLOBAL HORIZONTAL SCROLL FIX ---------- */
+html,
+body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+}
+
+.container,
+.app-container,
+.footer-wave {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* ---------- RESPONSIVE WRAPPERS (common across pages) ---------- */
 @media (min-width: 768px) {
-    /* Wrapper padding */
+    /* Increase side padding on wider containers */
     .welcome-section,
     .actions-list,
     .qotd-wrapper,
     .sep-promo-wrapper,
-    .section-title {
+    .section-title,
+    .features,
+    .hero-text,
+    .login-card .tabs,
+    .login-card .form-container {
         padding-left: 40px;
         padding-right: 40px;
     }
 
-    /* Stats grid */
+    /* Stats grid (used in dashboard) */
     .stats-grid {
         grid-template-columns: repeat(4, 1fr);
         gap: 20px;
     }
 
-    /* Actions grid */
+    /* Actions list becomes grid (dashboard) */
     .actions-list {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 20px;
     }
 
+    /* Action cards switch to vertical layout */
     .action-card {
         flex-direction: column;
         text-align: center;
@@ -40,5 +64,115 @@
 
     .action-arrow {
         margin-top: 15px;
+    }
+
+    /* Features section (login page) – horizontal layout */
+    .features {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .feature-item {
+        flex: 1;
+    }
+
+    /* QOTD card – wider internal spacing */
+    .qotd-banner {
+        padding: 18px 24px;
+    }
+
+    .qotd-body {
+        padding: 24px 24px 0;
+    }
+
+    .qotd-options {
+        gap: 14px;
+    }
+
+    .qotd-option {
+        padding: 14px 18px;
+    }
+
+    /* SEP promo – wider card and content */
+    .sep-promo-card {
+        padding: 20px 25px;
+    }
+
+    .btn-start-exam {
+        padding: 12px;
+        font-size: 14px;
+    }
+}
+
+/* ---------- SMALL MOBILE FIXES (under 480px) ---------- */
+@media (max-width: 480px) {
+    /* Reduce padding on tight screens */
+    .welcome-section,
+    .actions-list,
+    .qotd-wrapper,
+    .sep-promo-wrapper,
+    .section-title {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    /* QOTD banner stacks on very small screens */
+    .qotd-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .qotd-timer {
+        align-self: flex-end;
+    }
+
+    /* SEP promo stacks vertically */
+    .sep-promo-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .promo-illustration {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+        gap: 15px;
+        padding: 10px 0;
+    }
+
+    .promo-features li {
+        justify-content: center;
+    }
+
+    /* Login features grid becomes 2 columns */
+    .features {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+/* ---------- TABLET / DESKTOP SPECIFIC (larger than 768) ---------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+    /* Optional: fine-tune for tablets only */
+    .stats-grid {
+        gap: 15px;
+    }
+}
+
+/* ---------- LARGE SCREENS (min-width: 1024px) ---------- */
+@media (min-width: 1024px) {
+    /* Wider container for large desktops */
+    .app-container {
+        max-width: 1100px;
+        margin: 20px auto;
+    }
+
+    .stats-grid {
+        gap: 30px;
     }
 }
