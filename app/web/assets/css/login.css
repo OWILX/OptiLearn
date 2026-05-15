@@ -1,10 +1,7 @@
-/* login.css – only login page specific styles */
-/* Depends on global.css (resets, body flex, app-container, etc.) */
-
-/* Override global body background & padding for login page */
 body {
     background: linear-gradient(135deg, #F0F4FF 0%, #FFFFFF 100%);
     padding: clamp(1rem, 5vw, 3rem) 1rem;
+    font-family: Poppins;
 }
 
 /* Login container – replaces .app-container on this page */
@@ -18,7 +15,6 @@ body {
 }
 
 
-.logo-image:hover { transform: scale(1.05); }
 
 /* Hero text */
 .hero-text {
