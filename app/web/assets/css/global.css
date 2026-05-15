@@ -20,6 +20,14 @@
     font-family: 'Inter', sans-serif;
     -webkit-tap-highlight-color: transparent;
 }
+/* Logo (unique to login) */
+.logo-section { margin-bottom: 2rem; }
+.logo-image {
+    width: clamp(100px, 30vw, 140px);
+    height: auto;
+    transition: transform 0.3s ease;
+}
+.logo-image:hover { transform: scale(1.05); }
 
 body {
     background-color: #e5e7eb;
