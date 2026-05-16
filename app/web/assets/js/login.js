@@ -1,4 +1,4 @@
-  //   import { client } from './supabase.js';
+    import { client } from './supabase.js';
 
 // ========== EYE ICON TOGGLE ==========
 document.querySelectorAll('.eye-icon').forEach(icon => {
@@ -10,7 +10,7 @@ document.querySelectorAll('.eye-icon').forEach(icon => {
             input.type = 'text';
             icon.classList.remove('fa-eye');
             icon.classList.add('fa-eye-slash');
-        } /*else {
+        } else {
             input.type = 'password';
             icon.classList.remove('fa-eye-slash');
             icon.classList.add('fa-eye');*/
@@ -112,11 +112,11 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
 });
 
 // ========== CHECK EXISTING SESSION ==========
-/*(async () => {
+(async () => {
     try {
         const { data } = await client.auth.getSession();
         if (data.session) {
-            window.location.href = "home.html";
+            window.location.href = "login.html";
         }
     } catch (err) {
         console.error('Session check failed:', err);
