@@ -1,4 +1,4 @@
-    //import { client } from './supabase.js';
+  /*  //import { client } from './supabase.js';
 
 // ========== EYE ICON TOGGLE ==========
 document.querySelectorAll('.eye-icon').forEach(icon => {
