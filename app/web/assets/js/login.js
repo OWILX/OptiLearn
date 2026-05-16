@@ -1,18 +1,23 @@
-//import { client } from './supabase.js';
+    import { client } from './supabase.js';
 
 // ========== EYE ICON TOGGLE ==========
 document.querySelectorAll('.eye-icon').forEach(icon => {
-    icon.addEventListener('click', function(e) {
-        e.preventDefault();
-        const input = this.parentElement.querySelector('input');
+    icon.addEventListener('click', () => {
+
+        // Get the previous input element
+        const input = icon.previousElementSibling;
+
         if (input.type === 'password') {
             input.type = 'text';
-            this.classList.remove('fa-eye');
-            this.classList.add('fa-eye-slash');
+
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+
         } else {
             input.type = 'password';
-            this.classList.remove('fa-eye-slash');
-            this.classList.add('fa-eye');
+
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
         }
     });
 });
