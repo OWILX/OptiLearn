@@ -13,7 +13,7 @@ document.querySelectorAll('.eye-icon').forEach(icon => {
         } else {
             input.type = 'password';
             icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');*/
+            icon.classList.add('fa-eye');
         }
     });
 });
