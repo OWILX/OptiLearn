@@ -13,7 +13,7 @@ document.querySelectorAll('.eye-icon').forEach(icon => {
         } else {
             input.type = 'password';
             icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');*/
+            icon.classList.add('fa-eye');
         }
     });
 });
@@ -116,7 +116,7 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
     try {
         const { data } = await client.auth.getSession();
         if (data.session) {
-            window.location.href = "home.html";
+            window.location.href = "login.html";
         }
     } catch (err) {
         console.error('Session check failed:', err);
