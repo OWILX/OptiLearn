@@ -38,7 +38,7 @@
 
         try {
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: window.location.origin + '/update-password.html', // page where user sets new password
+                redirectTo: https: +'/' '/' + 'owilx.github.io/OptiLearn/app/web' + '/update-password.html', // page where user sets new password
             });
 
             if (error) {
