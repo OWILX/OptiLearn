@@ -1,11 +1,10 @@
-    import { client } from './supabase.js';
 
-// ========== EYE ICON TOGGLE ==========
+import { client } from './supabase.js';
+
+// ========== EYE ICON TOGGLE  ==========
 document.querySelectorAll('.eye-icon').forEach(icon => {
     icon.addEventListener('click', () => {
-        // ✅ Use 'icon' instead of 'this'
         const input = icon.parentElement.querySelector('input');
-
         if (input.type === 'password') {
             input.type = 'text';
             icon.classList.remove('fa-eye');
@@ -43,25 +42,19 @@ function validateLogin(email, password) {
     return true;
 }
 
-// ========== SIGN UP ==========
+// ========== SIGN UP  ==========
 document.getElementById("signup-btn").addEventListener("click", async (e) => {
     e.preventDefault();
-    
     const name = document.getElementById("signup-name").value;
     const email = document.getElementById("signup-email").value;
     const password = document.getElementById("signup-password").value;
-
     if (!validateSignup(name, email, password)) return;
-
     try {
         const { data, error } = await client.auth.signUp({
             email: email,
             password: password,
-            options: {
-                data: { full_name: name }
-            }
+            options: { data: { full_name: name } }
         });
-
         if (error) {
             showError(error.message);
         } else {
@@ -69,9 +62,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
                 showError('User already exists. Please log in instead.');
             } else {
                 alert("Account created successfully! Please check your email to confirm your account.");
-                // Switch to login tab
                 document.getElementById('auth-toggle').checked = false;
-                // Clear signup form
                 document.getElementById("signup-name").value = '';
                 document.getElementById("signup-email").value = '';
                 document.getElementById("signup-password").value = '';
@@ -85,18 +76,11 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
 // ========== LOGIN ==========
 document.getElementById("login-btn").addEventListener("click", async (e) => {
     e.preventDefault();
-
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
-
     if (!validateLogin(email, password)) return;
-
     try {
-        const { data, error } = await client.auth.signInWithPassword({
-            email,
-            password
-        });
-
+        const { data, error } = await client.auth.signInWithPassword({ email, password });
         if (error) {
             if (error.message.includes('Email not confirmed')) {
                 showError('Please confirm your email address first. Check your inbox.');
@@ -111,14 +95,46 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
     }
 });
 
-// ========== CHECK EXISTING SESSION ==========
-/*(async () => {
+// ========== GOOGLE OAUTH  ==========
+async function signInWithGoogle() {
+    try {
+        // Redirect to index.html after successful authentication
+        const redirectTo = `${window.location.origin}/index.html`;
+        const { data, error } = await client.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: redirectTo,
+                queryParams: {
+                    access_type: 'offline',   // optional: request refresh token
+                    prompt: 'consent'
+                }
+            }
+        });
+        if (error) throw error;
+        // Supabase automatically redirects to Google; no further action needed
+    } catch (error) {
+        console.error('Google OAuth error:', error);
+        showError('Failed to sign in with Google. Please try again.');
+    }
+}
+
+// Attach Google OAuth to both social buttons (Login & Signup containers)
+document.querySelectorAll('.btn-social').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        signInWithGoogle();
+    });
+});
+
+// ========== CHECK EXISTING SESSION – UPDATED ==========
+// Redirect already authenticated users away from login page
+(async () => {
     try {
         const { data } = await client.auth.getSession();
         if (data.session) {
-            window.location.href = "login.html";
+            window.location.href = "index.html";
         }
     } catch (err) {
         console.error('Session check failed:', err);
     }
-})();*/
+})();
