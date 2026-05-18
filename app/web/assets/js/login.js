@@ -116,7 +116,7 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
     try {
         const { data } = await client.auth.getSession();
         if (data.session) {
-            window.location.href = "index.html";
+            window.location.href = "login.html";
         }
     } catch (err) {
         console.error('Session check failed:', err);
