@@ -1,5 +1,6 @@
 
 import { client } from './supabase.js';
+import { toast } from './toast.js';
 
 // ========== EYE ICON TOGGLE  ==========
 document.querySelectorAll('.eye-icon').forEach(icon => {
@@ -18,17 +19,17 @@ document.querySelectorAll('.eye-icon').forEach(icon => {
 });
 
 // ========== VALIDATION HELPERS ==========
-function showError(message) {
-    alert(message);
+function toast.show(message) {
+    toast.show(message);
 }
 
 function validateSignup(name, email, password) {
     if (!name || !email || !password) {
-        showError('Please fill in all fields');
+        toast.show('Please fill in all fields');
         return false;
     }
     if (password.length < 6) {
-        showError('Password must be at least 6 characters');
+        toast.show('Password must be at least 6 characters');
         return false;
     }
     return true;
@@ -36,7 +37,7 @@ function validateSignup(name, email, password) {
 
 function validateLogin(email, password) {
     if (!email || !password) {
-        showError('Please enter email and password');
+        toast.show('Please enter email and password');
         return false;
     }
     return true;
@@ -56,12 +57,12 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
             options: { data: { full_name: name } }
         });
         if (error) {
-            showError(error.message);
+            toast.show(error.message);
         } else {
             if (data.user?.identities?.length === 0) {
-                showError('User already exists. Please log in instead.');
+                toast.show('User already exists. Please log in instead.');
             } else {
-                alert("Account created successfully! Please check your email to confirm your account.");
+                toast.show("Account created successfully! Please check your email to confirm your account.");
                 document.getElementById('auth-toggle').checked = false;
                 document.getElementById("signup-name").value = '';
                 document.getElementById("signup-email").value = '';
@@ -69,7 +70,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
             }
         }
     } catch (err) {
-        showError('Network error. Please try again.');
+        toast.show('Network error. Please try again.');
     }
 });
 
@@ -83,15 +84,15 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
         const { data, error } = await client.auth.signInWithPassword({ email, password });
         if (error) {
             if (error.message.includes('Email not confirmed')) {
-                showError('Please confirm your email address first. Check your inbox.');
+                toast.show('Please confirm your email address first. Check your inbox.');
             } else {
-                showError(error.message);
+                toast.show(error.message);
             }
         } else {
             window.location.href = "index.html";
         }
     } catch (err) {
-        showError('Network error. Please try again.');
+        toast.show('Network error. Please try again.');
     }
 });
 
@@ -114,7 +115,7 @@ async function signInWithGoogle() {
         // Supabase automatically redirects to Google; no further action needed
     } catch (error) {
         console.error('Google OAuth error:', error);
-        showError('Failed to sign in with Google. Please try again.');
+        toast.show('Failed to sign in with Google. Please try again.');
     }
 }
 
