@@ -121,7 +121,7 @@ document.querySelectorAll('.btn-social').forEach(btn => {
 });
 
 // ========== CHECK EXISTING SESSION ==========
-(async () => {
+/*(async () => {
     try {
         const { data } = await client.auth.getSession();
         if (data.session) {
@@ -130,4 +130,4 @@ document.querySelectorAll('.btn-social').forEach(btn => {
     } catch (err) {
         console.error('Session check failed:', err);
     }
-})();
+})();*/
