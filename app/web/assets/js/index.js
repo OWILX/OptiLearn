@@ -1,4 +1,17 @@
-<script>
+
+    import { client } from './assets/js/supabase.js';
+
+    (async () => {
+    const { data: { session } } = await client.auth.getSession();
+    if (session) {
+        console.log('User is logged in:', session.user.email);
+        // Update UI – show user name, hide login button, etc.
+    } else {
+        // Redirect to login page if needed
+        window.location.href = 'login.html';
+    }
+    })();
+
     document.addEventListener('DOMContentLoaded', () => {
         // 1. Quick Action Cards
         const studyCard = document.querySelector('.action-card.purple');
@@ -77,5 +90,4 @@
                 alert('ðŸ“‹ View all questions (coming soon).');
             });
         }
-    });
-</script>
+    })
