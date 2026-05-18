@@ -112,7 +112,7 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
 });
 
 // ========== CHECK EXISTING SESSION ==========
-(async () => {
+/*(async () => {
     try {
         const { data } = await client.auth.getSession();
         if (data.session) {
@@ -121,4 +121,4 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
     } catch (err) {
         console.error('Session check failed:', err);
     }
-})();
+})();*/
