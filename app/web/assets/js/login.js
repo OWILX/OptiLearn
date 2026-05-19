@@ -17,7 +17,7 @@ document.querySelectorAll('.eye-icon').forEach(icon => {
     });
 });
 
-// ========== VALIDATION HELPERS  ==========
+// ========== VALIDATION HELPERS (with confirm password) ==========
 function validateSignup(name, email, password, confirmPassword) {
     if (!name || !email || !password || !confirmPassword) {
         toast.show('Please fill in all fields', 'error');
@@ -33,100 +33,51 @@ function validateSignup(name, email, password, confirmPassword) {
     }
     return true;
 }
+
 function validateLogin(email, password) {
     if (!email || !password) {
-        toast.show('Please fill in all fields', 'error');
+        toast.show('Please enter email and password', 'error');
         return false;
     }
-
     return true;
 }
-/// ========== SIGN UP ==========
+
+// ========== SIGN UP (with confirm password) ==========
 document.getElementById("signup-btn").addEventListener("click", async (e) => {
     e.preventDefault();
-
-    const name = document.getElementById("signup-name").value.trim();
-    const email = document.getElementById("signup-email").value.trim();
+    const name = document.getElementById("signup-name").value;
+    const email = document.getElementById("signup-email").value;
     const password = document.getElementById("signup-password").value;
     const confirmPassword = document.getElementById("signup-confirm-password").value;
-
-    // ===== VALIDATION =====
-    if (!validateSignup(name, email, password, confirmPassword)) {
-        return;
-    }
-
+    
+    if (!validateSignup(name, email, password, confirmPassword)) return;
+    
     try {
-
-        // ===== CHECK IF EMAIL ALREADY EXISTS =====
-        const { data: existingUsers, error: checkError } =
-            await client
-                .from('profiles')
-                .select('email')
-                .eq('email', email);
-
-        if (checkError) {
-            toast.show('Unable to verify email.', 'error');
-            return;
-        }
-
-        if (existingUsers.length > 0) {
-            toast.show('Email already registered. Please log in.', 'error');
-            return;
-        }
-
-        // ===== CREATE ACCOUNT =====
         const { data, error } = await client.auth.signUp({
             email: email,
             password: password,
-            options: {
-                data: {
-                    full_name: name
-                }
-            }
+            options: { data: { full_name: name } }
         });
-
         if (error) {
-    toast.show(error.message, 'error');
-    return;
-}
-
-// ===== SAVE USER TO PROFILES TABLE =====
-/*const { error: profileError } = await client
-    .from('profiles')
-    .insert([
-        {
-            id: data.user.id,
-            email: email,
-            full_name: name
+            toast.show(error.message, 'error');
+        } else {
+            if (data.user?.identities?.length === 0) {
+                toast.show('User already exists. Please log in instead.', 'error');
+            } else {
+                toast.show('Account created successfully! Please check your email to confirm your account.', 'success', 6000);
+                document.getElementById('auth-toggle').checked = false;
+                // Clear all signup fields including confirm password
+                document.getElementById("signup-name").value = '';
+                document.getElementById("signup-email").value = '';
+                document.getElementById("signup-password").value = '';
+                document.getElementById("signup-confirm-password").value = '';
+            }
         }
-    ]);
-*/
-           if (profileError) {
-               console.error(profileError);
-               toast.show('Account created, but profile could not be saved.', 'warning');
-               return;
-           }
-
-           // ===== SUCCESS =====
-                      toast.show(
-                                     'Account created successfully! Please check your email.',
-                                     'success',
-                                     6000
-                      );
-        // Switch back to login tab
-        document.getElementById('auth-toggle').checked = false;
-
-        // ===== CLEAR ALL INPUTS =====
-        document.getElementById("signup-name").value = '';
-        document.getElementById("signup-email").value = '';
-        document.getElementById("signup-password").value = '';
-        document.getElementById("signup-confirm-password").value = '';
-
     } catch (err) {
-        console.error(err);
         toast.show('Network error. Please try again.', 'error');
     }
 });
+
 // ========== LOGIN ==========
 document.getElementById("login-btn").addEventListener("click", async (e) => {
     e.preventDefault();
@@ -179,7 +130,7 @@ document.querySelectorAll('.btn-social').forEach(btn => {
 });
 
 // ========== CHECK EXISTING SESSION ==========
-/*(async () => {
+/* (async () => {
     try {
         const { data } = await client.auth.getSession();
         if (data.session) {
@@ -188,4 +139,4 @@ document.querySelectorAll('.btn-social').forEach(btn => {
     } catch (err) {
         console.error('Session check failed:', err);
     }
-})();*/
+})(); */
