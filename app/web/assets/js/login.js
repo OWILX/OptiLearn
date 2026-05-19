@@ -17,9 +17,9 @@ document.querySelectorAll('.eye-icon').forEach(icon => {
     });
 });
 
-// ========== VALIDATION HELPERS (using toast directly) ==========
-function validateSignup(name, email, password) {
-    if (!name || !email || !password) {
+// ========== VALIDATION HELPERS  ==========
+function validateSignup(name, email, password, confirmPassword) {
+    if (!name || !email || !password || !confirmPassword) {
         toast.show('Please fill in all fields', 'error');
         return false;
     }
@@ -27,24 +27,23 @@ function validateSignup(name, email, password) {
         toast.show('Password must be at least 6 characters', 'error');
         return false;
     }
-    return true;
-}
-
-function validateLogin(email, password) {
-    if (!email || !password) {
-        toast.show('Please enter email and password', 'error');
+    if (password !== confirmPassword) {
+        toast.show('Passwords do not match', 'error');
         return false;
     }
     return true;
 }
 
-// ========== SIGN UP ==========
+// ========== SIGN UP () ==========
 document.getElementById("signup-btn").addEventListener("click", async (e) => {
     e.preventDefault();
     const name = document.getElementById("signup-name").value;
     const email = document.getElementById("signup-email").value;
     const password = document.getElementById("signup-password").value;
-    if (!validateSignup(name, email, password)) return;
+    const confirmPassword = document.getElementById("signup-confirm-password").value;
+    
+    if (!validateSignup(name, email, password, confirmPassword)) return;
+    
     try {
         const { data, error } = await client.auth.signUp({
             email: email,
@@ -59,16 +58,17 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
             } else {
                 toast.show('Account created successfully! Please check your email to confirm your account.', 'success', 6000);
                 document.getElementById('auth-toggle').checked = false;
+                // Clear all signup fields including confirm password
                 document.getElementById("signup-name").value = '';
                 document.getElementById("signup-email").value = '';
                 document.getElementById("signup-password").value = '';
+                document.getElementById("signup-confirm-password").value = '';
             }
         }
     } catch (err) {
         toast.show('Network error. Please try again.', 'error');
     }
 });
-
 // ========== LOGIN ==========
 document.getElementById("login-btn").addEventListener("click", async (e) => {
     e.preventDefault();
