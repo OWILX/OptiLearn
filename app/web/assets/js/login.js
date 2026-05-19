@@ -86,17 +86,33 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
         });
 
         if (error) {
-            toast.show(error.message, 'error');
-            return;
+    toast.show(error.message, 'error');
+    return;
+}
+
+// ===== SAVE USER TO PROFILES TABLE =====
+/*const { error: profileError } = await client
+    .from('profiles')
+    .insert([
+        {
+            id: data.user.id,
+            email: email,
+            full_name: name
         }
+    ]);
+*/
+           if (profileError) {
+               console.error(profileError);
+               toast.show('Account created, but profile could not be saved.', 'warning');
+               return;
+           }
 
-        // ===== SUCCESS =====
-        toast.show(
-            'Account created successfully! Please check your email.',
-            'success',
-            6000
-        );
-
+           // ===== SUCCESS =====
+                      toast.show(
+                                     'Account created successfully! Please check your email.',
+                                     'success',
+                                     6000
+                      );
         // Switch back to login tab
         document.getElementById('auth-toggle').checked = false;
 
