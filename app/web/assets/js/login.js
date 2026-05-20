@@ -50,7 +50,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
     const password = document.getElementById("signup-password").value;
     const confirmPassword = document.getElementById("signup-confirm-password").value;
     
-    if (!validateSignup(name, email, password, confirmPassword)) return;
+   // if (!validateSignup(name, email, password, confirmPassword)) return;
     
     try {
         const { data, error } = await client.auth.signUp({
