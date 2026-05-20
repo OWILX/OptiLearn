@@ -19,6 +19,7 @@ document.querySelectorAll('.eye-icon').forEach(icon => {
 
 // ========== VALIDATION HELPERS (with confirm password) ==========
 function validateSignup(name, email, password, confirmPassword) {
+    console.log("Validation:", { name, email, password, confirmPassword });
     if (!name || !email || !password || !confirmPassword) {
         toast.show('Please fill in all fields', 'error');
         return false;
@@ -33,7 +34,6 @@ function validateSignup(name, email, password, confirmPassword) {
     }
     return true;
 }
-
 function validateLogin(email, password) {
     if (!email || !password) {
         toast.show('Please enter email and password', 'error');
