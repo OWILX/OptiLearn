@@ -19,7 +19,7 @@ document.querySelectorAll('.eye-icon').forEach(icon => {
 
 // ========== VALIDATION HELPERS (with confirm password) ==========
 function validateSignup(name, email, password, confirmPassword) {
-    console.log("Validation:", { name, email, password, confirmPassword });
+    
     if (!name || !email || !password || !confirmPassword) {
         toast.show('Please fill in all fields', 'error');
         return false;
@@ -29,8 +29,8 @@ function validateSignup(name, email, password, confirmPassword) {
         return false;
     }
     if (password !== confirmPassword) {
-     //   toast.show('Passwords do not match', 'error');
-        return true;
+       toast.show('Passwords do not match', 'error');
+        return false;
     }
     return true;
 }
@@ -50,7 +50,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
     const password = document.getElementById("signup-password").value;
     const confirmPassword = document.getElementById("signup-confirm-password").value;
     
-   // if (!validateSignup(name, email, password, confirmPassword)) return;
+    if (!validateSignup(name, email, password, confirmPassword)) return;
     
     try {
         const { data, error } = await client.auth.signUp({
@@ -59,7 +59,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
             options: { data: { full_name: name } }
         });
         if (error) {
-            toast.show(error.message, 'error');
+            toast.show(error.message, 'success');
         } else {
             if (data.user?.identities?.length === 0) {
                 toast.show('User already exists. Please log in instead.', 'error');
