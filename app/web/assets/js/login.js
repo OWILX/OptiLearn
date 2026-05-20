@@ -59,7 +59,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
             options: { data: { full_name: name } }
         });
         if (error) {
-            toast.show(error.message, 'success');
+            toast.show(error.message, 'error');
         } else {
             if (data.user?.identities?.length === 0) {
                 toast.show('User already exists. Please log in instead.', 'error');
