@@ -45,38 +45,55 @@ function validateLogin(email, password) {
 // ========== SIGN UP (with confirm password) ==========
 document.getElementById("signup-btn").addEventListener("click", async (e) => {
     e.preventDefault();
-    const name = document.getElementById("signup-name").value;
-    const email = document.getElementById("signup-email").value;
-    const password = document.getElementById("signup-password").value;
-    const confirmPassword = document.getElementById("signup-confirm-password").value;
-    
+
+    const name = document.getElementById("signup-name").value.trim();
+    const email = document.getElementById("signup-email").value.trim();
+    const password = document.getElementById("signup-password").value.trim();
+    const confirmPassword = document.getElementById("signup-confirm-password").value.trim();
+
     if (!validateSignup(name, email, password, confirmPassword)) return;
-    
+
     try {
         const { data, error } = await client.auth.signUp({
-            email: email,
-            password: password,
-            options: { data: { full_name: name } }
-        });
-        if (error) {
-            toast.show(error.message, 'error');
-        } else {
-            if (data.user?.identities?.length === 0) {
-                toast.show('User already exists. Please log in instead.', 'error');
-            } else {
-                toast.show('Account created successfully! Please check your email to confirm your account.', 'success', 6000);
-                document.getElementById('auth-toggle').checked = false;
-                // Clear all signup fields including confirm password
-                document.getElementById("signup-name").value = '';
-                document.getElementById("signup-email").value = '';
-                document.getElementById("signup-password").value = '';
-                document.getElementById("signup-confirm-password").value = '';
+            email,
+            password,
+            options: {
+                data: {
+                    full_name: name
+                }
             }
+        });
+
+        console.log(data);
+
+        if (error) {
+            console.error(error);
+            toast.show(error.message, 'error');
+            return;
         }
+
+        toast.show(
+            'Account created successfully! Check your email for confirmation.',
+            'success',
+            6000
+        );
+
+        document.getElementById("signup-name").value = '';
+        document.getElementById("signup-email").value = '';
+        document.getElementById("signup-password").value = '';
+        document.getElementById("signup-confirm-password").value = '';
+
+        document.getElementById('auth-toggle').checked = false;
+
     } catch (err) {
+        console.error(err);
         toast.show('Network error. Please try again.', 'error');
     }
 });
+if (error) {
+    console.error(error);
+    toast.show(error.message, 'error');
+}
 
 // ========== LOGIN ==========
 document.getElementById("login-btn").addEventListener("click", async (e) => {
