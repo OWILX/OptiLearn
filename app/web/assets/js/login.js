@@ -77,6 +77,16 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
             'success',
             6000
         );
+        const { data, error } = await client.auth.signUp({
+    email,
+    password,
+    options: {
+        emailRedirectTo: 'https://github.io/app/web/login.html',
+        data: {
+            full_name: name
+        }
+    }
+});
 
         document.getElementById("signup-name").value = '';
         document.getElementById("signup-email").value = '';
