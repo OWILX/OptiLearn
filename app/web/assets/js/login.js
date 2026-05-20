@@ -182,7 +182,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
 
         document.getElementById('auth-toggle').checked = false;
 
-    } catch (err) {
+    catch (err) {
         console.error(err);
         toast.show('Network error. Please try again.', 'error');
     }
