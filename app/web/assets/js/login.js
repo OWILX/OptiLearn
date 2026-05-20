@@ -19,45 +19,80 @@ document.querySelectorAll('.eye-icon').forEach(icon => {
 
 // ========== VALIDATION HELPERS (with confirm password) ==========
 function validateSignup(name, email, password, confirmPassword) {
-    
+
+    // Remove accidental spaces
+    name = name.trim();
+    email = email.trim();
+
+    // ===== EMPTY FIELDS =====
     if (!name || !email || !password || !confirmPassword) {
         toast.show('Please fill in all fields', 'error');
         return false;
     }
+
+    // ===== NAME LENGTH =====
+    if (name.length < 2) {
+        toast.show('Name is too short', 'error');
+        return false;
+    }
+
+    // ===== EMAIL FORMAT =====
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+        toast.show('Please enter a valid email address', 'error');
+        return false;
+    }
+
+    // ===== PASSWORD LENGTH =====
     if (password.length < 6) {
         toast.show('Password must be at least 6 characters', 'error');
         return false;
     }
-    if (password !== confirmPassword) {
-       toast.show('Passwords do not match', 'error');
-        return false;
-    }
-    return true;
-}
-function validateLogin(email, password) {
-    if (!email || !password) {
-        toast.show('Please enter email and password', 'error');
-        return false;
-    }
-    return true;
-}
 
+    // ===== WEAK PASSWORD =====
+    const hasLetter = /[A-Za-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+
+    if (!hasLetter || !hasNumber) {
+        toast.show(
+            'Password must contain letters and numbers',
+            'error'
+        );
+        return false;
+    }
+
+    // ===== PASSWORD MATCH =====
+    if (password !== confirmPassword) {
+        toast.show('Passwords do not match', 'error');
+        return false;
+    }
+
+    return true;
+}
 // ========== SIGN UP (with confirm password) ==========
 document.getElementById("signup-btn").addEventListener("click", async (e) => {
+
     e.preventDefault();
 
     const name = document.getElementById("signup-name").value.trim();
+
     const email = document.getElementById("signup-email").value.trim();
-    const password = document.getElementById("signup-password").value.trim();
-    const confirmPassword = document.getElementById("signup-confirm-password").value.trim();
+
+    const password = document.getElementById("signup-password").value;
+
+    const confirmPassword =
+        document.getElementById("signup-confirm-password").value;
 
     if (!validateSignup(name, email, password, confirmPassword)) return;
 
     try {
+
         const { data, error } = await client.auth.signUp({
             email,
             password,
             options: {
+                emailRedirectTo: 'https://github.io/app/web/login.html',
                 data: {
                     full_name: name
                 }
@@ -65,26 +100,78 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
         });
 
         console.log(data);
+        console.log(error);
 
+        // ===== HANDLE SUPABASE ERRORS =====
         if (error) {
-            console.error(error);
-            toast.show(error.message, 'error');
+
+            const msg = error.message.toLowerCase();
+
+            if (msg.includes('already registered')) {
+
+                toast.show(
+                    'This email is already registered',
+                    'error'
+                );
+
+            } else if (msg.includes('invalid email')) {
+
+                toast.show(
+                    'Invalid email address',
+                    'error'
+                );
+
+            } else if (msg.includes('password')) {
+
+                toast.show(
+                    'Password is too weak',
+                    'error'
+                );
+
+            } else {
+
+                toast.show(error.message, 'error');
+
+            }
+
             return;
         }
 
-        toast.show(
-            'Account created successfully! Check your email for confirmation.',
-            'success',
-            6000
-        );
-        const { data, error } = await client.auth.signUp({
-    email,
-    password,
-    options: {
-        emailRedirectTo: 'https://github.io/app/web/login.html',
-        data: {
-            full_name: name
+        // ===== DETECT EXISTING USER =====
+        if (data.user?.identities?.length === 0) {
+
+            toast.show(
+                'This email has already been used',
+                'error'
+            );
+
+            return;
         }
+
+        // ===== SUCCESS =====
+        toast.show(
+            'Account created! Check your email to confirm.',
+            'success',
+            3000
+        );
+
+        // Clear fields
+        document.getElementById("signup-name").value = '';
+        document.getElementById("signup-email").value = '';
+        document.getElementById("signup-password").value = '';
+        document.getElementById("signup-confirm-password").value = '';
+
+        // Switch back to login
+        document.getElementById('auth-toggle').checked = false;
+
+    } catch (err) {
+
+        console.error(err);
+
+        toast.show(
+            'Network error. Please check your internet.',
+            'error'
+        );
     }
 });
 
