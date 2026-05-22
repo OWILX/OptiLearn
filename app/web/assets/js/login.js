@@ -1,6 +1,11 @@
 import { client } from './supabase.js';
 import { toast } from './toast.js';
 
+// ========== CONFIGURABLE REDIRECTS ==========
+const REDIRECT_AFTER_LOGIN = '/index.html';        // Change to your desired page
+const REDIRECT_AFTER_SIGNUP = '/login.html';       // Where user lands after email confirmation
+const REDIRECT_AFTER_GOOGLE = '/index.html';       // Must be added in Supabase Console → Authentication → URL Configuration
+
 // ========== EYE ICON TOGGLE ==========
 document.querySelectorAll('.eye-icon').forEach(icon => {
     icon.addEventListener('click', () => {
@@ -16,6 +21,30 @@ document.querySelectorAll('.eye-icon').forEach(icon => {
         }
     });
 });
+
+// ========== CHECK IF EMAIL IS ALREADY REGISTERED ==========
+async function isEmailRegistered(email) {
+    try {
+        // This uses signInWithOtp with shouldCreateUser: false
+        // It will error with 'User not found' if email is available
+        const { error } = await client.auth.signInWithOtp({
+            email: email.trim(),
+            options: {
+                shouldCreateUser: false   // Do NOT send email if user doesn't exist
+            }
+        });
+        // If error message indicates user not found, email is free
+        if (error && error.message.toLowerCase().includes('user not found')) {
+            return false;
+        }
+        // If no error or other error (e.g., rate limit), assume exists or uncertain
+        // For signup UX, we'll rely on the signUp error anyway, but this helps early validation
+        return !(error && error.message.toLowerCase().includes('user not found'));
+    } catch (err) {
+        console.error('Check email error:', err);
+        return false; // assume available on network error
+    }
+}
 
 // ========== VALIDATION ==========
 function validateSignup(name, email, password, confirmPassword) {
@@ -53,6 +82,7 @@ function validateSignup(name, email, password, confirmPassword) {
 }
 
 function validateLogin(email, password) {
+    email = email.trim();
     if (!email || !password) {
         toast.show('Please enter email and password', 'error');
         return false;
@@ -80,36 +110,47 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
 
     if (!validateSignup(name, email, password, confirmPassword)) return;
 
+    // Optional: early check for existing user to improve UX
+    const alreadyExists = await isEmailRegistered(email);
+    if (alreadyExists) {
+        toast.show('This email is already registered. Please log in.', 'warning');
+        // Optionally switch to login tab
+        document.getElementById('auth-toggle').checked = false;
+        return;
+    }
+
     try {
         const { data, error } = await client.auth.signUp({
             email,
             password,
             options: {
-                emailRedirectTo: window.location.origin + '/login.html',
+                emailRedirectTo: 'https://github.io/OptiLearn/app/web/login.html',
                 data: { full_name: name }
             }
         });
 
         if (error) {
-            const msg = error.message.toLowerCase();
-            if (msg.includes('already registered')) {
+            // Improved error messages for existing user
+            const errorMsg = error.message.toLowerCase();
+            if (errorMsg.includes('already registered') || errorMsg.includes('user already registered')) {
                 toast.show('This email is already registered', 'error');
-            } else if (msg.includes('invalid email')) {
+            } else if (errorMsg.includes('invalid email')) {
                 toast.show('Invalid email address', 'error');
-            } else if (msg.includes('password')) {
-                toast.show('Password is too weak', 'error');
+            } else if (errorMsg.includes('password')) {
+                toast.show('Password is too weak. Use at least 6 characters with letters and numbers.', 'error');
             } else {
                 toast.show(error.message, 'error');
             }
             return;
         }
 
+        // If user already exists but somehow no error (identities check)
         if (data.user?.identities?.length === 0) {
-            toast.show('This email has already been used', 'error');
+            toast.show('This email is already registered', 'error');
             return;
         }
 
-        toast.show('Account created! Check your email to confirm.', 'success', 3000);
+        toast.show('Account created! Check your email to confirm.', 'success', 5000);
 
         // Clear fields
         document.getElementById("signup-name").value = '';
@@ -130,7 +171,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
 document.getElementById("login-btn").addEventListener("click", async (e) => {
     e.preventDefault();
 
-    const email = document.getElementById("login-email").value;
+    const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value;
 
     if (!validateLogin(email, password)) return;
@@ -139,15 +180,17 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
         const { data, error } = await client.auth.signInWithPassword({ email, password });
 
         if (error) {
-            if (error.message.includes('Email not confirmed')) {
+            if (error.message.toLowerCase().includes('email not confirmed')) {
                 toast.show('Please confirm your email address first. Check your inbox.', 'warning', 5000);
+            } else if (error.message.toLowerCase().includes('invalid login credentials')) {
+                toast.show('Invalid email or password', 'error');
             } else {
                 toast.show(error.message, 'error');
             }
             return;
         }
 
-        window.location.href = "index.html";
+        window.location.href = 'https://github.io/OptiLearn/app/web/index.html';
 
     } catch (err) {
         console.error(err);
@@ -158,11 +201,10 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
 // ========== GOOGLE OAUTH ==========
 async function signInWithGoogle() {
     try {
-        const redirectTo = `${window.location.origin}/index.html`;
         const { error } = await client.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: redirectTo,
+                redirectTo: 'https://github.io/OptiLearn/app/web/index.html',,
                 queryParams: {
                     access_type: 'offline',
                     prompt: 'consent'
@@ -183,14 +225,34 @@ document.querySelectorAll('.btn-social').forEach(btn => {
     });
 });
 
-// Optional: redirect if already logged in
-/*(async () => {
-    try {
-        const { data } = await client.auth.getSession();
-        if (data.session) {
-            window.location.href = "index.html";
-        }
-    } catch (err) {
-        console.error('Session check failed:', err);
+// ========== HANDLE EMAIL CONFIRMATION & OAUTH REDIRECTS ==========
+// If user lands on this page after email confirmation, show a message.
+// Also handle OAuth redirect result (if needed).
+(async () => {
+    // Check if this is a redirect after email confirmation
+    const urlParams = new URLSearchParams(window.location.search);
+    const confirmed = urlParams.get('confirmed');
+    if (confirmed === 'true') {
+        toast.show('Email confirmed! You can now log in.', 'success', 4000);
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
-})();*/
+
+    // Check for OAuth redirect session (already handled by Supabase automatically,
+    // but we can listen for auth state change to redirect if on login page)
+    const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && window.location.pathname.includes('login.html')) {
+            window.location.href = 'https://github.io/OptiLearn/app/web/index.html',;
+        }
+    });
+})();
+
+// Optional: auto-redirect if already logged in (uncomment if desired)
+/*
+(async () => {
+    const { data } = await client.auth.getSession();
+    if (data.session && window.location.pathname.includes('login.html')) {
+        window.location.href = REDIRECT_AFTER_LOGIN;
+    }
+})();
+*/
