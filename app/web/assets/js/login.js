@@ -230,7 +230,7 @@ document.querySelectorAll('.btn-social').forEach(btn => {
 // ========== HANDLE EMAIL CONFIRMATION & OAUTH REDIRECTS ==========
 // If user lands on this page after email confirmation, show a message.
 // Also handle OAuth redirect result (if needed).
-(async () => {
+/*(async () => {
     // Check if this is a redirect after email confirmation
     const urlParams = new URLSearchParams(window.location.search);
     const confirmed = urlParams.get('confirmed');
@@ -248,7 +248,7 @@ document.querySelectorAll('.btn-social').forEach(btn => {
         }
     });
 })();
-
+*/
 // Optional: auto-redirect if already logged in (uncomment if desired)
 /*
 (async () => {
