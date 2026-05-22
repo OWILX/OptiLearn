@@ -1,5 +1,4 @@
 import { client } from './supabase.js';  // adjust path if needed
-import { toast } from './toast.js';
 
 // ---------- Fetch user data ----------
 async function loadUserProfile() {
@@ -49,14 +48,14 @@ async function loadUserProfile() {
 
 function renderSubjects(subjects) {
   const grid = document.getElementById('subjectsGrid');
-  grid.innerHTML = subjects.map(sub => `
+  const colors = ['blue', 'purple', 'teal', 'orange', 'blue']; // cycling colours
+  grid.innerHTML = subjects.map((sub, i) => `
     <div class="subject-item">
       <span class="subject-name">${sub.name}</span>
-      <span class="subject-score">${sub.score}%</span>
+      <span class="subject-score ${colors[i % colors.length]}">${sub.score}%</span>
     </div>
   `).join('');
 }
-
 function renderRecentTests(tests) {
   const list = document.getElementById('testList');
   list.innerHTML = tests.map(test => `
@@ -111,7 +110,7 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
   if (!error) {
     window.location.href = 'login.html';
   } else {
-    toast.show('Logout failed. Please try again.', 'error');
+    toast.show('Logout failed. Please try again.');
   }
 });
 
