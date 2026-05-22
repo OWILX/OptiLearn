@@ -5,9 +5,6 @@ import { toast } from './toast.js';
 const REDIRECT_AFTER_LOGIN = '/OptiLearn/app/web/index.html';        // Change to your desired page
 const REDIRECT_AFTER_SIGNUP = '/OptiLearn/app/web/login.html';       // Where user lands after email confirmation
 const REDIRECT_AFTER_GOOGLE = '/OptiLearn/app/web/index.html';       // Must be added in Supabase Console → Authentication → URL Configuration
-
-toast.show(window.location.pathname,'success')
-toast.show(window.location.origin, 'success')
 // ========== EYE ICON TOGGLE ==========
 document.querySelectorAll('.eye-icon').forEach(icon => {
     icon.addEventListener('click', () => {

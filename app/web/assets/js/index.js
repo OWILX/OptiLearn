@@ -1,15 +1,15 @@
 
     import { client } from './assets/js/supabase.js';
 
-    (async () => {
-    const { data: { session } } = await client.auth.getSession();
-    if (session) {
-        console.log('User is logged in:', session.user.email);
-        // Update UI – show user name, hide login button, etc.
-    } else {
-        // Redirect to login page if needed
-        window.location.href = 'login.html';
-    }
+(async () => {
+  const { data: { session } } = await client.auth.getSession();
+  if (!session) {
+    window.location.href = 'login.html';
+  } else {
+    // optional: update UI with user name
+    document.querySelector('.welcome-title').textContent = `Welcome back, ${session.user.user_metadata?.full_name || 'Student'}! `;
+  }
+})();
     })();
 
     document.addEventListener('DOMContentLoaded', () => {

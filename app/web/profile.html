@@ -1,239 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OptiLearn Profile</title>
-
-<link rel="stylesheet" href="assets/css/profile.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile – OptiLearn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" src="assets/js/profile.js"></script>
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
+  <link rel="stylesheet" href="assets/css/button.css">
+  <link rel="stylesheet" href="assets/css/profile.css">
 </head>
 <body>
 
 <div class="app-container">
 
-<header class="header">
+  <!-- Header – reused from index, but you can simplify -->
+  <header class="header">
+    <div class="menu-btn"><i class="fa-solid fa-arrow-left" onclick="history.back()"></i></div>
+    <div class="container">
+      <div class="logo-section">
+        <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663584504305/jlXamgVcAIcxXRwJ.jpg" alt="OptiLearn Logo" class="logo-image">
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="notification"><i class="fa-regular fa-bell"></i></div>
+      <img id="profileAvatar" src="https://i.pravatar.cc/100?img=11" alt="Profile" class="avatar">
+    </div>
+  </header>
 
-<div class="menu-btn">
-<i class="fa-solid fa-bars"></i>
-</div>
+  <main>
+    <!-- Profile Card -->
+    <section class="profile-header">
+      <div class="profile-card">
+        <div class="profile-avatar">
+          <img id="avatarImg" src="https://i.pravatar.cc/150?img=11" alt="User Avatar">
+        </div>
+        <h2 id="userName">Emeka Okafor</h2>
+        <p id="userEmail">emeka@example.com</p>
+        <button class="btn-edit-profile"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+      </div>
+    </section>
 
-<div class="page-title">
-Profile
-</div>
+    <!-- UTME Stats Grid -->
+    <section class="profile-stats">
+      <div class="stat-card">
+        <i class="fa-solid fa-bullseye stat-icon purple"></i>
+        <div class="stat-value" id="targetScore">300</div>
+        <div class="stat-label">Target Score</div>
+      </div>
+      <div class="stat-card">
+        <i class="fa-solid fa-chart-line stat-icon blue"></i>
+        <div class="stat-value" id="avgScore">72%</div>
+        <div class="stat-label">Average Score</div>
+      </div>
+      <div class="stat-card">
+        <i class="fa-solid fa-fire stat-icon orange"></i>
+        <div class="stat-value" id="streak">12</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+      <div class="stat-card">
+        <i class="fa-solid fa-clock stat-icon teal"></i>
+        <div class="stat-value" id="studyHours">18.5</div>
+        <div class="stat-label">Study Hours</div>
+      </div>
+    </section>
 
-<div class="settings-btn">
-<i class="fa-solid fa-gear"></i>
-</div>
+    <!-- Performance Chart -->
+    <section class="chart-section">
+      <div class="section-title">📈 Progress Over Time</div>
+      <div class="chart-container">
+        <canvas id="scoreChart"></canvas>
+      </div>
+    </section>
 
-</header>
+    <!-- Weak Subjects & Recommendations -->
+    <section class="performance-areas">
+      <div class="section-title">📚 Subjects at a Glance</div>
+      <div class="subjects-grid" id="subjectsGrid">
+        <!-- dynamically filled by JS -->
+      </div>
+    </section>
 
-<main>
+    <!-- Recent Tests -->
+    <section class="recent-tests">
+      <div class="section-title">🕒 Recent Mock Exams</div>
+      <div class="test-list" id="testList">
+        <!-- dynamically filled -->
+      </div>
+    </section>
 
-<!-- PROFILE HERO -->
-<section class="profile-hero">
+    <!-- Logout -->
+    <section class="logout-section">
+      <button id="logoutBtn" class="btn-logout">
+        <i class="fa-solid fa-right-from-bracket"></i> Log out
+      </button>
+    </section>
+  </main>
 
-<img
-src="https://i.pravatar.cc/150?img=12"
-class="profile-avatar"
-alt="User Avatar"
->
-
-<h1 class="profile-name">Emeka Johnson</h1>
-
-<p class="profile-email">
-emeka@example.com
-</p>
-
-<div class="profile-badges">
-
-<div class="badge-pill purple">
-<i class="fa-solid fa-fire"></i>
-12 Day Streak
-</div>
-
-<div class="badge-pill teal">
-<i class="fa-solid fa-trophy"></i>
-Top 10%
-</div>
-
-</div>
-
-</section>
-
-<!-- STATS -->
-<section class="stats-grid">
-
-<div class="stat-card">
-<div class="stat-value">42</div>
-<div class="stat-label">Topics Studied</div>
-</div>
-
-<div class="stat-card">
-<div class="stat-value">18</div>
-<div class="stat-label">SEP Attempts</div>
-</div>
-
-<div class="stat-card">
-<div class="stat-value">78%</div>
-<div class="stat-label">Average Score</div>
-</div>
-
-<div class="stat-card">
-<div class="stat-value">324</div>
-<div class="stat-label">Best Score</div>
-</div>
-
-</section>
-
-<!-- PERFORMANCE HEATMAP -->
-<section class="section-header">
-<h2 class="section-title">Study Activity</h2>
-<p class="section-subtitle">
-Your consistency over the last 30 days
-</p>
-</section>
-
-<section class="heatmap-wrapper">
-
-<div class="heat-day active"></div>
-<div class="heat-day active"></div>
-<div class="heat-day medium"></div>
-<div class="heat-day low"></div>
-<div class="heat-day empty"></div>
-<div class="heat-day active"></div>
-<div class="heat-day medium"></div>
-
-<div class="heat-day low"></div>
-<div class="heat-day active"></div>
-<div class="heat-day medium"></div>
-<div class="heat-day active"></div>
-<div class="heat-day empty"></div>
-<div class="heat-day active"></div>
-<div class="heat-day active"></div>
-
-<div class="heat-day medium"></div>
-<div class="heat-day low"></div>
-<div class="heat-day active"></div>
-<div class="heat-day active"></div>
-<div class="heat-day medium"></div>
-<div class="heat-day empty"></div>
-<div class="heat-day active"></div>
-
-<div class="heat-day active"></div>
-<div class="heat-day medium"></div>
-<div class="heat-day low"></div>
-<div class="heat-day active"></div>
-<div class="heat-day active"></div>
-<div class="heat-day medium"></div>
-<div class="heat-day active"></div>
-
-</section>
-
-<!-- ACHIEVEMENTS -->
-<section class="section-header">
-<h2 class="section-title">Achievements</h2>
-</section>
-
-<section class="achievements-grid">
-
-<div class="achievement-card">
-<i class="fa-solid fa-fire"></i>
-<span>7 Day Streak</span>
-</div>
-
-<div class="achievement-card">
-<i class="fa-solid fa-medal"></i>
-<span>300+ Score</span>
-</div>
-
-<div class="achievement-card">
-<i class="fa-solid fa-book"></i>
-<span>50 Topics</span>
-</div>
-
-<div class="achievement-card">
-<i class="fa-solid fa-bolt"></i>
-<span>Speed Master</span>
-</div>
-
-</section>
-
-<!-- SETTINGS -->
-<section class="section-header">
-<h2 class="section-title">Preferences</h2>
-</section>
-
-<section class="settings-list">
-
-<div class="setting-item">
-<div class="setting-left">
-<i class="fa-solid fa-moon"></i>
-<span>Dark Mode</span>
-</div>
-
-<label class="switch">
-<input type="checkbox" id="darkToggle">
-<span class="slider"></span>
-</label>
-</div>
-
-<div class="setting-item">
-<div class="setting-left">
-<i class="fa-solid fa-bell"></i>
-<span>Notifications</span>
-</div>
-
-<label class="switch">
-<input type="checkbox" checked>
-<span class="slider"></span>
-</label>
-</div>
-
-<div class="setting-item logout">
-<div class="setting-left">
-<i class="fa-solid fa-right-from-bracket"></i>
-<span>Log Out</span>
-</div>
-</div>
-
-</section>
-
-</main>
-
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-
-<a href="#" class="nav-item">
-<i class="fa-solid fa-house"></i>
-<span>Home</span>
-</a>
-
-<a href="#" class="nav-item">
-<i class="fa-solid fa-book-open"></i>
-<span>Study</span>
-</a>
-
-<a href="#" class="nav-item">
-<i class="fa-solid fa-bullseye"></i>
-<span>SEP</span>
-</a>
-
-<a href="#" class="nav-item">
-<i class="fa-regular fa-file-lines"></i>
-<span>Past Questions</span>
-</a>
-
-<a href="#" class="nav-item active">
-<i class="fa-regular fa-user"></i>
-<span>Profile</span>
-</a>
-
-</nav>
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="study.html" class="nav-item"><i class="fa-solid fa-book"></i><span>Study</span></a>
+    <div class="nav-item-center">
+      <a href="#" class="floating-btn"><i class="fa-solid fa-plus"></i><span>Practice</span></a>
+    </div>
+    <a href="#" class="nav-item"><i class="fa-solid fa-chart-simple"></i><span>Stats</span></a>
+    <a href="profile.html" class="nav-item active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+  </nav>
 
 </div>
-
-<script src="assets/js/profile.js"></script>
 </body>
 </html>

@@ -91,37 +91,6 @@
 }
 
 /* ---------- RESPONSIVE (FOOTER) ---------- */
-@media (min-width: 768px) {
-    .bottom-nav {
-        max-width: 100%;
-        border-radius: 0 0 28px 28px;
-        padding: 12px 40px 18px;
-    }
-
-    .nav-item {
-        font-size: 12px;
-    }
-
-    .nav-item i {
-        font-size: 22px;
-    }
-
-    .floating-btn {
-        width: 72px;
-        height: 72px;
-        top: -38px;
-    }
-
-    .floating-btn i {
-        font-size: 28px;
-    }
-
-    .floating-btn span {
-        font-size: 10px;
-    }
-}
-
-/* Small mobile adjustments – prevent overflow or squishing */
 @media (max-width: 480px) {
     .bottom-nav {
         padding: 6px 5px 12px;
@@ -141,3 +110,11 @@
         font-size: 8px;
     }
 }
+/*.nav-btn {
+  all: unset;           /* remove default link styles */
+  /*display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;*/
+  /* add any other button-like styling */
+}*/
