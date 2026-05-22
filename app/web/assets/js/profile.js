@@ -1,4 +1,5 @@
 import { client } from './supabase.js';  // adjust path if needed
+import { toast } from './toast.js';
 
 // ---------- Fetch user data ----------
 async function loadUserProfile() {
@@ -110,7 +111,7 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
   if (!error) {
     window.location.href = 'login.html';
   } else {
-    alert('Logout failed. Please try again.');
+    toast.show('Logout failed. Please try again.', 'error');
   }
 });
 

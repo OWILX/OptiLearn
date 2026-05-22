@@ -1,16 +1,20 @@
 
     import { client } from './assets/js/supabase.js';
 
-(async () => {
-  const { data: { session } } = await client.auth.getSession();
-  if (!session) {
+if (session) {
+    console.log('User is logged in:', session.user.email);
+
+    // --- Update the welcome message with the real name ---
+    const userName = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Student';
+    document.querySelector('.welcome-title').innerHTML = `Welcome back, ${userName}! `;
+
+    // Optional: Update the avatar image if you stored one in metadata
+    // if (session.user.user_metadata?.avatar_url) {
+    //   document.querySelector('.avatar').src = session.user.user_metadata.avatar_url;
+    // }
+} else {
     window.location.href = 'login.html';
-  } else {
-    // optional: update UI with user name
-    document.querySelector('.welcome-title').textContent = `Welcome back, ${session.user.user_metadata?.full_name || 'Student'}! `;
-  }
-})();
-    })();
+}
 
     document.addEventListener('DOMContentLoaded', () => {
         // 1. Quick Action Cards
