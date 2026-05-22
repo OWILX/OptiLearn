@@ -124,7 +124,7 @@ document.getElementById("signup-btn").addEventListener("click", async (e) => {
             email,
             password,
             options: {
-                emailRedirectTo: 'https://github.io/OptiLearn/app/web/login.html',
+                emailRedirectTo: window.location.origin + REDIRECT_AFTER_SIGNUP,
                 data: { full_name: name }
             }
         });
@@ -190,7 +190,7 @@ document.getElementById("login-btn").addEventListener("click", async (e) => {
             return;
         }
 
-        window.location.href = 'https://github.io/OptiLearn/app/web/index.html';
+        window.location.href = REDIRECT_AFTER_LOGIN;
 
     } catch (err) {
         console.error(err);
@@ -204,7 +204,7 @@ async function signInWithGoogle() {
         const { error } = await client.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: 'https://github.io/OptiLearn/app/web/index.html',,
+                redirectTo: window.location.origin + REDIRECT_AFTER_GOOGLE,
                 queryParams: {
                     access_type: 'offline',
                     prompt: 'consent'
@@ -242,7 +242,7 @@ document.querySelectorAll('.btn-social').forEach(btn => {
     // but we can listen for auth state change to redirect if on login page)
     const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN' && window.location.pathname.includes('login.html')) {
-            window.location.href = 'https://github.io/OptiLearn/app/web/index.html',;
+            window.location.href = REDIRECT_AFTER_LOGIN;
         }
     });
 })();
