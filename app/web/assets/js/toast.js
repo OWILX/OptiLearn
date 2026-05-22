@@ -1,4 +1,3 @@
-
 class ToastManager {
     constructor() {
         this.container = document.getElementById('toast-container');
@@ -14,11 +13,14 @@ class ToastManager {
      * Show a toast notification
      * @param {string} message - The message to display
      * @param {string} type - 'success', 'error', 'info', 'warning'
-     * @param {number} duration - Time in milliseconds to show the toast (default: 4000)
+     * @param {number} duration - Time in milliseconds to show the toast (default: 3000)
      */
-    show(message, type = 'info', duration = 4000) {
+    show(message, type = 'info', duration = 3000) {
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
+        
+        // Make entire toast clickable for dismissal
+        toast.style.cursor = 'pointer';
 
         // Icon based on type
         let iconHtml = '';
@@ -39,16 +41,9 @@ class ToastManager {
         toast.innerHTML = `
             <div class="toast-icon">${iconHtml}</div>
             <div class="toast-content">${this.escapeHtml(message)}</div>
-            <button class="toast-close" aria-label="Close">&times;</button>
         `;
 
         this.container.appendChild(toast);
-
-        // Close button event
-        const closeBtn = toast.querySelector('.toast-close');
-        closeBtn.addEventListener('click', () => {
-            this.dismiss(toast);
-        });
 
         // Auto dismiss after duration
         const timeoutId = setTimeout(() => {
@@ -57,12 +52,22 @@ class ToastManager {
 
         // Store timeoutId on the toast for possible early dismissal
         toast._timeoutId = timeoutId;
+        
+        // Click anywhere on toast to dismiss
+        toast.addEventListener('click', () => {
+            this.dismiss(toast);
+        });
     }
 
     dismiss(toast) {
+        // Prevent multiple dismissals
+        if (toast._isDismissing) return;
+        toast._isDismissing = true;
+        
         if (toast._timeoutId) {
             clearTimeout(toast._timeoutId);
         }
+        
         toast.classList.add('hide');
         toast.addEventListener('animationend', () => {
             if (toast.parentNode) {
