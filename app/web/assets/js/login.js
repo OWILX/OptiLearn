@@ -2,9 +2,9 @@ import { client } from './supabase.js';
 import { toast } from './toast.js';
 
 // ========== CONFIGURABLE REDIRECTS ==========
-const REDIRECT_AFTER_LOGIN = '/index.html';        // Change to your desired page
-const REDIRECT_AFTER_SIGNUP = '/login.html';       // Where user lands after email confirmation
-const REDIRECT_AFTER_GOOGLE = '/index.html';       // Must be added in Supabase Console → Authentication → URL Configuration
+const REDIRECT_AFTER_LOGIN = '/OptiLearn/app/web/index.html';        // Change to your desired page
+const REDIRECT_AFTER_SIGNUP = '/OptiLearn/app/web/login.html';       // Where user lands after email confirmation
+const REDIRECT_AFTER_GOOGLE = '/OptiLearn/app/web/index.html';       // Must be added in Supabase Console → Authentication → URL Configuration
 
 // ========== EYE ICON TOGGLE ==========
 document.querySelectorAll('.eye-icon').forEach(icon => {
