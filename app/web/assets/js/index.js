@@ -3,7 +3,7 @@
 
 async function handleSession() {
   // Make sure you actually fetch the session (Supabase example)
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await client.auth.getSession();
 
   if (session?.user) {
     console.log('User is logged in:', session.user.email);
