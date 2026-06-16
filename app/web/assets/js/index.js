@@ -71,7 +71,7 @@ handleSession();
                 navItems.forEach(nav => nav.classList.remove('active'));
                 item.classList.add('active');
                 const page = item.querySelector('span')?.innerText || 'page';
-                alert(`📱 Navigating to ${page} (demo)`);
+               
                 // Later: actual routing
             });
         });
