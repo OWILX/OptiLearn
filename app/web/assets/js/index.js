@@ -38,7 +38,6 @@ handleSession();
         if (studyCard) {
             studyCard.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.location.href = 'study.html';
             });
         }
         if (sepCard) {
@@ -64,27 +63,12 @@ handleSession();
 
         // 3. Bottom Navigation Items
         const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Remove active class from all, then add to clicked
-                navItems.forEach(nav => nav.classList.remove('active'));
-                item.classList.add('active');
-                const page = item.querySelector('span')?.innerText || 'page';
-               
-              
-            });
-        });
-
-        // Center floating button
-        const floatingBtn = document.querySelector('.floating-btn');
-        if (floatingBtn) {
-            floatingBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-            });
-        }
-
+navItems.forEach(item => {
+    item.addEventListener('click', () => {
+        navItems.forEach(nav => nav.classList.remove('active'));
+        item.classList.add('active');
+    });
+});
         // 4. Header icons (menu, notification)
         const menuBtn = document.querySelector('.menu-btn');
         if (menuBtn) {

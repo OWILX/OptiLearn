@@ -1,0 +1,422 @@
+/* ============================================================
+   STUDY-MATH – specific styles for Mathematics study page
+   ============================================================ */
+
+/* ---- Hero Banner ---- */
+.math-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%);
+  border-radius: 20px;
+  margin: 0 16px 16px;
+  padding: 24px 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.math-hero-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.math-hero-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+}
+.math-hero-text h1 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+.math-hero-text p {
+  font-size: 13px;
+  color: #e0e7ff;
+  line-height: 1.4;
+}
+.math-hero-stats {
+  display: flex;
+  gap: 24px;
+  background: rgba(255,255,255,0.10);
+  padding: 12px 20px;
+  border-radius: 16px;
+  backdrop-filter: blur(4px);
+}
+.hero-stat {
+  text-align: center;
+}
+.hero-stat-value {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+}
+.hero-stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #c7d2fe;
+}
+
+/* ---- Overall Progress ---- */
+.overall-progress-wrapper {
+  padding: 0 16px 20px;
+}
+.overall-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+}
+.overall-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.overall-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #16248c, #4f46e5);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+/* ---- Topics Section ---- */
+.topics-section {
+  padding: 0 16px 20px;
+}
+.topics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+.topics-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.topics-count {
+  font-size: 13px;
+  color: var(--text-grey);
+}
+
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.topic-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.topic-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+.topic-card:active {
+  transform: scale(0.97);
+}
+.topic-card .topic-category {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  background: var(--primary-blue-light);
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+.topic-card .topic-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+}
+.topic-card .topic-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.topic-card .topic-progress-bar {
+  flex: 1;
+  height: 5px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.topic-card .topic-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.topic-card .topic-progress-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-grey);
+}
+.topic-card .topic-status-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 16px;
+  color: #10b981;
+}
+.topic-card .topic-status-badge.not-studied {
+  color: #d1d5db;
+}
+
+/* ---- Study Panel (slide-in) ---- */
+.study-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 900;
+  display: none;
+  backdrop-filter: blur(2px);
+}
+.study-overlay.active {
+  display: block;
+}
+
+.study-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-width: 414px;
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+  z-index: 1000;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  overflow: hidden;
+}
+.study-panel.active {
+  transform: translateY(0);
+}
+.study-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.study-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.study-panel-icon {
+  color: var(--primary-blue);
+}
+.study-panel-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--text-grey);
+  cursor: pointer;
+  padding: 0 4px;
+}
+.study-panel-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+.study-panel-body h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 16px 0 8px;
+  color: var(--text-dark);
+}
+.study-panel-body h3:first-child {
+  margin-top: 0;
+}
+.study-panel-body ul, .study-panel-body ol {
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+.study-panel-body li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dark);
+}
+.study-panel-body p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+.study-panel-body .formula-box {
+  background: var(--bg-light);
+  border-left: 4px solid var(--primary-blue);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 12px 0;
+  font-family: 'Times New Roman', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-blue);
+}
+.study-panel-body .example-box {
+  background: #fefce8;
+  border: 1px solid #fde68a;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+.study-panel-body .example-box strong {
+  color: #92400e;
+}
+.study-panel-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.btn-mark-studied,
+.btn-practice {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+.btn-mark-studied {
+  background: var(--primary-blue);
+  color: white;
+}
+.btn-mark-studied:hover {
+  background: #0f1a6b;
+}
+.btn-mark-studied:active {
+  transform: scale(0.97);
+}
+.btn-mark-studied.done {
+  background: #10b981;
+}
+.btn-practice {
+  background: var(--primary-teal-light);
+  color: var(--primary-teal);
+}
+.btn-practice:hover {
+  background: #d1f0f0;
+}
+.btn-practice:active {
+  transform: scale(0.97);
+}
+
+/* ---- Responsive ---- */
+@media (min-width: 768px) {
+  .math-hero {
+    margin: 0 40px 20px;
+    padding: 30px 28px;
+  }
+  .math-hero-text h1 { font-size: 28px; }
+  .math-hero-text p { font-size: 15px; }
+  .math-hero-stats { padding: 16px 28px; gap: 32px; }
+  .hero-stat-value { font-size: 28px; }
+
+  .overall-progress-wrapper {
+    padding: 0 40px 24px;
+  }
+  .topics-section {
+    padding: 0 40px 30px;
+  }
+  .topics-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .study-panel {
+    max-width: 600px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    border-radius: 24px;
+    bottom: 20px;
+    max-height: 80vh;
+  }
+  .study-panel.active {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .math-hero {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 18px 16px;
+  }
+  .math-hero-stats {
+    justify-content: space-around;
+    padding: 10px 12px;
+  }
+  .math-hero-content {
+    gap: 12px;
+  }
+  .math-hero-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+  }
+  .math-hero-text h1 { font-size: 18px; }
+  .math-hero-text p { font-size: 12px; }
+  .topics-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .topic-card {
+    padding: 12px 10px;
+  }
+  .topic-card .topic-title {
+    font-size: 13px;
+  }
+  .study-panel {
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+  }
+  .study-panel-footer {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 1024px) {
+  .topics-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
