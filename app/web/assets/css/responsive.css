@@ -96,3 +96,32 @@ html, body {
     gap: 1rem;
   }
 }
+/* ========== GLOBAL RESPONSIVE OVERRIDES ========== */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+.app-container {
+  max-width: 100%;
+  overflow-x: hidden;
+  padding-bottom: 90px; /* space for footer */
+}
+img, svg, video {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (min-width: 768px) {
+  .app-container {
+    max-width: 900px;
+    margin: 20px auto;
+    border-radius: 28px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  }
+}
+
+@media (max-width: 480px) {
+  .app-container {
+    padding-bottom: 80px; /* less padding on small phones */
+  }
+}

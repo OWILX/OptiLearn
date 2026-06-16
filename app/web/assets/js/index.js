@@ -1,5 +1,5 @@
 
-    import { client } from './assets/js/supabase.js';
+    import { client } from './supabase.js';
 
 async function handleSession() {
   // Make sure you actually fetch the session (Supabase example)
@@ -15,7 +15,7 @@ async function handleSession() {
 
     const welcomeEl = document.querySelector('.welcome-title');
     if (welcomeEl) {
-      welcomeEl.textContent = `Welcome back, ${userName}! `;
+      welcomeEl.textContent = `Welcome back, ${userName}! `;
     }
 
     const avatarEl = document.querySelector('.avatar');
