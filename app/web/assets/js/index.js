@@ -72,7 +72,7 @@ handleSession();
                 item.classList.add('active');
                 const page = item.querySelector('span')?.innerText || 'page';
                
-                // Later: actual routing
+              
             });
         });
 
@@ -81,7 +81,7 @@ handleSession();
         if (floatingBtn) {
             floatingBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                alert('➕ Start a quick practice session!');
+                
             });
         }
 
