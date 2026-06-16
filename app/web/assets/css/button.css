@@ -6,14 +6,13 @@ button,
 .btn-start-exam,
 .floating-btn,
 .action-card {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Overlay pseudo-element */
 button::after,
 .btn-action::after,
 .btn-social::after,
@@ -22,20 +21,19 @@ button::after,
 .btn-start-exam::after,
 .floating-btn::after,
 .action-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-    z-index: 1;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* Hover overlay */
 button:hover::after,
 .btn-action:hover::after,
 .btn-social:hover::after,
@@ -44,10 +42,9 @@ button:hover::after,
 .btn-start-exam:hover::after,
 .floating-btn:hover::after,
 .action-card:hover::after {
-    opacity: 1;
+  opacity: 1;
 }
 
-/* Active (click) effect – subtle scale + darker overlay */
 button:active::after,
 .btn-action:active::after,
 .btn-social:active::after,
@@ -56,8 +53,8 @@ button:active::after,
 .btn-start-exam:active::after,
 .floating-btn:active::after,
 .action-card:active::after {
-    background: rgba(0, 0, 0, 0.1);
-    opacity: 1;
+  background: rgba(0, 0, 0, 0.08);
+  opacity: 1;
 }
 
 button:active,
@@ -68,39 +65,33 @@ button:active,
 .btn-start-exam:active,
 .floating-btn:active,
 .action-card:active {
-    transform: scale(0.97);
+  transform: scale(0.97);
 }
 
-/* Disabled buttons – no overlay, no transform */
 button:disabled,
 .btn-submit:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 button:disabled::after,
 .btn-submit:disabled::after {
-    display: none;
+  display: none;
 }
 
-/* For action cards – ensure overlay doesn't break layout */
-.action-card {
-    z-index: 1;
-}
 .floating-btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(22, 36, 140, 0.1);
-    transform: translate(-50%, -50%);
-    transition: width 0.3s ease, height 0.3s ease;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(22, 36, 140, 0.08);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
 }
-
 .floating-btn:active::after {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }

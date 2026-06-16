@@ -1,120 +1,92 @@
 /* ---------- BOTTOM NAVIGATION ---------- */
 .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 414px;
-    background: var(--white);
-    display: flex;
-    justify-content: space-around;
-    align-items: center; /* center items vertically */
-    padding: 8px 5px 12px;
-    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
-    border-top: 1px solid var(--border-color);
-    z-index: 1000;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 414px;
+  background: var(--white);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 5px 16px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid var(--border-color);
+  z-index: 1000;
 }
 
 .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: var(--text-grey);
-    text-decoration: none;
-    font-size: 10px;
-    gap: 5px;
-    flex: 1;
-    transition: color 0.2s ease;
-}
-
-.nav-item.active {
-    color: var(--primary-blue);
-}
-
-.nav-item i {
-    font-size: 20px;
-}
-
-/* Container for the floating button – ensures perfect centering */
-.nav-item-center {
-    position: relative;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Floating Action Button – beautifully aligned and interactive */
-.floating-btn {
-    position: absolute;
-    top: -32px; /* raised just enough to feel "floating" */
-    width: 64px;
-    height: 64px;
-    background: var(--white);
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.05);
-    border: 3px solid var(--white);
-    transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.2s ease;
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
-}
-
-/* Hover effect: lift and grow slightly */
-.floating-btn:hover {
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* Active press effect – subtle shrink */
-.floating-btn:active {
-    transform: translateY(2px) scale(0.96);
-    transition: transform 0.08s linear;
-}
-
-.floating-btn i {
-    font-size: 24px;
-    color: var(--primary-blue);
-    margin-bottom: 2px;
-}
-
-.floating-btn span {
-    font-size: 9px;
-    color: var(--primary-blue);
-    margin-top: 2px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-}
-
-/* ---------- RESPONSIVE (FOOTER) ---------- */
-@media (max-width: 480px) {
-    .bottom-nav {
-        padding: 6px 5px 12px;
-    }
-
-    .floating-btn {
-        width: 56px;
-        height: 56px;
-        top: -28px;
-    }
-
-    .floating-btn i {
-        font-size: 20px;
-    }
-
-    .floating-btn span {
-        font-size: 8px;
-    }
-}
-/*.nav-btn {
-  all: unset;           /* remove default link styles */
-  /*display: flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: pointer;*/
-  /* add any other button-like styling */
-}*/
+  color: #9ca3af;
+  text-decoration: none;
+  font-size: 10px;
+  gap: 4px;
+  flex: 1;
+  transition: color 0.2s;
+  font-weight: 500;
+  padding: 4px 0;
+}
+.nav-item i {
+  font-size: 22px;
+  transition: color 0.2s;
+}
+.nav-item.active {
+  color: var(--primary-blue);
+}
+.nav-item.active i {
+  color: var(--primary-blue);
+}
+
+.nav-item-center {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.floating-btn {
+  position: absolute;
+  top: -32px;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.04);
+  border: 3px solid var(--white);
+  transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.2s;
+}
+.floating-btn:hover {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.15);
+}
+.floating-btn:active {
+  transform: translateY(2px) scale(0.96);
+}
+.floating-btn i {
+  font-size: 26px;
+  color: var(--primary-blue);
+  margin-bottom: 1px;
+}
+.floating-btn span {
+  font-size: 9px;
+  color: var(--primary-blue);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 480px) {
+  .bottom-nav { padding: 6px 5px 14px; }
+  .floating-btn { width: 56px; height: 56px; top: -28px; }
+  .floating-btn i { font-size: 22px; }
+  .floating-btn span { font-size: 8px; }
+  .nav-item i { font-size: 20px; }
+}
