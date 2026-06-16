@@ -83,7 +83,7 @@
 
             <section class="subjects-grid">
                 <!-- Mathematics -->
-                <div class="subject-card" data-subject="math">
+                <div class="subject-card" data-link = "math.html" data-subject="math">
                     <div class="card-top">
                         <div class="subject-icon" style="background: var(--math-color);">
                             <i class="fa-solid fa-calculator"></i>
@@ -242,6 +242,18 @@
         </nav>
 
     </div>
-
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.subject-card');
+    cards.forEach(card => {
+      card.addEventListener('click', function() {
+        const link = this.dataset.link;
+        if (link) {
+          window.location.href = link;
+        }
+      });
+    });
+  });
+</script>
 </body>
 </html>
