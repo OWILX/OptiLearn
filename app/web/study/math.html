@@ -3,157 +3,160 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>OptiLearn – Mathematics Study</title>
+    <title>OptiLearn – Physics Study</title>
 
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-    <!-- ====== GENERAL STYLESHEETS ====== -->
-    <link rel="stylesheet" href="../assets/css/global.css" />
-    <link rel="stylesheet" href="../assets/css/header.css" />
-    <link rel="stylesheet" href="../assets/css/footer.css" />
-    <link rel="stylesheet" href="../assets/css/button.css" />
-    <link rel="stylesheet" href="../assets/css/responsive.css" />
+    <!-- Global styles -->
+    <link rel="stylesheet" href="assets/css/global.css" />
+    <link rel="stylesheet" href="assets/css/header.css" />
+    <link rel="stylesheet" href="assets/css/footer.css" />
+    <link rel="stylesheet" href="assets/css/button.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
 
-    <!-- ====== STUDY-MATH STYLESHEET ====== -->
-    <link rel="stylesheet" href="../assets/css/study/math.css" />
+    <!-- Subject-specific generic CSS -->
+    <link rel="stylesheet" href="assets/css/subject-study.css" />
 </head>
 <body>
 
-    <div class="app-container">
+<div class="app-container">
 
-        <!-- ===== HEADER ===== -->
-        <header class="header">
-            <a href="../study.html" class="back-btn">
-                <i class="fa-solid fa-arrow-left"></i>
-            </a>
-            <div class="logo-container">
-                <div class="logo-top">
-                    <div class="logo-icon-small">
-                        <i class="fa-solid fa-calculator"></i>
-                        <i class="fa-solid fa-chart-line"></i>
-                    </div>
-                    <div class="logo-text-small">
-                        <span>Opti</span>Learn
-                    </div>
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <a href="study.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div class="logo-container">
+            <div class="logo-top">
+                <div class="logo-icon-small">
+                    <i class="fa-solid fa-atom"></i>
+                    <i class="fa-solid fa-chart-line"></i>
                 </div>
-                <div class="logo-tagline">Where Preparation Meets Excellence</div>
-            </div>
-            <div class="header-right">
-                <div class="notification">
-                    <i class="fa-regular fa-bell"></i>
-                    <span class="badge">2</span>
-                </div>
-                <img src="https://i.pravatar.cc/100?img=11" alt="Profile" class="avatar" />
-            </div>
-        </header>
-
-        <main>
-
-            <!-- ===== HERO BANNER ===== -->
-            <section class="math-hero">
-                <div class="math-hero-content">
-                    <div class="math-hero-icon">
-                        <i class="fa-solid fa-calculator"></i>
-                    </div>
-                    <div class="math-hero-text">
-                        <h1>Mathematics</h1>
-                        <p>Master the UTME Mathematics syllabus, topic by topic.</p>
-                    </div>
-                </div>
-                <div class="math-hero-stats">
-                    <div class="hero-stat">
-                        <span class="hero-stat-value" id="topicsCompleted">0</span>
-                        <span class="hero-stat-label">Topics Done</span>
-                    </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-value" id="totalProgress">0%</span>
-                        <span class="hero-stat-label">Overall Progress</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ===== OVERALL PROGRESS BAR ===== -->
-            <div class="overall-progress-wrapper">
-                <div class="overall-progress-label">
-                    <span>Syllabus Progress</span>
-                    <span id="progressPercent">0%</span>
-                </div>
-                <div class="overall-progress-bar">
-                    <div class="overall-progress-fill" id="progressFill" style="width: 0%;"></div>
+                <div class="logo-text-small">
+                    <span>Opti</span>Learn
                 </div>
             </div>
+            <div class="logo-tagline">Where Preparation Meets Excellence</div>
+        </div>
+        <div class="header-right">
+            <div class="notification">
+                <i class="fa-regular fa-bell"></i>
+                <span class="badge">2</span>
+            </div>
+            <img src="https://i.pravatar.cc/100?img=11" alt="Profile" class="avatar" />
+        </div>
+    </header>
 
-            <!-- ===== TOPICS GRID ===== -->
-            <section class="topics-section">
-                <div class="topics-header">
-                    <h2 class="topics-title">Choose a Topic</h2>
-                    <span class="topics-count" id="topicsCount">0 topics</span>
-                </div>
-                <div class="topics-grid" id="topicsGrid">
-                    <!-- Rendered by JavaScript -->
-                </div>
-            </section>
+    <main>
 
-            <!-- ===== STUDY CONTENT PANEL ===== -->
-            <div class="study-panel" id="studyPanel" style="display: none;">
-                <div class="study-panel-header">
-                    <div class="study-panel-title">
-                        <span class="study-panel-icon"><i class="fa-solid fa-book-open"></i></span>
-                        <span id="studyTopicTitle">Topic Title</span>
-                    </div>
-                    <button class="study-panel-close" id="closeStudyPanel">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+        <!-- ===== HERO BANNER ===== -->
+        <section class="subject-hero">
+            <div class="subject-hero-content">
+                <div class="subject-hero-icon">
+                    <i class="fa-solid fa-atom"></i> <!-- overridden by JS -->
                 </div>
-                <div class="study-panel-body" id="studyContent">
-                    <!-- Dynamic content -->
-                </div>
-                <div class="study-panel-footer">
-                    <button class="btn-mark-studied" id="markStudiedBtn">
-                        <i class="fa-regular fa-circle-check"></i> Mark as Studied
-                    </button>
-                    <button class="btn-practice" id="practiceBtn">
-                        <i class="fa-solid fa-pencil"></i> Practice Questions
-                    </button>
+                <div class="subject-hero-text">
+                    <h1>Physics</h1> <!-- overridden by JS -->
+                    <p>Master the UTME Physics syllabus, topic by topic.</p>
                 </div>
             </div>
-
-            <!-- ===== OVERLAY ===== -->
-            <div class="study-overlay" id="studyOverlay"></div>
-
-        </main>
-
-        <!-- ===== BOTTOM NAVIGATION ===== -->
-        <nav class="bottom-nav">
-            <a href="../index.html" class="nav-item">
-                <i class="fa-solid fa-house"></i>
-                <span>Home</span>
-            </a>
-            <a href="../study.html" class="nav-item active">
-                <i class="fa-solid fa-book"></i>
-                <span>Study</span>
-            </a>
-            <div class="nav-item-center">
-                <a href="exam.html" class="floating-btn">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Practice</span>
-                </a>
+            <div class="subject-hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-value" id="topicsCompleted">0</span>
+                    <span class="hero-stat-label">Topics Done</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-value" id="totalProgress">0%</span>
+                    <span class="hero-stat-label">Overall Progress</span>
+                </div>
             </div>
-            <a href="#" class="nav-item">
-                <i class="fa-solid fa-chart-simple"></i>
-                <span>Stats</span>
-            </a>
-            <a href="profile.html" class="nav-item">
-                <i class="fa-solid fa-user"></i>
-                <span>Profile</span>
-            </a>
-        </nav>
+        </section>
 
-    </div>
+        <!-- ===== OVERALL PROGRESS ===== -->
+        <div class="overall-progress-wrapper">
+            <div class="overall-progress-label">
+                <span>Syllabus Progress</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="overall-progress-bar">
+                <div class="overall-progress-fill" id="progressFill" style="width: 0%;"></div>
+            </div>
+        </div>
 
-    <!-- ===== JAVASCRIPT ===== -->
-    <script type="module" src="../assets/js/study/math.js"></script>
+        <!-- ===== TOPICS GRID ===== -->
+        <section class="topics-section">
+            <div class="topics-header">
+                <h2 class="topics-title">Choose a Topic</h2>
+                <span class="topics-count" id="topicsCount">0 topics</span>
+            </div>
+            <div class="topics-grid" id="topicsGrid">
+                <!-- Rendered by JavaScript -->
+            </div>
+        </section>
+
+        <!-- ===== STUDY PANEL ===== -->
+        <div class="study-panel" id="studyPanel" style="display: none;">
+            <div class="study-panel-header">
+                <div class="study-panel-title">
+                    <span class="study-panel-icon"><i class="fa-solid fa-book-open"></i></span>
+                    <span id="studyTopicTitle">Topic Title</span>
+                </div>
+                <button class="study-panel-close" id="closeStudyPanel">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="study-panel-body" id="studyContent">
+                <!-- Dynamic content -->
+            </div>
+            <div class="study-panel-footer">
+                <button class="btn-mark-studied" id="markStudiedBtn">
+                    <i class="fa-regular fa-circle-check"></i> Mark as Studied
+                </button>
+                <button class="btn-practice" id="practiceBtn">
+                    <i class="fa-solid fa-pencil"></i> Practice Questions
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== OVERLAY ===== -->
+        <div class="study-overlay" id="studyOverlay"></div>
+
+    </main>
+
+    <!-- ===== BOTTOM NAV ===== -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="study.html" class="nav-item active">
+            <i class="fa-solid fa-book"></i>
+            <span>Study</span>
+        </a>
+        <div class="nav-item-center">
+            <a href="exam.html" class="floating-btn">
+                <i class="fa-solid fa-plus"></i>
+                <span>Practice</span>
+            </a>
+        </div>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-chart-simple"></i>
+            <span>Stats</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // --- SET THE SUBJECT KEY ---
+    window.subjectKey = 'mathematics';  // change to 'chemistry', 'biology', 'english', etc.
+</script>
+<script type="module" src="assets/js/subject-study.js"></script>
 </body>
 </html>
