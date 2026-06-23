@@ -1,104 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OptiLearn CBT Exam</title>
-<link rel="stylesheet" href="assets/css/exam.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OptiLearn – Mock Exam</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/button.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <!-- Exam specific styles -->
+    <link rel="stylesheet" href="assets/css/exam.css">
 </head>
 <body>
 
-<div class="exam-container">
+<div class="app-container">
 
-<header class="exam-header">
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <a href="study.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div class="logo-container">
+            <div class="logo-top">
+                <div class="logo-icon-small">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div class="logo-text-small">
+                    <span>Opti</span>Learn
+                </div>
+            </div>
+            <div class="logo-tagline">Where Preparation Meets Excellence</div>
+        </div>
+        <div class="header-right">
+            <div class="notification">
+                <i class="fa-regular fa-bell"></i>
+                <span class="badge">2</span>
+            </div>
+            <img src="https://i.pravatar.cc/100?img=11" alt="Profile" class="avatar" />
+        </div>
+    </header>
 
-<div class="exam-subject">
-Use of English
+    <main>
+
+        <!-- ===== SUBJECT SELECTION ===== -->
+        <div id="selectionContainer" class="selection-container">
+            <h2 class="selection-title">Select Your Subjects</h2>
+            <p class="selection-subtitle">Choose exactly 4 subjects for your mock exam.</p>
+            <div id="subjectGrid" class="subject-grid">
+                <!-- Rendered by JS -->
+            </div>
+            <button id="startExamBtn" class="btn-start-exam" disabled>
+                Start Exam <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- ===== EXAM INTERFACE ===== -->
+        <div id="examContainer" class="exam-container" style="display: none;">
+            <div class="exam-header">
+                <div id="timerDisplay" class="exam-timer">02:00:00</div>
+                <div id="examProgressText" class="exam-progress-text">0/0</div>
+            </div>
+            <div class="exam-progress-bar">
+                <div id="examProgressFill" class="exam-progress-fill" style="width: 0%;"></div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-number" id="questionNumber">Question 1</div>
+                <div class="question-text" id="questionText">Loading...</div>
+                <div id="optionsContainer">
+                    <!-- options rendered by JS -->
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button id="prevBtn" class="btn-prev" disabled><i class="fa-solid fa-chevron-left"></i> Previous</button>
+                <button id="markReviewBtn" class="btn-mark-review">Mark for Review</button>
+                <button id="nextBtn" class="btn-next">Next <i class="fa-solid fa-chevron-right"></i></button>
+                <button id="submitExamBtn" class="btn-submit-exam">Submit</button>
+            </div>
+
+            <!-- Question Palette -->
+            <div id="paletteContainer" class="question-palette"></div>
+        </div>
+
+        <!-- ===== RESULTS ===== -->
+        <div id="resultsContainer" class="results-container" style="display: none;">
+            <div class="results-summary">
+                <div class="results-score" id="totalCorrect">0</div>
+                <div style="font-size: 18px; font-weight: 600;">out of <span id="totalQuestions">0</span> correct</div>
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary-blue);" id="scorePercent">0%</div>
+            </div>
+
+            <div id="resultsDetail" class="results-detail">
+                <!-- per subject breakdown -->
+            </div>
+
+            <button id="reviewAnswersBtn" class="btn-review-answers"><i class="fa-regular fa-eye"></i> Review Answers</button>
+            <button id="backHomeBtn" class="btn-back-home"><i class="fa-solid fa-house"></i> Back to Home</button>
+        </div>
+
+    </main>
+
+    <!-- ===== BOTTOM NAV ===== -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="study.html" class="nav-item">
+            <i class="fa-solid fa-book"></i>
+            <span>Study</span>
+        </a>
+        <div class="nav-item-center">
+            <a href="exam.html" class="floating-btn active">
+                <i class="fa-solid fa-plus"></i>
+                <span>Practice</span>
+            </a>
+        </div>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-chart-simple"></i>
+            <span>Stats</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
 </div>
 
-<div class="timer-box" id="timer">
-01:45:22
-</div>
-
-</header>
-
-<main class="question-wrapper">
-
-<div class="question-number">
-Question 12 of 60
-</div>
-
-<div class="question-card">
-
-<h2 class="question-text">
-Choose the option nearest in meaning to the underlined word.
-</h2>
-
-<div class="passage">
-The principal was <strong>elated</strong> after the school's performance.
-</div>
-
-<div class="options-list">
-
-<label class="option-item">
-<input type="radio" name="answer">
-<span>Sad</span>
-</label>
-
-<label class="option-item active">
-<input type="radio" name="answer">
-<span>Excited</span>
-</label>
-
-<label class="option-item">
-<input type="radio" name="answer">
-<span>Confused</span>
-</label>
-
-<label class="option-item">
-<input type="radio" name="answer">
-<span>Angry</span>
-</label>
-
-</div>
-
-</div>
-
-<div class="question-actions">
-<button class="btn-secondary">
-<i class="fa-solid fa-arrow-left"></i>
-Previous
-</button>
-
-<button class="btn-primary">
-Next
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-
-</main>
-
-<nav class="navigator-panel">
-<div class="nav-title">Questions</div>
-
-<div class="question-grid">
-<button class="q-btn done">1</button>
-<button class="q-btn done">2</button>
-<button class="q-btn current">3</button>
-<button class="q-btn">4</button>
-<button class="q-btn">5</button>
-<button class="q-btn marked">6</button>
-</div>
-
-<button class="submit-btn">
-Submit Exam
-</button>
-</nav>
-
-</div>
-
-<script src="assets/js/exam.js"></script>
+<script type="module" src="assets/js/exam.js"></script>
 </body>
 </html>
