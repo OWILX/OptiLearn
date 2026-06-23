@@ -35,7 +35,7 @@ handleSession();
         const sepCard = document.querySelector('.action-card.blue');
         const pastQuestionsCard = document.querySelector('.action-card.teal');
         
-        if (studyCard) {
+       /* if (studyCard) {
             studyCard.addEventListener('click', (e) => {
                 e.preventDefault();
             });
@@ -51,7 +51,7 @@ handleSession();
                 e.preventDefault();
                 alert('📖 Past questions library coming soon.');
             });
-        }
+        }*/
 
         // 2. Start Mock Exam Button
         const startExamBtn = document.querySelector('.btn-start-exam');
