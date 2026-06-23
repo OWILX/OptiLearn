@@ -271,8 +271,8 @@ export const subjectData = {
       }
     ]
   }
-
-mathematics: {
+};
+/*mathematics: {
     name: 'Mathematics',
     icon: 'fa-hat',
     gradient: 'linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%)',
@@ -566,4 +566,4 @@ mathematics: {
   ]
 };
 
-   };
+*/   
