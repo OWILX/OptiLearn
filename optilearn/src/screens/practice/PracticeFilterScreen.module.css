@@ -1,0 +1,222 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.modeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.modeBadgeUntimed {
+  background: var(--color-brand-teal-soft);
+  color: var(--color-brand-teal);
+}
+
+.modeBadgeTimed {
+  background: var(--color-brand-purple-soft);
+  color: var(--color-brand-purple);
+}
+
+.filterCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.filterHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.filterLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.clearButton {
+  background: none;
+  border: none;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-brand-blue);
+  border-radius: var(--radius-sm);
+  -webkit-tap-highlight-color: transparent;
+  transition: background 140ms var(--ease-out);
+}
+
+.clearButton:hover {
+  background: var(--color-brand-blue-soft);
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    background 140ms var(--ease-out),
+    border-color 140ms var(--ease-out),
+    color 140ms var(--ease-out),
+    transform 100ms var(--ease-out);
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.chip:hover {
+  border-color: #e5e7eb;
+}
+
+.chipActive {
+  background: var(--color-brand-blue);
+  border-color: var(--color-brand-blue);
+  color: #ffffff;
+}
+
+.chipActive:hover {
+  border-color: var(--color-brand-blue);
+}
+
+.filterHint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.summaryBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-brand-blue-soft);
+  border: 1px solid rgba(22, 36, 140, 0.08);
+}
+
+.summaryText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.summaryCount {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.summaryCountMuted {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.summaryMeta {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.startButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 12px 22px;
+  border-radius: var(--radius-md);
+  background: var(--color-brand-blue);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  transition:
+    background 140ms var(--ease-out),
+    transform 100ms var(--ease-out),
+    opacity 140ms var(--ease-out);
+}
+
+.startButton:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.startButton:not(:disabled):hover {
+  background: #101d75;
+}
+
+.startButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  font-size: 13px;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(185, 28, 28, 0.15);
+}

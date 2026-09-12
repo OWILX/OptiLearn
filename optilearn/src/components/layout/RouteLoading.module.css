@@ -1,0 +1,21 @@
+.wrap {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: var(--color-bg);
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2.5px solid var(--color-brand-blue-soft);
+  border-top-color: var(--color-brand-blue);
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

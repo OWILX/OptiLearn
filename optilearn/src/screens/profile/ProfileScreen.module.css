@@ -1,0 +1,338 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* === Loading state === */
+.loadingWrap {
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2.5px solid var(--color-brand-blue-soft);
+  border-top-color: var(--color-brand-blue);
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === Header block === */
+.headerBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) 0 var(--space-2);
+  text-align: center;
+}
+
+.name {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.email {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* === Card === */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cardTitle {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.row:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.rowLabel {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.rowValue {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  text-align: right;
+  word-break: break-word;
+  flex: 1;
+  min-width: 0;
+}
+
+.rowButton {
+  background: none;
+  border: none;
+  color: var(--color-brand-blue);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 140ms var(--ease-out);
+}
+
+.rowButton:hover {
+  background: var(--color-brand-blue-soft);
+}
+
+/* Small "Locked" pill shown next to a read-only field. */
+.rowLock {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* === Edit form === */
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  animation: slideDown 200ms var(--ease-out) both;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.input {
+  width: 100%;
+  height: 46px;
+  padding: 0 var(--space-4);
+  font-size: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  transition:
+    border-color 140ms var(--ease-out),
+    background 140ms var(--ease-out);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-brand-blue);
+  background: var(--color-surface);
+}
+
+.input:disabled {
+  opacity: 0.6;
+}
+
+.editActions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.editActions > * {
+  flex: 1;
+}
+
+/* === Errors / hints === */
+.error {
+  font-size: 13px;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(185, 28, 28, 0.15);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* === Footer (version string) === */
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+  padding-bottom: var(--space-2);
+}
+
+/* === Sign-out confirmation dialog === */
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(15, 23, 42, 0.5);
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+  animation: fadeIn 160ms var(--ease-out) both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.confirmCard {
+  width: 100%;
+  max-width: 400px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-lg);
+  animation: confirmUp 220ms var(--ease-out) both;
+}
+
+@keyframes confirmUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.confirmIconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-pill);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--space-1);
+}
+
+.confirmTitle {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.confirmText {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.confirmActions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.confirmActions > * {
+  flex: 1;
+}
+
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  font-size: 15px;
+  font-weight: 600;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 140ms var(--ease-out);
+}
+
+.secondaryButton:not(:disabled):hover {
+  background: var(--color-bg);
+}
+
+.secondaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dangerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  background: var(--color-danger);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 140ms var(--ease-out),
+    opacity 140ms var(--ease-out);
+}
+
+.dangerButton:not(:disabled):hover {
+  background: #991b1b;
+}
+
+.dangerButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

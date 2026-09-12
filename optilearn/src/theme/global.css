@@ -1,0 +1,119 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* === Mobile-specific hardening === */
+
+html {
+  /* Prevent iOS auto text resize in landscape. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
+  /* Kill the browser's pull-to-refresh and rubber-band overscroll. */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+
+  /* Double-tap zoom is almost never desired in an app shell. */
+  touch-action: manipulation;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: inherit;
+  /* Remove iOS tap flash on non-interactive-ish elements. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+textarea,
+select {
+  /* 16px prevents iOS from auto-zooming the viewport on focus. */
+  font-size: 16px;
+  font-family: inherit;
+  color: inherit;
+  /* Kill the OS-level "inner shadow" on iOS form fields. */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-blue);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Block iOS/Android context menu on chrome-y elements only.
+   Study content, question text, and explanations keep long-press,
+   so students can still copy or select material they need. */
+button,
+a,
+[role='button'],
+nav,
+header {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

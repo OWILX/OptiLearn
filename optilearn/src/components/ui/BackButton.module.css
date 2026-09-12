@@ -1,0 +1,30 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 8px 10px 8px 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-brand-blue);
+  border-radius: var(--radius-sm);
+  margin-left: -6px;
+  min-width: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 140ms var(--ease-out);
+}
+
+.button:hover {
+  background: var(--color-brand-blue-soft);
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+}
