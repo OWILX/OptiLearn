@@ -68,6 +68,20 @@
   letter-spacing: 0.02em;
 }
 
+.premiumBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-purple-soft);
+  color: var(--color-brand-purple);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .questionText {
   font-size: 17px;
   font-weight: 600;
@@ -80,6 +94,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+.optionsSlide {
+  animation: revealSlide 260ms var(--ease-out) both;
 }
 
 .option {
@@ -197,7 +215,6 @@
   font-size: 14px;
   line-height: 1.55;
   color: var(--color-text);
-  white-space: pre-wrap;
 }
 
 .explanationEmpty {

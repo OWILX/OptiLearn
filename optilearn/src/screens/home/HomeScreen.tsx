@@ -198,8 +198,11 @@ export function HomeScreen() {
         });
       } catch (err) {
         if (signal.cancelled) return;
+        if (import.meta.env.DEV) {
+          console.warn('[HOME] Dashboard load failed:', err);
+        }
         setError(
-          err instanceof Error ? err.message : 'Could not load your dashboard.',
+          "We couldn't load your dashboard. Check your connection and try again.",
         );
       } finally {
         if (signal.cancelled) return;

@@ -7,6 +7,7 @@ import {
   type PastQuestionsSummary,
 } from '@/services/pastQuestions/pastQuestionsService';
 import { BackButton } from '@/components/ui/BackButton';
+import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import styles from './PracticeFilterScreen.module.css';
 
@@ -33,6 +34,7 @@ export function PracticeFilterScreen() {
   const [summary, setSummary] = useState<PastQuestionsSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   const [subject, setSubject] = useState<string | null>(null);
   const [year, setYear] = useState<number | null>(null);
@@ -70,7 +72,7 @@ export function PracticeFilterScreen() {
     return () => {
       cancelled = true;
     };
-  }, [mode, profileLoading, department]);
+  }, [mode, profileLoading, department, retryKey]);
 
   useEffect(() => {
     if (!summary) return;
@@ -155,7 +157,18 @@ export function PracticeFilterScreen() {
         </p>
       </div>
 
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <>
+          <div className={styles.error}>{error}</div>
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => setRetryKey((k) => k + 1)}
+          >
+            Try again
+          </Button>
+        </>
+      )}
       {loading && <Skeleton height={260} />}
 
       {!loading && summary && (

@@ -3,11 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowRight,
   Check,
+  Eye,
   Lightbulb,
   Sparkles,
   BookOpen,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useProfile } from '@/context/ProfileContext';
 import {
   questionService,
   type MCQQuestion,
@@ -19,30 +21,38 @@ import {
   type SyllabusRow,
 } from '@/services/syllabus/syllabusService';
 import { BackButton } from '@/components/ui/BackButton';
+import { Button } from '@/components/ui/Button';
+import { Markdown } from '@/components/ui/Markdown';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import styles from './StudyReaderScreen.module.css';
 
 const LETTERS = ['A', 'B', 'C', 'D'] as const;
 
+type Stage = 'question' | 'options' | 'explanation';
+
 export function StudyReaderScreen() {
   const { syllabusId: syllabusIdParam } = useParams<{ syllabusId: string }>();
   const syllabusId = Number(syllabusIdParam);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { profile } = useProfile();
 
   const [syllabus, setSyllabus] = useState<SyllabusRow | null>(null);
   const [questions, setQuestions] = useState<MCQQuestion[] | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [explanationOpen, setExplanationOpen] = useState(false);
+  const [stage, setStage] = useState<Stage>('question');
   const [showEnd, setShowEnd] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   const hasRecordedInitial = useRef(false);
+  const isPremium = profile?.premium === true;
 
+  // Reset reveal stage whenever the question changes.
   useEffect(() => {
-    setExplanationOpen(false);
+    setStage('question');
     window.scrollTo(0, 0);
   }, [currentIndex]);
 
@@ -90,7 +100,12 @@ export function StudyReaderScreen() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Could not load topic.');
+        if (import.meta.env.DEV) {
+          console.warn('[STUDY] Topic load failed:', err);
+        }
+        setError(
+          "We couldn't load this topic. Check your connection and try again.",
+        );
       })
       .finally(() => {
         if (cancelled) return;
@@ -100,7 +115,7 @@ export function StudyReaderScreen() {
     return () => {
       cancelled = true;
     };
-  }, [user, syllabusId]);
+  }, [user, syllabusId, retryKey]);
 
   function goNext() {
     if (!user || !questions) return;
@@ -170,7 +185,15 @@ export function StudyReaderScreen() {
   if (error) {
     return (
       <section className={styles.page}>
+        <BackButton label="Back to Study" onClick={() => navigate('/study')} />
         <div className={styles.error}>{error}</div>
+        <Button
+          variant="secondary"
+          fullWidth
+          onClick={() => setRetryKey((k) => k + 1)}
+        >
+          Try again
+        </Button>
       </section>
     );
   }
@@ -197,7 +220,7 @@ export function StudyReaderScreen() {
           </div>
           <h2 className={styles.endTitle}>Topic complete</h2>
           <p className={styles.endText}>
-            You've read through every question in "{syllabus.topic}".
+            You&apos;ve read through every question in &quot;{syllabus.topic}&quot;.
           </p>
           <div className={styles.endActions}>
             <button
@@ -225,6 +248,10 @@ export function StudyReaderScreen() {
   const isLast = currentIndex >= questions.length - 1;
   const displayPct = Math.round(((currentIndex + 1) / questions.length) * 100);
 
+  const explanation = isPremium
+    ? current.premiumExplanation
+    : current.standardExplanation;
+
   return (
     <section className={styles.page}>
       <div className={styles.topBar}>
@@ -244,44 +271,70 @@ export function StudyReaderScreen() {
       <article className={styles.questionCard}>
         <div className={styles.questionHeader}>
           <span className={styles.qBadge}>Q{currentIndex + 1}</span>
+          {isPremium && (
+            <span className={styles.premiumBadge}>
+              <Sparkles size={11} aria-hidden="true" />
+              Premium
+            </span>
+          )}
         </div>
-        <p className={styles.questionText}>{current.question}</p>
-
-        <div className={styles.options}>
-          {current.options.map((opt, i) => {
-            const letter = LETTERS[i];
-            const isCorrect = letter === current.answer;
-            return (
-              <div
-                key={letter}
-                className={`${styles.option} ${isCorrect ? styles.optionCorrect : ''}`}
-              >
-                <span className={styles.optionLetter}>{letter}</span>
-                <span className={styles.optionText}>{opt}</span>
-              </div>
-            );
-          })}
-        </div>
+        <Markdown className={styles.questionText}>{current.question}</Markdown>
       </article>
 
-      {!explanationOpen && (
+      {stage !== 'question' && (
+        <div className={styles.optionsSlide} key={`opts-${currentIndex}`}>
+          <div className={styles.options}>
+            {current.options.map((opt, i) => {
+              const letter = LETTERS[i];
+              const isCorrect = letter === current.answer;
+              return (
+                <div
+                  key={letter}
+                  className={`${styles.option} ${isCorrect ? styles.optionCorrect : ''}`}
+                >
+                  <span className={styles.optionLetter}>{letter}</span>
+                  <Markdown className={styles.optionText}>{opt}</Markdown>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {stage === 'question' && (
         <button
           type="button"
           className={styles.revealButton}
-          onClick={() => setExplanationOpen(true)}
+          onClick={() => setStage('options')}
         >
-          <Lightbulb size={16} aria-hidden="true" />
-          Reveal explanation
+          <Eye size={16} aria-hidden="true" />
+          Show options
         </button>
       )}
 
-      {explanationOpen && (
-        <article className={styles.explanationCard} key={currentIndex}>
+      {stage === 'options' && (
+        <button
+          type="button"
+          className={styles.revealButton}
+          onClick={() => setStage('explanation')}
+        >
+          <Lightbulb size={16} aria-hidden="true" />
+          {isPremium ? 'Show premium explanation' : 'Show explanation'}
+        </button>
+      )}
+
+      {stage === 'explanation' && (
+        <article
+          className={styles.explanationCard}
+          key={`expl-${currentIndex}`}
+        >
           <div className={styles.explanationHeader}>
-            <span className={styles.explanationTitle}>Explanation</span>
+            <span className={styles.explanationTitle}>
+              {isPremium ? 'Premium explanation' : 'Explanation'}
+            </span>
           </div>
-          {current.explanation ? (
-            <p className={styles.explanationBody}>{current.explanation}</p>
+          {explanation ? (
+            <Markdown className={styles.explanationBody}>{explanation}</Markdown>
           ) : (
             <p className={styles.explanationEmpty}>
               No explanation is available for this question yet.

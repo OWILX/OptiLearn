@@ -7,6 +7,7 @@ import {
   type AttemptListItem,
 } from '@/services/exams/examService';
 import { BackButton } from '@/components/ui/BackButton';
+import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import styles from './SepHistoryScreen.module.css';
@@ -51,6 +52,7 @@ export function SepHistoryScreen() {
   const [attempts, setAttempts] = useState<AttemptListItem[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -77,7 +79,7 @@ export function SepHistoryScreen() {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, retryKey]);
 
   return (
     <section className={styles.page}>
@@ -90,7 +92,18 @@ export function SepHistoryScreen() {
         </p>
       </div>
 
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <>
+          <div className={styles.error}>{error}</div>
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => setRetryKey((k) => k + 1)}
+          >
+            Try again
+          </Button>
+        </>
+      )}
 
       {loading && (
         <div className={styles.list}>

@@ -2,18 +2,30 @@ import { supabase } from '@/lib/supabase';
 import { wrapError } from '@/utils/errors';
 
 /**
- * Read-side of question_bank.
+ * Read-side of question_bank (flat schema).
  *
  * Study reader uses `getMCQsForTopic` — full topic, in order.
  * SEP exam uses `getSEPQuestions` — weighted random sample by subject.
+ *
+ * Explanations come in two flavours (standard / premium). Callers choose
+ * which to render based on the user's `profiles.premium` flag.
  */
 
 export interface QuestionBankRow {
   id: number;
   syllabus_id: number;
   question_type: string;
-  question_data: unknown;
-  created_at: string;
+  question: string;
+  option_a: string;
+  option_b: string;
+  option_c: string;
+  option_d: string;
+  correct_answer: string;
+  standard_explanation: string;
+  premium_explanation: string;
+  difficulty: string | null;
+  cognitive_level: string | null;
+  quality_grade: string | null;
 }
 
 export interface MCQQuestion {
@@ -21,44 +33,39 @@ export interface MCQQuestion {
   question: string;
   options: string[];
   answer: 'A' | 'B' | 'C' | 'D';
-  explanation: string;
+  standardExplanation: string;
+  premiumExplanation: string;
 }
 
 const VALID_ANSWERS = ['A', 'B', 'C', 'D'] as const;
 
-/**
- * Validate a raw question_bank row into a renderable MCQ.
- * Returns null for anything malformed — callers skip those rows.
- */
+const SELECT_COLS =
+  'id, syllabus_id, question_type, question, option_a, option_b, option_c, option_d, correct_answer, standard_explanation, premium_explanation, difficulty, cognitive_level, quality_grade';
+
 export function parseMCQ(row: QuestionBankRow): MCQQuestion | null {
-  const raw = row.question_data;
-  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
-
-  const data = raw as Record<string, unknown>;
-
-  const question = typeof data.question === 'string' ? data.question.trim() : '';
+  const question = (row.question ?? '').trim();
   if (!question) return null;
 
-  const options = data.options;
-  if (!Array.isArray(options) || options.length !== 4) return null;
-  if (!options.every((o) => typeof o === 'string' && o.trim().length > 0)) {
-    return null;
-  }
+  const options = [
+    (row.option_a ?? '').trim(),
+    (row.option_b ?? '').trim(),
+    (row.option_c ?? '').trim(),
+    (row.option_d ?? '').trim(),
+  ];
+  if (options.some((o) => !o)) return null;
 
-  const answer = typeof data.answer === 'string' ? data.answer.trim().toUpperCase() : '';
+  const answer = (row.correct_answer ?? '').trim().toUpperCase();
   if (!VALID_ANSWERS.includes(answer as (typeof VALID_ANSWERS)[number])) {
     return null;
   }
 
-  const explanation =
-    typeof data.explanation === 'string' ? data.explanation.trim() : '';
-
   return {
     id: row.id,
     question,
-    options: options.map((o) => (o as string).trim()),
+    options,
     answer: answer as MCQQuestion['answer'],
-    explanation,
+    standardExplanation: (row.standard_explanation ?? '').trim(),
+    premiumExplanation: (row.premium_explanation ?? '').trim(),
   };
 }
 
@@ -66,12 +73,6 @@ export function parseMCQ(row: QuestionBankRow): MCQQuestion | null {
    Weighted sampling
    ============================================================ */
 
-/**
- * Weights used by the SEP sampler.
- *   - Questions the user has never attempted get medium weight.
- *   - Questions the user always answers correctly get the LOWEST weight.
- *   - Questions the user always answers wrong get the HIGHEST weight.
- */
 const W_NEVER_ATTEMPTED = 4;
 const W_ALWAYS_CORRECT = 1;
 const W_ALWAYS_WRONG = 8;
@@ -81,22 +82,13 @@ interface AttemptHistoryEntry {
   total: number;
 }
 
-/**
- * Compute per-question weights from the user's attempt history.
- *
- * Weight = 1 + (1 − correctRatio) × 7    (for seen questions)
- * Weight = 4                              (for unseen questions)
- *
- * Never-attempted questions get the mid-range value so new topics still
- * appear at a healthy rate.
- */
 function computeWeights(
   candidateIds: number[],
   attempts: { question_id: number; is_correct: boolean | null }[],
 ): Map<number, number> {
   const history = new Map<number, AttemptHistoryEntry>();
   for (const a of attempts) {
-    if (a.is_correct === null) continue; // ignore incomplete rows
+    if (a.is_correct === null) continue;
     const h = history.get(a.question_id) ?? { correct: 0, total: 0 };
     h.total += 1;
     if (a.is_correct) h.correct += 1;
@@ -119,10 +111,6 @@ function computeWeights(
   return weights;
 }
 
-/**
- * Weighted random sample without replacement.
- * Uses Efraimidis-Spirakis (A-Res): key = random()^(1/w), take top-K.
- */
 function weightedSampleWithoutReplacement<T extends { id: number }>(
   items: T[],
   weights: Map<number, number>,
@@ -146,13 +134,10 @@ function weightedSampleWithoutReplacement<T extends { id: number }>(
    ============================================================ */
 
 export const questionService = {
-  /**
-   * All MCQs for a topic, ordered by id. Used by the Study reader.
-   */
   async getMCQsForTopic(syllabusId: number): Promise<MCQQuestion[]> {
     const { data, error } = await supabase
       .from('question_bank')
-      .select('id, syllabus_id, question_type, question_data, created_at')
+      .select(SELECT_COLS)
       .eq('syllabus_id', syllabusId)
       .eq('question_type', 'mcq')
       .order('id', { ascending: true });
@@ -171,20 +156,11 @@ export const questionService = {
     return parsed;
   },
 
-  /**
-   * Build a SEP question set for one subject.
-   *
-   * Picks `count` questions from question_bank belonging to `subject`,
-   * weighted by the user's attempt history (see `computeWeights`).
-   *
-   * Returns fewer than `count` when the pool is smaller.
-   */
   async getSEPQuestions(
     userId: string,
     subject: string,
     count: number,
   ): Promise<MCQQuestion[]> {
-    // 1. Find syllabus ids for this subject.
     const { data: sylRows, error: sylErr } = await supabase
       .from('syllabus')
       .select('id')
@@ -194,10 +170,9 @@ export const questionService = {
     const syllabusIds = ((sylRows ?? []) as { id: number }[]).map((r) => r.id);
     if (syllabusIds.length === 0) return [];
 
-    // 2. Fetch candidate questions.
     const { data: rows, error } = await supabase
       .from('question_bank')
-      .select('id, syllabus_id, question_type, question_data, created_at')
+      .select(SELECT_COLS)
       .in('syllabus_id', syllabusIds)
       .eq('question_type', 'mcq');
 
@@ -214,7 +189,6 @@ export const questionService = {
 
     if (candidates.length === 0) return [];
 
-    // 3. Fetch attempt history for these candidates.
     const ids = candidates.map((c) => c.id);
     const { data: attemptRows, error: attemptErr } = await supabase
       .from('question_attempts')
@@ -225,7 +199,6 @@ export const questionService = {
     if (attemptErr)
       throw wrapError(attemptErr, 'Could not load attempt history.');
 
-    // 4. Weight + sample.
     const weights = computeWeights(
       ids,
       (attemptRows ?? []) as {

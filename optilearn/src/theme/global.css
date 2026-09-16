@@ -15,6 +15,7 @@ html,
 body,
 #root {
   height: 100%;
+  overscroll-behavior: none;
 }
 
 /* === Mobile-specific hardening === */
@@ -23,6 +24,10 @@ html {
   /* Prevent iOS auto text resize in landscape. */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+
+  /* Kill rubber-band / pull-to-refresh at the html level too.
+     Chrome Android needs it here, not just on body. */
+  overscroll-behavior: none;
 }
 
 body {

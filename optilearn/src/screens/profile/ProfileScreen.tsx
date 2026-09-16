@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { LogOut } from 'lucide-react';
+import { LogOut, Sparkles } from 'lucide-react';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/AuthContext';
@@ -22,6 +22,17 @@ function formatMemberSince(iso: string | undefined): string | null {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
   return d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+}
+
+function formatFullDate(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString(undefined, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 }
 
 function formatProvider(rawProvider: string | undefined): string {
@@ -64,6 +75,10 @@ export function ProfileScreen() {
   const providerLabel = formatProvider(
     user?.app_metadata?.provider as string | undefined,
   );
+
+  const isPremium = profile?.premium === true;
+  const premiumSince = formatFullDate(profile?.premium_since);
+  const premiumExpiresAt = formatFullDate(profile?.premium_expires_at);
 
   function openEdit() {
     setNameInput(profile?.full_name ?? '');
@@ -214,6 +229,43 @@ export function ProfileScreen() {
             <span className={styles.rowValue}>{memberSince}</span>
           </div>
         )}
+      </div>
+
+      <div className={styles.card}>
+        <h2 className={styles.cardTitle}>Subscription</h2>
+
+        <div className={styles.row}>
+          <span className={styles.rowLabel}>Plan</span>
+          <span className={styles.rowValue}>
+            {isPremium ? 'Premium' : 'Free'}
+          </span>
+          {isPremium && (
+            <span className={styles.rowPremium} aria-label="Premium active">
+              <Sparkles size={11} aria-hidden="true" />
+              Premium
+            </span>
+          )}
+        </div>
+
+        {isPremium && premiumSince && (
+          <div className={styles.row}>
+            <span className={styles.rowLabel}>Premium since</span>
+            <span className={styles.rowValue}>{premiumSince}</span>
+          </div>
+        )}
+
+        {isPremium && premiumExpiresAt && (
+          <div className={styles.row}>
+            <span className={styles.rowLabel}>Renews</span>
+            <span className={styles.rowValue}>{premiumExpiresAt}</span>
+          </div>
+        )}
+
+        <p className={styles.hint}>
+          {isPremium
+            ? 'You have access to premium explanations across Study.'
+            : 'You are on the free plan. Premium explanations unlock with a subscription.'}
+        </p>
       </div>
 
       <div className={styles.card}>

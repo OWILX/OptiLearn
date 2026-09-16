@@ -153,20 +153,18 @@ export function SepExamScreen() {
         clearSession(SEP_SESSION_KEY);
         setWasResumed(false);
 
-        // 3. Sample fresh questions.
-        const flat: SepQuestion[] = [];
-        for (let i = 0; i < config.subjects.length; i++) {
-          const subject = config.subjects[i];
-          const target = PER_SLOT_TARGETS[i] ?? 40;
-          const qs = await questionService.getSEPQuestions(
-            user.id,
-            subject,
-            target,
-          );
-          for (const q of qs) flat.push({ ...q, subject });
-          if (cancelled) return;
-        }
+        // 3. Sample fresh questions. Fire all subjects in parallel,
+        // then reassemble in slot order (Promise.all preserves order).
+        const perSlot = await Promise.all(
+          config.subjects.map((subject, i) => {
+            const target = PER_SLOT_TARGETS[i] ?? 40;
+            return questionService
+              .getSEPQuestions(user.id, subject, target)
+              .then((qs) => qs.map((q) => ({ ...q, subject })));
+          }),
+        );
         if (cancelled) return;
+        const flat: SepQuestion[] = perSlot.flat();
 
         if (flat.length === 0) {
           setQuestions([]);
@@ -293,17 +291,11 @@ export function SepExamScreen() {
             console.warn('[SEP] Failed to persist attempt:', err);
           }
         });
-      streakService
-        .bumpStreak()
-        .then((info) => {
-          window.alert('SEP streak OK: ' + JSON.stringify(info));
-        })
-        .catch((err) => {
-          window.alert(
-            'SEP streak ERROR: ' +
-              (err instanceof Error ? err.message : String(err)),
-          );
-        });
+      streakService.bumpStreak().catch((err) => {
+        if (import.meta.env.DEV) {
+          console.warn('[SEP] Failed to bump streak:', err);
+        }
+      });
     },
     [answers, questions, user, config, startedAt],
   );

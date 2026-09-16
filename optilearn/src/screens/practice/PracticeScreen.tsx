@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useProfile } from '@/context/ProfileContext';
 import { pastQuestionsService } from '@/services/pastQuestions/pastQuestionsService';
+import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import styles from './PracticeScreen.module.css';
@@ -19,6 +20,7 @@ export function PracticeScreen() {
   const [totalAvailable, setTotalAvailable] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   const department = profile?.department ?? null;
 
@@ -46,7 +48,7 @@ export function PracticeScreen() {
     return () => {
       cancelled = true;
     };
-  }, [profileLoading, department]);
+  }, [profileLoading, department, retryKey]);
 
   const hasAnyData = (totalAvailable ?? 0) > 0;
 
@@ -68,7 +70,18 @@ export function PracticeScreen() {
         </span>
       </div>
 
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <>
+          <div className={styles.error}>{error}</div>
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => setRetryKey((k) => k + 1)}
+          >
+            Try again
+          </Button>
+        </>
+      )}
 
       {loading && <Skeleton height={200} />}
 

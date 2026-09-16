@@ -13,6 +13,9 @@ export interface Profile {
   full_name: string | null;
   avatar_url: string | null;
   department: Department | null;
+  premium: boolean;
+  premium_since: string | null;
+  premium_expires_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -24,7 +27,7 @@ export interface ProfilePatch {
 }
 
 const SELECT_COLUMNS =
-  'id, full_name, avatar_url, department, created_at, updated_at';
+  'id, full_name, avatar_url, department, premium, premium_since, premium_expires_at, created_at, updated_at';
 
 function seedFromMetadata(user: User): {
   full_name: string | null;

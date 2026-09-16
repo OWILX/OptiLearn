@@ -137,6 +137,21 @@ export const progressService = {
     const status: ProgressStatus = pct >= 100 ? 'completed' : 'in_progress';
     const now = new Date().toISOString();
 
+    // Preserve set-once fields: started_at (first open) and completed_at
+    // (first 100%). Reading first means a re-visit can't clobber them.
+    const { data: existing, error: readError } = await supabase
+      .from('study_progress')
+      .select('started_at, completed_at')
+      .eq('user_id', userId)
+      .eq('syllabus_id', syllabusId)
+      .maybeSingle();
+
+    if (readError) throw wrapError(readError, 'Could not read progress.');
+
+    const startedAt = existing?.started_at ?? now;
+    const completedAt =
+      existing?.completed_at ?? (status === 'completed' ? now : null);
+
     const { data, error } = await supabase
       .from('study_progress')
       .upsert(
@@ -145,9 +160,9 @@ export const progressService = {
           syllabus_id: syllabusId,
           status,
           progress: pct,
-          started_at: now,
+          started_at: startedAt,
           last_accessed_at: now,
-          completed_at: status === 'completed' ? now : null,
+          completed_at: completedAt,
         },
         { onConflict: 'user_id,syllabus_id' },
       )

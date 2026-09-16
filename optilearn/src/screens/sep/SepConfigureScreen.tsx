@@ -22,6 +22,7 @@ import {
   syllabusService,
   type SubjectSummary,
 } from '@/services/syllabus/syllabusService';
+import { Button } from '@/components/ui/Button';
 import styles from './SepConfigureScreen.module.css';
 
 const TOTAL_SLOTS = 4;
@@ -37,6 +38,7 @@ export function SepConfigureScreen() {
   const [subjects, setSubjects] = useState<SubjectSummary[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   const [slots, setSlots] = useState<string[]>(['', '', '', '']);
   const [openSlot, setOpenSlot] = useState<number>(-1);
@@ -89,7 +91,7 @@ export function SepConfigureScreen() {
     return () => {
       cancelled = true;
     };
-  }, [user, profileLoading, department]);
+  }, [user, profileLoading, department, retryKey]);
 
   useEffect(() => {
     const s = readSession<SEPPersistedSession>(SEP_SESSION_KEY);
@@ -219,7 +221,18 @@ export function SepConfigureScreen() {
         </span>
       </div>
 
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <>
+          <div className={styles.error}>{error}</div>
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => setRetryKey((k) => k + 1)}
+          >
+            Try again
+          </Button>
+        </>
+      )}
 
       {loading && <div className={styles.skeleton} aria-hidden="true" />}
 

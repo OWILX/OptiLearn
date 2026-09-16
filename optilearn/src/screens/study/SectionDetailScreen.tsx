@@ -9,6 +9,7 @@ import {
 } from '@/services/syllabus/syllabusService';
 import { subjectColor } from '@/utils/subjectColor';
 import { BackButton } from '@/components/ui/BackButton';
+import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import styles from './SectionDetailScreen.module.css';
@@ -26,6 +27,7 @@ export function SectionDetailScreen() {
   const [topics, setTopics] = useState<TopicSummary[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     if (!user || !subject || !section) return;
@@ -52,7 +54,7 @@ export function SectionDetailScreen() {
     return () => {
       cancelled = true;
     };
-  }, [user, subject, section]);
+  }, [user, subject, section, retryKey]);
 
   const accent = subjectColor(subject);
 
@@ -77,7 +79,18 @@ export function SectionDetailScreen() {
         )}
       </div>
 
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <>
+          <div className={styles.error}>{error}</div>
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => setRetryKey((k) => k + 1)}
+          >
+            Try again
+          </Button>
+        </>
+      )}
 
       {loading && (
         <div className={styles.list}>
