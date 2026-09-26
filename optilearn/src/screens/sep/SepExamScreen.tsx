@@ -13,11 +13,13 @@ import {
   Save,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useProfile } from '@/context/ProfileContext';
 import { questionService } from '@/services/questions/questionService';
 import { examService } from '@/services/exams/examService';
 import { streakService } from '@/services/streaks/streakService';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Markdown } from '@/components/ui/Markdown';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import {
@@ -29,7 +31,7 @@ import styles from './SepExamScreen.module.css';
 
 import {
   SEP_SESSION_KEY,
-  type SEPPersistedSessionSession,
+  type SEPPersistedSession,
   type SepPersistedQuestion,
 } from '@/services/exams/sepSession';
 
@@ -92,6 +94,8 @@ function configMatches(
 export function SepExamScreen() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { profile } = useProfile();
+  const isPremium = profile?.premium === true;
   const [params] = useSearchParams();
   const config = useMemo(() => parseConfig(params), [params]);
 
@@ -197,7 +201,7 @@ export function SepExamScreen() {
       } catch (err) {
         if (cancelled) return;
         setError(
-          err instanceof Error ? err.message : 'Could not load the exam.',
+          "We couldn't load the exam. Check your connection and try again.",
         );
         setLoading(false);
       }
@@ -395,6 +399,7 @@ export function SepExamScreen() {
       <SepReview
         results={results}
         timedOut={timedOut}
+        isPremium={isPremium}
         onRetake={restartExam}
         onBack={() => navigate('/sep')}
       />
@@ -460,7 +465,7 @@ export function SepExamScreen() {
       </div>
 
       <article className={styles.questionCard}>
-        <p className={styles.questionText}>{current.question}</p>
+        <Markdown className={styles.questionText}>{current.question}</Markdown>
         <div className={styles.options}>
           {current.options.map((opt, i) => {
             const letter = LETTERS[i];
@@ -475,7 +480,7 @@ export function SepExamScreen() {
                 }
               >
                 <span className={styles.optionLetter}>{letter}</span>
-                <span className={styles.optionText}>{opt}</span>
+                <Markdown className={styles.optionText}>{opt}</Markdown>
               </button>
             );
           })}
@@ -777,6 +782,7 @@ function SepConfirmSubmit({
 interface SepReviewProps {
   results: ResultRow[];
   timedOut: boolean;
+  isPremium: boolean;
   onRetake: () => void;
   onBack: () => void;
 }
@@ -789,7 +795,13 @@ interface ReviewGroup {
   skipped: number;
 }
 
-function SepReview({ results, timedOut, onRetake, onBack }: SepReviewProps) {
+function SepReview({
+  results,
+  timedOut,
+  isPremium,
+  onRetake,
+  onBack,
+}: SepReviewProps) {
   const [openSubjects, setOpenSubjects] = useState<Set<string>>(new Set());
 
   const total = results.length;
@@ -924,6 +936,9 @@ function SepReview({ results, timedOut, onRetake, onBack }: SepReviewProps) {
                         : row.verdict === 'wrong'
                           ? styles.reviewVerdictWrong
                           : styles.reviewVerdictSkipped;
+                    const explanation = isPremium
+                      ? row.question.premiumExplanation
+                      : row.question.standardExplanation;
 
                     return (
                       <div
@@ -943,9 +958,9 @@ function SepReview({ results, timedOut, onRetake, onBack }: SepReviewProps) {
                           </span>
                         </div>
 
-                        <p className={styles.reviewQuestion}>
+                        <Markdown className={styles.reviewQuestion}>
                           {row.question.question}
-                        </p>
+                        </Markdown>
 
                         <div className={styles.reviewOptions}>
                           {row.question.options.map((opt, i) => {
@@ -967,16 +982,18 @@ function SepReview({ results, timedOut, onRetake, onBack }: SepReviewProps) {
                                 <span className={styles.reviewOptionLetter}>
                                   {letter}
                                 </span>
-                                <span className={styles.reviewOptionText}>
+                                <Markdown className={styles.reviewOptionText}>
                                   {opt}
-                                </span>
+                                </Markdown>
                               </div>
                             );
                           })}
                         </div>
 
                         <div className={styles.reviewExplanation}>
-                          {row.question.explanation || (
+                          {explanation ? (
+                            <Markdown>{explanation}</Markdown>
+                          ) : (
                             <span className={styles.reviewExplanationEmpty}>
                               No explanation available for this question yet.
                             </span>

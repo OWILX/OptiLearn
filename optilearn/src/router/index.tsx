@@ -10,9 +10,9 @@ import { StudyScreen } from '@/screens/study/StudyScreen';
 import { SubjectDetailScreen } from '@/screens/study/SubjectDetailScreen';
 import { SectionDetailScreen } from '@/screens/study/SectionDetailScreen';
 import { StudyReaderScreen } from '@/screens/study/StudyReaderScreen';
-import { PracticeScreen } from '@/screens/practice/PracticeScreen';
-import { PracticeFilterScreen } from '@/screens/practice/PracticeFilterScreen';
-import { PracticeSessionScreen } from '@/screens/practice/PracticeSessionScreen';
+import { QuizScreen } from '@/screens/quiz/QuizScreen';
+import { QuizSetupScreen } from '@/screens/quiz/QuizSetupScreen';
+import { QuizSessionScreen } from '@/screens/quiz/QuizSessionScreen';
 import { SepConfigureScreen } from '@/screens/sep/SepConfigureScreen';
 import { SepInstructionsScreen } from '@/screens/sep/SepInstructionsScreen';
 import { SepExamScreen } from '@/screens/sep/SepExamScreen';
@@ -60,9 +60,9 @@ export const router = createBrowserRouter([
                 path: '/study/topic/:syllabusId',
                 element: <StudyReaderScreen />,
               },
-              { path: '/practice', element: <PracticeScreen /> },
-              { path: '/practice/filter', element: <PracticeFilterScreen /> },
-              { path: '/practice/session', element: <PracticeSessionScreen /> },
+              { path: '/quiz', element: <QuizScreen /> },
+              { path: '/quiz/setup', element: <QuizSetupScreen /> },
+              { path: '/quiz/session', element: <QuizSessionScreen /> },
               { path: '/sep', element: <SepConfigureScreen /> },
               { path: '/sep/instructions', element: <SepInstructionsScreen /> },
               { path: '/sep/exam', element: <SepExamScreen /> },

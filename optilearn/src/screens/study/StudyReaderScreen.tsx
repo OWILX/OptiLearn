@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Check,
   Eye,
+  EyeOff,
   Lightbulb,
   Sparkles,
   BookOpen,
@@ -79,8 +80,9 @@ export function StudyReaderScreen() {
         }
 
         const pct = prog?.progress ?? 0;
+        const viewedCount = Math.round((pct / 100) * qs.length);
         const resumeIndex = Math.min(
-          Math.max(0, Math.round((pct / 100) * qs.length)),
+          Math.max(0, viewedCount > 0 ? viewedCount - 1 : 0),
           qs.length - 1,
         );
 
@@ -301,28 +303,6 @@ export function StudyReaderScreen() {
         </div>
       )}
 
-      {stage === 'question' && (
-        <button
-          type="button"
-          className={styles.revealButton}
-          onClick={() => setStage('options')}
-        >
-          <Eye size={16} aria-hidden="true" />
-          Show options
-        </button>
-      )}
-
-      {stage === 'options' && (
-        <button
-          type="button"
-          className={styles.revealButton}
-          onClick={() => setStage('explanation')}
-        >
-          <Lightbulb size={16} aria-hidden="true" />
-          {isPremium ? 'Show premium explanation' : 'Show explanation'}
-        </button>
-      )}
-
       {stage === 'explanation' && (
         <article
           className={styles.explanationCard}
@@ -355,6 +335,52 @@ export function StudyReaderScreen() {
           </div>
         </article>
       )}
+
+      <div className={styles.revealRow}>
+        {stage === 'question' && (
+          <button
+            type="button"
+            className={styles.revealButton}
+            onClick={() => setStage('options')}
+          >
+            <Eye size={16} aria-hidden="true" />
+            Show options
+          </button>
+        )}
+
+        {stage !== 'question' && (
+          <button
+            type="button"
+            className={styles.revealButtonSecondary}
+            onClick={() => setStage('question')}
+          >
+            <EyeOff size={16} aria-hidden="true" />
+            Hide options
+          </button>
+        )}
+
+        {stage === 'options' && (
+          <button
+            type="button"
+            className={styles.revealButton}
+            onClick={() => setStage('explanation')}
+          >
+            <Lightbulb size={16} aria-hidden="true" />
+            {isPremium ? 'Show premium explanation' : 'Show explanation'}
+          </button>
+        )}
+
+        {stage === 'explanation' && (
+          <button
+            type="button"
+            className={styles.revealButtonSecondary}
+            onClick={() => setStage('options')}
+          >
+            <EyeOff size={16} aria-hidden="true" />
+            Hide explanation
+          </button>
+        )}
+      </div>
 
       <div className={styles.actions}>
         <button

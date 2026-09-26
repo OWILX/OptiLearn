@@ -39,7 +39,7 @@ export interface MCQQuestion {
 
 const VALID_ANSWERS = ['A', 'B', 'C', 'D'] as const;
 
-const SELECT_COLS =
+export const QUESTION_BANK_SELECT =
   'id, syllabus_id, question_type, question, option_a, option_b, option_c, option_d, correct_answer, standard_explanation, premium_explanation, difficulty, cognitive_level, quality_grade';
 
 export function parseMCQ(row: QuestionBankRow): MCQQuestion | null {
@@ -137,7 +137,7 @@ export const questionService = {
   async getMCQsForTopic(syllabusId: number): Promise<MCQQuestion[]> {
     const { data, error } = await supabase
       .from('question_bank')
-      .select(SELECT_COLS)
+      .select(QUESTION_BANK_SELECT)
       .eq('syllabus_id', syllabusId)
       .eq('question_type', 'mcq')
       .order('id', { ascending: true });
@@ -172,7 +172,7 @@ export const questionService = {
 
     const { data: rows, error } = await supabase
       .from('question_bank')
-      .select(SELECT_COLS)
+      .select(QUESTION_BANK_SELECT)
       .in('syllabus_id', syllabusIds)
       .eq('question_type', 'mcq');
 
@@ -190,10 +190,12 @@ export const questionService = {
     if (candidates.length === 0) return [];
 
     const ids = candidates.map((c) => c.id);
+    // SEP-only history — keeps SEP weighting independent of Quiz.
     const { data: attemptRows, error: attemptErr } = await supabase
       .from('question_attempts')
       .select('question_id, is_correct')
       .eq('user_id', userId)
+      .eq('attempt_type', 'sep')
       .in('question_id', ids);
 
     if (attemptErr)

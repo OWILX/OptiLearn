@@ -5,12 +5,16 @@ import { Logo } from '@/components/brand/Logo';
 import { Avatar } from '@/components/ui/Avatar';
 import { NotificationPanel } from '@/components/notifications/NotificationPanel';
 import { useAuth } from '@/context/AuthContext';
+import {
+  notificationService,
+  type AppNotification,
+} from '@/services/notifications/notificationService';
 import styles from './AppShell.module.css';
 
 const NAV = [
   { to: '/home', label: 'Home', Icon: Home },
   { to: '/study', label: 'Study', Icon: BookOpen },
-  { to: '/practice', label: 'Practice', Icon: Target },
+  { to: '/quiz', label: 'Quiz', Icon: Target },
   { to: '/profile', label: 'Profile', Icon: User },
 ] as const;
 
@@ -18,13 +22,15 @@ const ENTER_SCROLLED = 48;
 const EXIT_SCROLLED = 4;
 
 /** Routes that hide the AppShell header and bottom nav. */
-const FOCUS_ROUTE_PREFIXES = ['/study/topic/', '/practice/session', '/sep/exam'];
+const FOCUS_ROUTE_PREFIXES = ['/study/topic/', '/quiz/session', '/sep/exam'];
 
 export function AppShell() {
   const { user } = useAuth();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [inbox, setInbox] = useState<AppNotification[]>([]);
+  const [inboxLoading, setInboxLoading] = useState(false);
 
   const isFocusMode = FOCUS_ROUTE_PREFIXES.some((p) =>
     location.pathname.startsWith(p),
@@ -46,6 +52,32 @@ export function AppShell() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!user) {
+      setInbox([]);
+      return;
+    }
+    let cancelled = false;
+    setInboxLoading(true);
+    notificationService
+      .getInbox(user.id)
+      .then((rows) => {
+        if (!cancelled) setInbox(rows);
+      })
+      .catch((err: unknown) => {
+        if (import.meta.env.DEV) {
+          console.warn('[INBOX] Load failed:', err);
+        }
+        if (!cancelled) setInbox([]);
+      })
+      .finally(() => {
+        if (!cancelled) setInboxLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user, location.pathname]);
 
   return (
     <div className={styles.shell}>
@@ -71,9 +103,16 @@ export function AppShell() {
               type="button"
               className={styles.iconButton}
               onClick={() => setNotificationsOpen(true)}
-              aria-label="Notifications"
+              aria-label={
+                inbox.length > 0
+                  ? `Notifications, ${inbox.length} items`
+                  : 'Notifications'
+              }
             >
               <Bell size={20} aria-hidden="true" />
+              {inbox.length > 0 && (
+                <span className={styles.badge} aria-hidden="true" />
+              )}
             </button>
             <Avatar user={user} size={34} />
           </div>
@@ -97,6 +136,8 @@ export function AppShell() {
 
       <NotificationPanel
         open={notificationsOpen}
+        items={inbox}
+        loading={inboxLoading}
         onClose={() => setNotificationsOpen(false)}
       />
     </div>

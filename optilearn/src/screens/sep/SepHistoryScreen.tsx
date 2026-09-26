@@ -69,7 +69,12 @@ export function SepHistoryScreen() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Could not load history.');
+        if (import.meta.env.DEV) {
+          console.warn('[SEP] History load failed:', err);
+        }
+        setError(
+          "We couldn't load your exam history. Check your connection and try again.",
+        );
       })
       .finally(() => {
         if (cancelled) return;

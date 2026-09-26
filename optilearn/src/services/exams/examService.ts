@@ -1,6 +1,10 @@
 import { supabase } from '@/lib/supabase';
 import { wrapError } from '@/utils/errors';
-import { parseMCQ, type QuestionBankRow } from '@/services/questions/questionService';
+import {
+  parseMCQ,
+  QUESTION_BANK_SELECT,
+  type QuestionBankRow,
+} from '@/services/questions/questionService';
 
 /**
  * Read-side of exam_attempts (for stats) and write-side (for SEP save).
@@ -42,7 +46,8 @@ export interface AttemptReviewQuestion {
   question: string;
   options: string[];
   answer: 'A' | 'B' | 'C' | 'D';
-  explanation: string;
+  standardExplanation: string;
+  premiumExplanation: string;
   userAnswer: string | null;
   verdict: ReviewVerdict;
 }
@@ -299,7 +304,7 @@ export const examService = {
     // 3. question_bank rows for these ids
     const { data: qbRows, error: qbErr } = await supabase
       .from('question_bank')
-      .select('id, syllabus_id, question_type, question_data, created_at')
+      .select(QUESTION_BANK_SELECT)
       .in('id', questionIds);
 
     if (qbErr)
@@ -353,7 +358,8 @@ export const examService = {
         question: mcq.question,
         options: mcq.options,
         answer: mcq.answer,
-        explanation: mcq.explanation,
+        standardExplanation: mcq.standardExplanation,
+        premiumExplanation: mcq.premiumExplanation,
         userAnswer: row.selected_answer,
         verdict,
       });

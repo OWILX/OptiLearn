@@ -8,6 +8,7 @@ import {
   type SubjectSummary,
 } from '@/services/syllabus/syllabusService';
 import { subjectColor } from '@/utils/subjectColor';
+import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import styles from './StudyScreen.module.css';
@@ -20,6 +21,7 @@ export function StudyScreen() {
   const [subjects, setSubjects] = useState<SubjectSummary[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   const department = profile?.department ?? null;
 
@@ -38,7 +40,12 @@ export function StudyScreen() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Could not load subjects.');
+        if (import.meta.env.DEV) {
+          console.warn('[STUDY] Subjects load failed:', err);
+        }
+        setError(
+          "We couldn't load subjects. Check your connection and try again.",
+        );
       })
       .finally(() => {
         if (cancelled) return;
@@ -48,7 +55,7 @@ export function StudyScreen() {
     return () => {
       cancelled = true;
     };
-  }, [user, profileLoading, department]);
+  }, [user, profileLoading, department, retryKey]);
 
   return (
     <section className={styles.page}>
@@ -59,7 +66,18 @@ export function StudyScreen() {
         </p>
       </div>
 
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <>
+          <div className={styles.error}>{error}</div>
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => setRetryKey((k) => k + 1)}
+          >
+            Try again
+          </Button>
+        </>
+      )}
 
       {loading && (
         <div className={styles.grid}>

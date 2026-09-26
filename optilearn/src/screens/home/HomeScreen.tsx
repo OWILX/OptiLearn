@@ -375,13 +375,13 @@ export function HomeScreen() {
           <button
             type="button"
             className={styles.actionButton}
-            onClick={() => navigate('/practice')}
+            onClick={() => navigate('/quiz')}
           >
             <div className={`${styles.actionIcon} ${styles.actionIconPractice}`}>
               <Target size={20} aria-hidden="true" />
             </div>
-            <span className={styles.actionLabel}>Practice</span>
-            <span className={styles.actionSub}>Past questions</span>
+            <span className={styles.actionLabel}>Quiz</span>
+            <span className={styles.actionSub}>Timed practice</span>
           </button>
 
           <button

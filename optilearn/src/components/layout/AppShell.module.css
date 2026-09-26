@@ -91,6 +91,7 @@
 }
 
 .iconButton {
+  position: relative;
   width: 38px;
   height: 38px;
   border-radius: var(--radius-pill);
@@ -103,6 +104,17 @@
   transition:
     background 140ms var(--ease-out),
     color 140ms var(--ease-out);
+}
+
+.badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-danger);
+  border: 2px solid #ffffff;
 }
 
 .iconButton:not(:disabled):hover {

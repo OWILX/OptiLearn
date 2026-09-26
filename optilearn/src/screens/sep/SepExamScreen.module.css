@@ -127,7 +127,6 @@
   line-height: 1.5;
   color: var(--color-text);
   letter-spacing: -0.005em;
-  white-space: pre-wrap;
 }
 
 .options {

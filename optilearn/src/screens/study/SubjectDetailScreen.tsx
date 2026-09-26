@@ -39,7 +39,12 @@ export function SubjectDetailScreen() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Could not load sections.');
+        if (import.meta.env.DEV) {
+          console.warn('[STUDY] Sections load failed:', err);
+        }
+        setError(
+          "We couldn't load sections. Check your connection and try again.",
+        );
       })
       .finally(() => {
         if (cancelled) return;

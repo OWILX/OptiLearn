@@ -13,7 +13,7 @@ import { wrapError } from '@/utils/errors';
  * the correctness ratio and skew the sampler.
  */
 
-export type AttemptType = 'practice' | 'sep' | 'daily_challenge';
+export type AttemptType = 'practice' | 'sep' | 'daily_challenge' | 'quiz';
 
 export interface AttemptInput {
   questionId: number;

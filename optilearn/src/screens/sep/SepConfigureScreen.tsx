@@ -81,7 +81,12 @@ export function SepConfigureScreen() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Could not load subjects.');
+        if (import.meta.env.DEV) {
+          console.warn('[SEP] Configure load failed:', err);
+        }
+        setError(
+          "We couldn't load subjects. Check your connection and try again.",
+        );
       })
       .finally(() => {
         if (cancelled) return;

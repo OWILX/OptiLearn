@@ -2,13 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AlertTriangle, Check, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useProfile } from '@/context/ProfileContext';
 import {
   examService,
   type AttemptDetail,
   type AttemptReviewQuestion,
 } from '@/services/exams/examService';
 import { BackButton } from '@/components/ui/BackButton';
+import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Markdown } from '@/components/ui/Markdown';
 import { Skeleton } from '@/components/ui/Skeleton';
 import styles from './SepHistoryDetailScreen.module.css';
 
@@ -38,10 +41,13 @@ export function SepHistoryDetailScreen() {
   const attemptId = Number(attemptIdParam);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { profile } = useProfile();
+  const isPremium = profile?.premium === true;
 
   const [detail, setDetail] = useState<AttemptDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
   const [openSubjects, setOpenSubjects] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -63,7 +69,12 @@ export function SepHistoryDetailScreen() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Could not load attempt.');
+        if (import.meta.env.DEV) {
+          console.warn('[SEP] Attempt detail load failed:', err);
+        }
+        setError(
+          "We couldn't load this attempt. Check your connection and try again.",
+        );
       })
       .finally(() => {
         if (cancelled) return;
@@ -73,7 +84,7 @@ export function SepHistoryDetailScreen() {
     return () => {
       cancelled = true;
     };
-  }, [user, attemptId]);
+  }, [user, attemptId, retryKey]);
 
   const groups: SubjectGroup[] = useMemo(() => {
     if (!detail) return [];
@@ -113,6 +124,13 @@ export function SepHistoryDetailScreen() {
       <section className={styles.page}>
         <BackButton label="History" onClick={() => navigate('/sep/history')} />
         <div className={styles.error}>{error}</div>
+        <Button
+          variant="secondary"
+          fullWidth
+          onClick={() => setRetryKey((k) => k + 1)}
+        >
+          Try again
+        </Button>
       </section>
     );
   }
@@ -219,6 +237,9 @@ export function SepHistoryDetailScreen() {
                         : q.verdict === 'wrong'
                           ? styles.verdictWrong
                           : styles.verdictSkipped;
+                    const explanation = isPremium
+                      ? q.premiumExplanation
+                      : q.standardExplanation;
 
                     return (
                       <div key={q.questionId} className={styles.questionCard}>
@@ -237,7 +258,9 @@ export function SepHistoryDetailScreen() {
                           </span>
                         </div>
 
-                        <p className={styles.questionText}>{q.question}</p>
+                        <Markdown className={styles.questionText}>
+                          {q.question}
+                        </Markdown>
 
                         <div className={styles.options}>
                           {q.options.map((opt, i) => {
@@ -259,16 +282,18 @@ export function SepHistoryDetailScreen() {
                                 <span className={styles.optionLetter}>
                                   {letter}
                                 </span>
-                                <span className={styles.optionText}>
+                                <Markdown className={styles.optionText}>
                                   {opt}
-                                </span>
+                                </Markdown>
                               </div>
                             );
                           })}
                         </div>
 
                         <div className={styles.explanation}>
-                          {q.explanation || (
+                          {explanation ? (
+                            <Markdown>{explanation}</Markdown>
+                          ) : (
                             <span className={styles.explanationEmpty}>
                               No explanation available for this question yet.
                             </span>

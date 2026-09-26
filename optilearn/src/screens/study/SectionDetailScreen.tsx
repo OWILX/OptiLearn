@@ -44,7 +44,12 @@ export function SectionDetailScreen() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : 'Could not load topics.');
+        if (import.meta.env.DEV) {
+          console.warn('[STUDY] Topics load failed:', err);
+        }
+        setError(
+          "We couldn't load topics. Check your connection and try again.",
+        );
       })
       .finally(() => {
         if (cancelled) return;
