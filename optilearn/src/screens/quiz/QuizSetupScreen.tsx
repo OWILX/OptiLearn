@@ -8,7 +8,15 @@ import {
   type SubjectSummary,
 } from '@/services/syllabus/syllabusService';
 import { subjectColor } from '@/utils/subjectColor';
+import { Play } from 'lucide-react';
 import { BackButton } from '@/components/ui/BackButton';
+import { readSession } from '@/utils/sessionStorage';
+import {
+  QUIZ_SESSION_KEY,
+  isLiveQuizSession,
+  quizSessionPath,
+  type QuizPersistedSession,
+} from './quizSession';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import {
@@ -44,8 +52,14 @@ export function QuizSetupScreen() {
   const [subject, setSubject] = useState<string | null>(null);
   const [timeMinutes, setTimeMinutes] = useState<number>(DEFAULT_TIME_MINUTES);
   const [count, setCount] = useState<number>(DEFAULT_QUESTION_COUNT);
+  const [resumable, setResumable] = useState<QuizPersistedSession | null>(null);
 
   const department = profile?.department ?? null;
+
+  useEffect(() => {
+    const stored = readSession<QuizPersistedSession>(QUIZ_SESSION_KEY);
+    setResumable(isLiveQuizSession(stored) ? stored : null);
+  }, []);
 
   useEffect(() => {
     if (!user || profileLoading) return;
@@ -94,6 +108,24 @@ export function QuizSetupScreen() {
   return (
     <section className={styles.page}>
       <BackButton label="Quiz" onClick={() => navigate('/quiz')} />
+
+      {resumable && (
+        <button
+          type="button"
+          className={styles.resumeBanner}
+          onClick={() => navigate(quizSessionPath(resumable))}
+        >
+          <span className={styles.resumeIcon}>
+            <Play size={16} aria-hidden="true" />
+          </span>
+          <span className={styles.resumeText}>
+            <span className={styles.resumeTitle}>Resume quiz</span>
+            <span className={styles.resumeMeta}>
+              {resumable.subject} - {Object.keys(resumable.answers).length}/{resumable.questions.length} answered
+            </span>
+          </span>
+        </button>
+      )}
 
       <div className={styles.header}>
         <h1 className={styles.title}>Set up your quiz</h1>

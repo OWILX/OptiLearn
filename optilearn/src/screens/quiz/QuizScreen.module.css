@@ -170,3 +170,31 @@
 .hard:hover {
   border-color: rgba(185, 28, 28, 0.35);
 }
+
+.resumeBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-brand-blue-soft);
+  border: 1px solid rgba(22, 36, 140, 0.12);
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+}
+.resumeBanner:active { transform: scale(0.99); }
+.resumeIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  display: grid;
+  place-items: center;
+  background: var(--color-brand-blue);
+  color: #ffffff;
+  flex-shrink: 0;
+}
+.resumeText { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.resumeTitle { font-size: 14px; font-weight: 700; color: var(--color-brand-blue); }
+.resumeMeta { font-size: 12px; color: var(--color-text-muted); }

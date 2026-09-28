@@ -1,7 +1,15 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Sparkles, Zap, Target, Flame, ChevronRight } from 'lucide-react';
+import { Lock, Sparkles, Zap, Target, Flame, ChevronRight, Play } from 'lucide-react';
 import { useProfile } from '@/context/ProfileContext';
+import { readSession } from '@/utils/sessionStorage';
 import { DIFFICULTIES, type Difficulty } from './quizConfig';
+import {
+  QUIZ_SESSION_KEY,
+  isLiveQuizSession,
+  quizSessionPath,
+  type QuizPersistedSession,
+} from './quizSession';
 import styles from './QuizScreen.module.css';
 
 const DIFFICULTY_META: Record<
@@ -17,9 +25,32 @@ export function QuizScreen() {
   const navigate = useNavigate();
   const { profile } = useProfile();
   const isPremium = profile?.premium === true;
+  const [resumable, setResumable] = useState<QuizPersistedSession | null>(null);
+
+  useEffect(() => {
+    const stored = readSession<QuizPersistedSession>(QUIZ_SESSION_KEY);
+    setResumable(isLiveQuizSession(stored) ? stored : null);
+  }, []);
 
   return (
     <section className={styles.page}>
+      {resumable && (
+        <button
+          type="button"
+          className={styles.resumeBanner}
+          onClick={() => navigate(quizSessionPath(resumable))}
+        >
+          <span className={styles.resumeIcon}>
+            <Play size={16} aria-hidden="true" />
+          </span>
+          <span className={styles.resumeText}>
+            <span className={styles.resumeTitle}>Resume quiz</span>
+            <span className={styles.resumeMeta}>
+              {resumable.subject} - {Object.keys(resumable.answers).length}/{resumable.questions.length} answered
+            </span>
+          </span>
+        </button>
+      )}
       <div className={styles.header}>
         <h1 className={styles.title}>Quiz</h1>
         <p className={styles.subtitle}>

@@ -22,7 +22,7 @@ const ENTER_SCROLLED = 48;
 const EXIT_SCROLLED = 4;
 
 /** Routes that hide the AppShell header and bottom nav. */
-const FOCUS_ROUTE_PREFIXES = ['/study/topic/', '/quiz/session', '/sep/exam'];
+const FOCUS_ROUTE_PREFIXES = ['/study/topic/', '/quiz/session', '/sep/exam', '/notes/'];
 
 export function AppShell() {
   const { user } = useAuth();

@@ -110,3 +110,42 @@
   padding: 2px 0;
   -webkit-overflow-scrolling: touch;
 }
+
+.md :global(sub) { font-size: 0.75em; vertical-align: sub; }
+.md :global(sup) { font-size: 0.75em; vertical-align: super; }
+.md :global(u) { text-decoration: underline; }
+.md :global(mark) { background: #fef3c7; padding: 0 2px; }
+.md :global(kbd) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  padding: 1px 5px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+}
+.md :global(img) { max-width: 100%; height: auto; }
+.md :global(del) { text-decoration: line-through; color: var(--color-text-muted); }
+.md :global(.katex) { font-size: 1.06em; }
+.md :global(.katex-display) {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  margin: 0.55em 0;
+  padding: 2px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.md :global(.footnotes) {
+  margin-top: 1em;
+  padding-top: 0.75em;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.9em;
+  color: var(--color-text-muted);
+}
+.md :global(input[type='checkbox']) {
+  margin-right: 0.4em;
+  vertical-align: middle;
+}
+.md :global(details) { margin: 0 0 0.75em; }
+.md :global(summary) { cursor: pointer; font-weight: 600; }

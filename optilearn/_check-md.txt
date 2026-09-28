@@ -1,0 +1,73 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/components/ui/Markdown.tsx");const _jsxDEV = __vite__cjsImport6_react_jsxDevRuntime["jsxDEV"];import ReactMarkdown from "/node_modules/.vite/deps/react-markdown.js?v=8c10fa36";
+import remarkGfm from "/node_modules/.vite/deps/remark-gfm.js?v=8c10fa36";
+import remarkMath from "/node_modules/.vite/deps/remark-math.js?v=8c10fa36";
+import rehypeKatex from "/node_modules/.vite/deps/rehype-katex.js?v=8c10fa36";
+import "/node_modules/katex/dist/katex.min.css";
+import styles from "/src/components/ui/Markdown.module.css";
+var _jsxFileName = "/data/data/com.termux/files/home/OptiLearn/optilearn/src/components/ui/Markdown.tsx";
+import __vite__cjsImport6_react_jsxDevRuntime from "/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=8c10fa36";
+export function normalizeExamMarkup(raw) {
+	if (!raw) return raw;
+	const parts = raw.split(/(\$\$[\s\S]*?\$\$|\\( [^ \)]*\$)/g);
+	return parts.map((part, index) => {
+		if (index % 2 === 1) return part;
+		let text = part;
+		text = text.replace(/([A-Za-z0-9]+)_\{([A-Za-z]+)\}/g, function(_m, token, word) {
+			return "( " + token + "_{\\mathrm{" + word + "}} )";
+		});
+		text = text.replace(/([A-Za-z0-9]+)_\{(\d+)\}/g, function(_m, token, base) {
+			return "( " + token + "_{" + base + "} )";
+		});
+		text = text.replace(/([A-Za-z0-9]+)_([A-Za-z]+)\b/g, function(_m, token, word) {
+			return "( " + token + "_{\\mathrm{" + word + "}} )";
+		});
+		return text;
+	}).join("");
+}
+export function Markdown({ children, className }) {
+	const source = normalizeExamMarkup(children ?? "");
+	const wrapClass = className ? styles.md + " " + className : styles.md;
+	return /* @__PURE__ */ _jsxDEV("div", {
+		className: wrapClass,
+		children: /* @__PURE__ */ _jsxDEV(ReactMarkdown, {
+			remarkPlugins: [remarkGfm, remarkMath],
+			rehypePlugins: [rehypeKatex],
+			children: source
+		}, void 0, false, {
+			fileName: _jsxFileName,
+			lineNumber: 48,
+			columnNumber: 7
+		}, this)
+	}, void 0, false, {
+		fileName: _jsxFileName,
+		lineNumber: 47,
+		columnNumber: 5
+	}, this);
+}
+_c = Markdown;
+var _c;
+$RefreshReg$(_c, "Markdown");
+import * as RefreshRuntime from "/@react-refresh";
+const inWebWorker = typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope;
+import * as __vite_react_currentExports from "/src/components/ui/Markdown.tsx";
+if (import.meta.hot && !inWebWorker) {
+  if (!window.$RefreshReg$) {
+    throw new Error(
+      "@vitejs/plugin-react can't detect preamble. Something is wrong."
+    );
+  }
+
+  const currentExports = __vite_react_currentExports;
+  queueMicrotask(() => {
+    RefreshRuntime.registerExportsForReactRefresh("/data/data/com.termux/files/home/OptiLearn/optilearn/src/components/ui/Markdown.tsx", currentExports);
+    import.meta.hot.accept((nextExports) => {
+      if (!nextExports) return;
+      const invalidateMessage = RefreshRuntime.validateRefreshBoundaryAndEnqueueUpdate("/data/data/com.termux/files/home/OptiLearn/optilearn/src/components/ui/Markdown.tsx", currentExports, nextExports);
+      if (invalidateMessage) import.meta.hot.invalidate(invalidateMessage);
+    });
+  });
+}
+function $RefreshReg$(type, id) { return RefreshRuntime.register(type, "/data/data/com.termux/files/home/OptiLearn/optilearn/src/components/ui/Markdown.tsx" + ' ' + id); }
+function $RefreshSig$() { return RefreshRuntime.createSignatureFunctionForTransform(); }
+
+//# sourceMappingURL=data:application/json;base64,eyJtYXBwaW5ncyI6IkFBQUEsT0FBTyxtQkFBbUI7QUFDMUIsT0FBTyxlQUFlO0FBQ3RCLE9BQU8sZ0JBQWdCO0FBQ3ZCLE9BQU8saUJBQWlCO0FBQ3hCLE9BQU87QUFDUCxPQUFPLFlBQVk7OztBQU9uQixPQUFPLFNBQVMsb0JBQW9CLEtBQXFCO0NBQ3ZELElBQUksQ0FBQyxLQUFLLE9BQU87Q0FDakIsTUFBTSxRQUFRLElBQUksTUFBTSxtQ0FBbUM7Q0FDM0QsT0FBTyxNQUNKLEtBQUssTUFBTSxVQUFVO0VBQ3BCLElBQUksUUFBUSxNQUFNLEdBQUcsT0FBTztFQUM1QixJQUFJLE9BQU87RUFDWCxPQUFPLEtBQUssUUFDVixtQ0FDQSxTQUFVLElBQUksT0FBTyxNQUFNO0dBQ3pCLE9BQU8sT0FBUSxRQUFRLGdCQUFnQixPQUFPO0VBQ2hELENBQ0Y7RUFDQSxPQUFPLEtBQUssUUFDViw2QkFDQSxTQUFVLElBQUksT0FBTyxNQUFNO0dBQ3pCLE9BQU8sT0FBUSxRQUFRLE9BQU8sT0FBTztFQUN2QyxDQUNGO0VBQ0EsT0FBTyxLQUFLLFFBQ1YsaUNBQ0EsU0FBVSxJQUFJLE9BQU8sTUFBTTtHQUN6QixPQUFPLE9BQVEsUUFBUSxnQkFBZ0IsT0FBTztFQUNoRCxDQUNGO0VBQ0EsT0FBTztDQUNULENBQUMsQ0FBQyxDQUNELEtBQUssRUFBRTtBQUNaO0FBRUEsT0FBTyxTQUFTLFNBQVMsRUFBRSxVQUFVLGFBQTRCO0NBQy9ELE1BQU0sU0FBUyxvQkFBb0IsWUFBWSxFQUFFO0NBQ2pELE1BQU0sWUFBWSxZQUFZLE9BQU8sS0FBSyxNQUFNLFlBQVksT0FBTztDQUNuRSxPQUNFLHdCQUFDLE9BQUQ7RUFBSyxXQUFXO1lBQ2Qsd0JBQUMsZUFBRDtHQUNFLGVBQWUsQ0FBQyxXQUFXLFVBQVU7R0FDckMsZUFBZSxDQUFDLFdBQVc7YUFFMUI7RUFDWTs7Ozs7Q0FDWjs7Ozs7QUFFVCIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJNYXJrZG93bi50c3giXSwidmVyc2lvbiI6Mywic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IFJlYWN0TWFya2Rvd24gZnJvbSAncmVhY3QtbWFya2Rvd24nO1xuaW1wb3J0IHJlbWFya0dmbSBmcm9tICdyZW1hcmstZ2ZtJztcbmltcG9ydCByZW1hcmtNYXRoIGZyb20gJ3JlbWFyay1tYXRoJztcbmltcG9ydCByZWh5cGVLYXRleCBmcm9tICdyZWh5cGUta2F0ZXgnO1xuaW1wb3J0ICdrYXRleC9kaXN0L2thdGV4Lm1pbi5jc3MnO1xuaW1wb3J0IHN0eWxlcyBmcm9tICcuL01hcmtkb3duLm1vZHVsZS5jc3MnO1xuXG5pbnRlcmZhY2UgTWFya2Rvd25Qcm9wcyB7XG4gIGNoaWxkcmVuOiBzdHJpbmc7XG4gIGNsYXNzTmFtZT86IHN0cmluZztcbn1cblxuZXhwb3J0IGZ1bmN0aW9uIG5vcm1hbGl6ZUV4YW1NYXJrdXAocmF3OiBzdHJpbmcpOiBzdHJpbmcge1xuICBpZiAoIXJhdykgcmV0dXJuIHJhdztcbiAgY29uc3QgcGFydHMgPSByYXcuc3BsaXQoLyhcXCRcXCRbXFxzXFxTXSo/XFwkXFwkfFxcXFwoIFteIFxcKV0qXFwkKS9nKTtcbiAgcmV0dXJuIHBhcnRzXG4gICAgLm1hcCgocGFydCwgaW5kZXgpID0+IHtcbiAgICAgIGlmIChpbmRleCAlIDIgPT09IDEpIHJldHVybiBwYXJ0O1xuICAgICAgbGV0IHRleHQgPSBwYXJ0O1xuICAgICAgdGV4dCA9IHRleHQucmVwbGFjZShcbiAgICAgICAgLyhbQS1aYS16MC05XSspX1xceyhbQS1aYS16XSspXFx9L2csXG4gICAgICAgIGZ1bmN0aW9uIChfbSwgdG9rZW4sIHdvcmQpIHtcbiAgICAgICAgICByZXR1cm4gJ1xcKCAnICsgdG9rZW4gKyAnX3tcXFxcbWF0aHJteycgKyB3b3JkICsgJ319IFxcKSc7XG4gICAgICAgIH0sXG4gICAgICApO1xuICAgICAgdGV4dCA9IHRleHQucmVwbGFjZShcbiAgICAgICAgLyhbQS1aYS16MC05XSspX1xceyhcXGQrKVxcfS9nLFxuICAgICAgICBmdW5jdGlvbiAoX20sIHRva2VuLCBiYXNlKSB7XG4gICAgICAgICAgcmV0dXJuICdcXCggJyArIHRva2VuICsgJ197JyArIGJhc2UgKyAnfSBcXCknO1xuICAgICAgICB9LFxuICAgICAgKTtcbiAgICAgIHRleHQgPSB0ZXh0LnJlcGxhY2UoXG4gICAgICAgIC8oW0EtWmEtejAtOV0rKV8oW0EtWmEtel0rKVxcYi9nLFxuICAgICAgICBmdW5jdGlvbiAoX20sIHRva2VuLCB3b3JkKSB7XG4gICAgICAgICAgcmV0dXJuICdcXCggJyArIHRva2VuICsgJ197XFxcXG1hdGhybXsnICsgd29yZCArICd9fSBcXCknO1xuICAgICAgICB9LFxuICAgICAgKTtcbiAgICAgIHJldHVybiB0ZXh0O1xuICAgIH0pXG4gICAgLmpvaW4oJycpO1xufVxuXG5leHBvcnQgZnVuY3Rpb24gTWFya2Rvd24oeyBjaGlsZHJlbiwgY2xhc3NOYW1lIH06IE1hcmtkb3duUHJvcHMpIHtcbiAgY29uc3Qgc291cmNlID0gbm9ybWFsaXplRXhhbU1hcmt1cChjaGlsZHJlbiA/PyAnJyk7XG4gIGNvbnN0IHdyYXBDbGFzcyA9IGNsYXNzTmFtZSA/IHN0eWxlcy5tZCArICcgJyArIGNsYXNzTmFtZSA6IHN0eWxlcy5tZDtcbiAgcmV0dXJuIChcbiAgICA8ZGl2IGNsYXNzTmFtZT17d3JhcENsYXNzfT5cbiAgICAgIDxSZWFjdE1hcmtkb3duXG4gICAgICAgIHJlbWFya1BsdWdpbnM9e1tyZW1hcmtHZm0sIHJlbWFya01hdGhdfVxuICAgICAgICByZWh5cGVQbHVnaW5zPXtbcmVoeXBlS2F0ZXhdfVxuICAgICAgPlxuICAgICAgICB7c291cmNlfVxuICAgICAgPC9SZWFjdE1hcmtkb3duPlxuICAgIDwvZGl2PlxuICApO1xufVxuIl19

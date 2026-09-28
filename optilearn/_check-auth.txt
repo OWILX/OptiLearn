@@ -1,0 +1,94 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/context/AuthContext.tsx");const createContext = __vite__cjsImport0_react["createContext"]; const useContext = __vite__cjsImport0_react["useContext"]; const useEffect = __vite__cjsImport0_react["useEffect"]; const useState = __vite__cjsImport0_react["useState"];const _jsxDEV = __vite__cjsImport2_react_jsxDevRuntime["jsxDEV"];import __vite__cjsImport0_react from "/node_modules/.vite/deps/react.js?v=8c10fa36";
+import { authService } from "/src/services/auth/authService.ts";
+var _jsxFileName = "/data/data/com.termux/files/home/OptiLearn/optilearn/src/context/AuthContext.tsx";
+import __vite__cjsImport2_react_jsxDevRuntime from "/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=8c10fa36";
+var _s = $RefreshSig$(), _s2 = $RefreshSig$();
+const AuthContext = createContext(null);
+_c = AuthContext;
+export function AuthProvider({ children }) {
+	_s();
+	const [session, setSession] = useState(null);
+	const [user, setUser] = useState(null);
+	const [initializing, setInitializing] = useState(true);
+	useEffect(() => {
+		let mounted = true;
+		// 1. Read the persisted session once at mount.
+		authService.getSession().then((s) => {
+			if (!mounted) return;
+			setSession(s);
+			setUser(s?.user ?? null);
+		}).catch((err) => {
+			// Not fatal — user simply starts signed out.
+			console.error("[AUTH] Failed to read initial session:", err);
+		}).finally(() => {
+			if (!mounted) return;
+			setInitializing(false);
+		});
+		// 2. Subscribe to future changes (sign-in, sign-out, token refresh,
+		//    magic-link return, OAuth redirect return).
+		const sub = authService.onAuthStateChange((s) => {
+			if (!mounted) return;
+			setSession(s);
+			setUser(s?.user ?? null);
+		});
+		return () => {
+			mounted = false;
+			sub.unsubscribe();
+		};
+	}, []);
+	const value = {
+		session,
+		user,
+		initializing,
+		signInWithGoogle: () => authService.signInWithGoogle(),
+		signInWithMagicLink: (email) => authService.signInWithMagicLink(email),
+		signOut: () => authService.signOut()
+	};
+	return /* @__PURE__ */ _jsxDEV(AuthContext.Provider, {
+		value,
+		children
+	}, void 0, false, {
+		fileName: _jsxFileName,
+		lineNumber: 82,
+		columnNumber: 10
+	}, this);
+}
+_s(AuthProvider, "zFVnO3wuW9VwE4Fjj412m5p3tCA=");
+_c2 = AuthProvider;
+/** Read the auth state. Must be called inside <AuthProvider>. */
+export function useAuth() {
+	_s2();
+	const ctx = useContext(AuthContext);
+	if (!ctx) {
+		throw new Error("useAuth must be used within an <AuthProvider>");
+	}
+	return ctx;
+}
+_s2(useAuth, "/dMy7t63NXD4eYACoT93CePwGrg=");
+var _c, _c2;
+$RefreshReg$(_c, "AuthContext");
+$RefreshReg$(_c2, "AuthProvider");
+import * as RefreshRuntime from "/@react-refresh";
+const inWebWorker = typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope;
+import * as __vite_react_currentExports from "/src/context/AuthContext.tsx";
+if (import.meta.hot && !inWebWorker) {
+  if (!window.$RefreshReg$) {
+    throw new Error(
+      "@vitejs/plugin-react can't detect preamble. Something is wrong."
+    );
+  }
+
+  const currentExports = __vite_react_currentExports;
+  queueMicrotask(() => {
+    RefreshRuntime.registerExportsForReactRefresh("/data/data/com.termux/files/home/OptiLearn/optilearn/src/context/AuthContext.tsx", currentExports);
+    import.meta.hot.accept((nextExports) => {
+      if (!nextExports) return;
+      const invalidateMessage = RefreshRuntime.validateRefreshBoundaryAndEnqueueUpdate("/data/data/com.termux/files/home/OptiLearn/optilearn/src/context/AuthContext.tsx", currentExports, nextExports);
+      if (invalidateMessage) import.meta.hot.invalidate(invalidateMessage);
+    });
+  });
+}
+function $RefreshReg$(type, id) { return RefreshRuntime.register(type, "/data/data/com.termux/files/home/OptiLearn/optilearn/src/context/AuthContext.tsx" + ' ' + id); }
+function $RefreshSig$() { return RefreshRuntime.createSignatureFunctionForTransform(); }
+
+//# sourceMappingURL=data:application/json;base64,eyJtYXBwaW5ncyI6IkFBQUEsU0FDRSxlQUNBLFlBQ0EsV0FDQSxnQkFFSztBQUVQLFNBQVMsbUJBQW1COzs7O0FBbUI1QixNQUFNLGNBQWMsY0FBdUMsSUFBSTs7QUFNL0QsT0FBTyxTQUFTLGFBQWEsRUFBRSxZQUErQjs7Q0FDNUQsTUFBTSxDQUFDLFNBQVMsY0FBYyxTQUF5QixJQUFJO0NBQzNELE1BQU0sQ0FBQyxNQUFNLFdBQVcsU0FBc0IsSUFBSTtDQUNsRCxNQUFNLENBQUMsY0FBYyxtQkFBbUIsU0FBUyxJQUFJO0NBRXJELGdCQUFnQjtFQUNkLElBQUksVUFBVTs7RUFHZCxZQUNHLFdBQVcsQ0FBQyxDQUNaLE1BQU0sTUFBTTtHQUNYLElBQUksQ0FBQyxTQUFTO0dBQ2QsV0FBVyxDQUFDO0dBQ1osUUFBUSxHQUFHLFFBQVEsSUFBSTtFQUN6QixDQUFDLENBQUMsQ0FDRCxPQUFPLFFBQVE7O0dBRWQsUUFBUSxNQUFNLDBDQUEwQyxHQUFHO0VBQzdELENBQUMsQ0FBQyxDQUNELGNBQWM7R0FDYixJQUFJLENBQUMsU0FBUztHQUNkLGdCQUFnQixLQUFLO0VBQ3ZCLENBQUM7OztFQUlILE1BQU0sTUFBTSxZQUFZLG1CQUFtQixNQUFNO0dBQy9DLElBQUksQ0FBQyxTQUFTO0dBQ2QsV0FBVyxDQUFDO0dBQ1osUUFBUSxHQUFHLFFBQVEsSUFBSTtFQUN6QixDQUFDO0VBRUQsYUFBYTtHQUNYLFVBQVU7R0FDVixJQUFJLFlBQVk7RUFDbEI7Q0FDRixHQUFHLENBQUMsQ0FBQztDQUVMLE1BQU0sUUFBMEI7RUFDOUI7RUFDQTtFQUNBO0VBQ0Esd0JBQXdCLFlBQVksaUJBQWlCO0VBQ3JELHNCQUFzQixVQUFVLFlBQVksb0JBQW9CLEtBQUs7RUFDckUsZUFBZSxZQUFZLFFBQVE7Q0FDckM7Q0FFQSxPQUFPLHdCQUFDLFlBQVksVUFBYjtFQUE2QjtFQUFRO0NBQStCOzs7OztBQUM3RTs7OztBQUdBLE9BQU8sU0FBUyxVQUE0Qjs7Q0FDMUMsTUFBTSxNQUFNLFdBQVcsV0FBVztDQUNsQyxJQUFJLENBQUMsS0FBSztFQUNSLE1BQU0sSUFBSSxNQUFNLCtDQUErQztDQUNqRTtDQUNBLE9BQU87QUFDVCIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJBdXRoQ29udGV4dC50c3giXSwidmVyc2lvbiI6Mywic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtcbiAgY3JlYXRlQ29udGV4dCxcbiAgdXNlQ29udGV4dCxcbiAgdXNlRWZmZWN0LFxuICB1c2VTdGF0ZSxcbiAgdHlwZSBSZWFjdE5vZGUsXG59IGZyb20gJ3JlYWN0JztcbmltcG9ydCB0eXBlIHsgU2Vzc2lvbiwgVXNlciB9IGZyb20gJ0BzdXBhYmFzZS9zdXBhYmFzZS1qcyc7XG5pbXBvcnQgeyBhdXRoU2VydmljZSB9IGZyb20gJ0Avc2VydmljZXMvYXV0aC9hdXRoU2VydmljZSc7XG5cbmludGVyZmFjZSBBdXRoQ29udGV4dFZhbHVlIHtcbiAgLyoqIEN1cnJlbnQgU3VwYWJhc2Ugc2Vzc2lvbiwgb3IgbnVsbCB3aGVuIHNpZ25lZCBvdXQuICovXG4gIHNlc3Npb246IFNlc3Npb24gfCBudWxsO1xuICAvKiogQ3VycmVudCB1c2VyLCBvciBudWxsIHdoZW4gc2lnbmVkIG91dC4gQ29udmVuaWVuY2Ugb3ZlciBzZXNzaW9uLnVzZXIuICovXG4gIHVzZXI6IFVzZXIgfCBudWxsO1xuICAvKipcbiAgICogVHJ1ZSBvbmx5IGR1cmluZyB0aGUgdmVyeSBmaXJzdCBzZXNzaW9uIHJlYWQgYXQgYXBwIHN0YXJ0dXAuXG4gICAqIE9uY2UgZmFsc2UsIHNlc3Npb24vdXNlciBhcmUgYWNjdXJhdGUuIFNjcmVlbnMgdXNlIHRoaXMgdG8gZGVjaWRlXG4gICAqIGJldHdlZW4gXCJsb2FkaW5nXCIgYW5kIFwic2lnbmVkIGluIC8gc2lnbmVkIG91dFwiLlxuICAgKi9cbiAgaW5pdGlhbGl6aW5nOiBib29sZWFuO1xuXG4gIHNpZ25JbldpdGhHb29nbGU6ICgpID0+IFByb21pc2U8dm9pZD47XG4gIHNpZ25JbldpdGhNYWdpY0xpbms6IChlbWFpbDogc3RyaW5nKSA9PiBQcm9taXNlPHZvaWQ+O1xuICBzaWduT3V0OiAoKSA9PiBQcm9taXNlPHZvaWQ+O1xufVxuXG5jb25zdCBBdXRoQ29udGV4dCA9IGNyZWF0ZUNvbnRleHQ8QXV0aENvbnRleHRWYWx1ZSB8IG51bGw+KG51bGwpO1xuXG5pbnRlcmZhY2UgQXV0aFByb3ZpZGVyUHJvcHMge1xuICBjaGlsZHJlbjogUmVhY3ROb2RlO1xufVxuXG5leHBvcnQgZnVuY3Rpb24gQXV0aFByb3ZpZGVyKHsgY2hpbGRyZW4gfTogQXV0aFByb3ZpZGVyUHJvcHMpIHtcbiAgY29uc3QgW3Nlc3Npb24sIHNldFNlc3Npb25dID0gdXNlU3RhdGU8U2Vzc2lvbiB8IG51bGw+KG51bGwpO1xuICBjb25zdCBbdXNlciwgc2V0VXNlcl0gPSB1c2VTdGF0ZTxVc2VyIHwgbnVsbD4obnVsbCk7XG4gIGNvbnN0IFtpbml0aWFsaXppbmcsIHNldEluaXRpYWxpemluZ10gPSB1c2VTdGF0ZSh0cnVlKTtcblxuICB1c2VFZmZlY3QoKCkgPT4ge1xuICAgIGxldCBtb3VudGVkID0gdHJ1ZTtcblxuICAgIC8vIDEuIFJlYWQgdGhlIHBlcnNpc3RlZCBzZXNzaW9uIG9uY2UgYXQgbW91bnQuXG4gICAgYXV0aFNlcnZpY2VcbiAgICAgIC5nZXRTZXNzaW9uKClcbiAgICAgIC50aGVuKChzKSA9PiB7XG4gICAgICAgIGlmICghbW91bnRlZCkgcmV0dXJuO1xuICAgICAgICBzZXRTZXNzaW9uKHMpO1xuICAgICAgICBzZXRVc2VyKHM/LnVzZXIgPz8gbnVsbCk7XG4gICAgICB9KVxuICAgICAgLmNhdGNoKChlcnIpID0+IHtcbiAgICAgICAgLy8gTm90IGZhdGFsIOKAlCB1c2VyIHNpbXBseSBzdGFydHMgc2lnbmVkIG91dC5cbiAgICAgICAgY29uc29sZS5lcnJvcignW0FVVEhdIEZhaWxlZCB0byByZWFkIGluaXRpYWwgc2Vzc2lvbjonLCBlcnIpO1xuICAgICAgfSlcbiAgICAgIC5maW5hbGx5KCgpID0+IHtcbiAgICAgICAgaWYgKCFtb3VudGVkKSByZXR1cm47XG4gICAgICAgIHNldEluaXRpYWxpemluZyhmYWxzZSk7XG4gICAgICB9KTtcblxuICAgIC8vIDIuIFN1YnNjcmliZSB0byBmdXR1cmUgY2hhbmdlcyAoc2lnbi1pbiwgc2lnbi1vdXQsIHRva2VuIHJlZnJlc2gsXG4gICAgLy8gICAgbWFnaWMtbGluayByZXR1cm4sIE9BdXRoIHJlZGlyZWN0IHJldHVybikuXG4gICAgY29uc3Qgc3ViID0gYXV0aFNlcnZpY2Uub25BdXRoU3RhdGVDaGFuZ2UoKHMpID0+IHtcbiAgICAgIGlmICghbW91bnRlZCkgcmV0dXJuO1xuICAgICAgc2V0U2Vzc2lvbihzKTtcbiAgICAgIHNldFVzZXIocz8udXNlciA/PyBudWxsKTtcbiAgICB9KTtcblxuICAgIHJldHVybiAoKSA9PiB7XG4gICAgICBtb3VudGVkID0gZmFsc2U7XG4gICAgICBzdWIudW5zdWJzY3JpYmUoKTtcbiAgICB9O1xuICB9LCBbXSk7XG5cbiAgY29uc3QgdmFsdWU6IEF1dGhDb250ZXh0VmFsdWUgPSB7XG4gICAgc2Vzc2lvbixcbiAgICB1c2VyLFxuICAgIGluaXRpYWxpemluZyxcbiAgICBzaWduSW5XaXRoR29vZ2xlOiAoKSA9PiBhdXRoU2VydmljZS5zaWduSW5XaXRoR29vZ2xlKCksXG4gICAgc2lnbkluV2l0aE1hZ2ljTGluazogKGVtYWlsKSA9PiBhdXRoU2VydmljZS5zaWduSW5XaXRoTWFnaWNMaW5rKGVtYWlsKSxcbiAgICBzaWduT3V0OiAoKSA9PiBhdXRoU2VydmljZS5zaWduT3V0KCksXG4gIH07XG5cbiAgcmV0dXJuIDxBdXRoQ29udGV4dC5Qcm92aWRlciB2YWx1ZT17dmFsdWV9PntjaGlsZHJlbn08L0F1dGhDb250ZXh0LlByb3ZpZGVyPjtcbn1cblxuLyoqIFJlYWQgdGhlIGF1dGggc3RhdGUuIE11c3QgYmUgY2FsbGVkIGluc2lkZSA8QXV0aFByb3ZpZGVyPi4gKi9cbmV4cG9ydCBmdW5jdGlvbiB1c2VBdXRoKCk6IEF1dGhDb250ZXh0VmFsdWUge1xuICBjb25zdCBjdHggPSB1c2VDb250ZXh0KEF1dGhDb250ZXh0KTtcbiAgaWYgKCFjdHgpIHtcbiAgICB0aHJvdyBuZXcgRXJyb3IoJ3VzZUF1dGggbXVzdCBiZSB1c2VkIHdpdGhpbiBhbiA8QXV0aFByb3ZpZGVyPicpO1xuICB9XG4gIHJldHVybiBjdHg7XG59XG4iXX0=

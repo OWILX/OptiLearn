@@ -16,6 +16,10 @@ import {
 import { streakService, type StreakInfo } from '@/services/streaks/streakService';
 import { subjectColor } from '@/utils/subjectColor';
 import {
+  blogService,
+  type ConceptPostListItem,
+} from '@/services/blog/blogService';
+import {
   SEP_SESSION_KEY,
   type SEPPersistedSession,
 } from '@/services/exams/sepSession';
@@ -103,6 +107,8 @@ export function HomeScreen() {
 
   const [resumableSep, setResumableSep] = useState<ResumableSep | null>(null);
   const [sepCountdown, setSepCountdown] = useState(0);
+  const [notes, setNotes] = useState<ConceptPostListItem[]>([]);
+
 
   // Ticks once a minute so the greeting and date roll over correctly
   // if the user leaves the tab open across noon, evening, or midnight.
@@ -160,6 +166,24 @@ export function HomeScreen() {
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
   }, [resumableSep]);
+
+
+  useEffect(() => {
+    let cancelled = false;
+    blogService
+      .listPublished(profile?.department ?? null)
+      .then((rows) => {
+        if (!cancelled) setNotes(rows.slice(0, 2));
+      })
+      .catch((err: unknown) => {
+        if (import.meta.env.DEV) {
+          console.warn('[HOME] Lesson notes failed:', err);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [profile?.department]);
 
   function handleResumeSep() {
     if (!resumableSep) return;
@@ -400,11 +424,43 @@ export function HomeScreen() {
 
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Question of the day</h2>
+          <h2 className={styles.sectionTitle}>Lesson notes</h2>
+          <button
+            type="button"
+            className={styles.sectionLink}
+            onClick={() => navigate('/notes')}
+          >
+            View all
+          </button>
         </div>
-        <div className={styles.placeholder}>
-          Coming soon — will load from the daily challenges source.
-        </div>
+        {notes.length === 0 ? (
+          <button
+            type="button"
+            className={styles.actionButton}
+            onClick={() => navigate('/notes')}
+          >
+            <div className={`${styles.actionIcon} ${styles.actionIconStudy}`}>
+              <BookOpen size={20} aria-hidden="true" />
+            </div>
+            <span className={styles.actionLabel}>Lesson notes</span>
+            <span className={styles.actionSub}>One idea at a time</span>
+          </button>
+        ) : (
+          notes.map((note) => (
+            <button
+              key={note.id}
+              type="button"
+              className={styles.actionButton}
+              onClick={() => navigate('/notes/' + note.slug)}
+            >
+              <div className={`${styles.actionIcon} ${styles.actionIconStudy}`}>
+                <BookOpen size={20} aria-hidden="true" />
+              </div>
+              <span className={styles.actionLabel}>{note.title}</span>
+              <span className={styles.actionSub}>{note.subject}</span>
+            </button>
+          ))
+        )}
       </div>
 
       <div className={styles.section}>
@@ -473,7 +529,6 @@ export function HomeScreen() {
     </section>
   );
 }
-
 interface ContinueCardProps {
   data: ContinueLearning;
   onOpen: () => void;

@@ -9,6 +9,7 @@ import {
   Timer as TimerIcon,
   AlertTriangle,
   RotateCcw,
+  Save,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useProfile } from '@/context/ProfileContext';
@@ -20,8 +21,18 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Markdown } from '@/components/ui/Markdown';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
+import {
+  readSession,
+  writeSession,
+  clearSession,
+} from '@/utils/sessionStorage';
 import styles from './QuizSessionScreen.module.css';
 import { DEFAULT_TIME_MINUTES, DEFAULT_QUESTION_COUNT, DEFAULT_DIFFICULTY, type Difficulty } from './quizConfig';
+import {
+  QUIZ_SESSION_KEY,
+  quizSessionMatches,
+  type QuizPersistedSession,
+} from './quizSession';
 
 const LETTERS = ['A', 'B', 'C', 'D'] as const;
 const TIME_WARN_SECONDS = 120;
@@ -105,6 +116,7 @@ export function QuizSessionScreen() {
   const [results, setResults] = useState<ResultRow[] | null>(null);
   const [timedOut, setTimedOut] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  const [wasResumed, setWasResumed] = useState(false);
 
   const submittedRef = useRef(false);
 
@@ -119,7 +131,26 @@ export function QuizSessionScreen() {
     setSubmitted(false);
     setResults(null);
     setTimedOut(false);
+    setWasResumed(false);
     submittedRef.current = false;
+
+    const stored = readSession<QuizPersistedSession>(QUIZ_SESSION_KEY);
+    if (stored && quizSessionMatches(stored, config)) {
+      setQuestions(stored.questions);
+      setAnswers(stored.answers);
+      setCurrentIndex(
+        Math.min(Math.max(0, stored.currentIndex), stored.questions.length - 1),
+      );
+      setEndTime(stored.endTime);
+      setRemainingMs(Math.max(0, stored.endTime - Date.now()));
+      setWasResumed(true);
+      setLoading(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    clearSession(QUIZ_SESSION_KEY);
 
     quizService
       .getQuizQuestions(user.id, {
@@ -131,8 +162,20 @@ export function QuizSessionScreen() {
         if (cancelled) return;
         setQuestions(qs);
         if (qs.length > 0) {
-          setEndTime(Date.now() + config.timeLimitMinutes * 60_000);
+          const endMs = Date.now() + config.timeLimitMinutes * 60_000;
+          setEndTime(endMs);
           setRemainingMs(config.timeLimitMinutes * 60_000);
+          writeSession<QuizPersistedSession>(QUIZ_SESSION_KEY, {
+            version: 1,
+            subject: config.subject,
+            difficulty: config.difficulty,
+            timeLimitMinutes: config.timeLimitMinutes,
+            questionCount: config.questionCount,
+            endTime: endMs,
+            questions: qs,
+            answers: {},
+            currentIndex: 0,
+          });
         }
       })
       .catch((err: unknown) => {
@@ -158,6 +201,7 @@ export function QuizSessionScreen() {
     (isTimeout: boolean) => {
       if (submittedRef.current || !questions || !user) return;
       submittedRef.current = true;
+      clearSession(QUIZ_SESSION_KEY);
 
       const rows: ResultRow[] = questions.map((q) => {
         const userAnswer = answers[q.id] ?? null;
@@ -217,6 +261,21 @@ export function QuizSessionScreen() {
   }, [endTime, submitted, doSubmit]);
 
   useEffect(() => {
+    if (loading || submitted || !questions || !config || !endTime) return;
+    writeSession<QuizPersistedSession>(QUIZ_SESSION_KEY, {
+      version: 1,
+      subject: config.subject,
+      difficulty: config.difficulty,
+      timeLimitMinutes: config.timeLimitMinutes,
+      questionCount: config.questionCount,
+      endTime,
+      questions,
+      answers,
+      currentIndex,
+    });
+  }, [loading, submitted, questions, answers, currentIndex, config, endTime]);
+
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentIndex]);
 
@@ -244,6 +303,8 @@ export function QuizSessionScreen() {
 
   function restart() {
     submittedRef.current = false;
+    clearSession(QUIZ_SESSION_KEY);
+    setWasResumed(false);
     setReloadKey((k) => k + 1);
   }
 
@@ -314,6 +375,12 @@ export function QuizSessionScreen() {
           <span className={styles.timerProgress}>
             {answeredCount}/{questions.length}
           </span>
+          {wasResumed && (
+            <span className={styles.resumedChip}>
+              <Save size={11} aria-hidden="true" />
+              Resumed
+            </span>
+          )}
         </div>
         <button
           type="button"

@@ -19,6 +19,8 @@ import { SepExamScreen } from '@/screens/sep/SepExamScreen';
 import { SepHistoryScreen } from '@/screens/sep/SepHistoryScreen';
 import { SepHistoryDetailScreen } from '@/screens/sep/SepHistoryDetailScreen';
 import { ChooseDepartmentScreen } from '@/screens/onboarding/ChooseDepartmentScreen';
+import { BlogListScreen } from '@/screens/blog/BlogListScreen';
+import { BlogPostScreen } from '@/screens/blog/BlogPostScreen';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicOnlyRoute } from './PublicOnlyRoute';
 import { RequireDepartment } from './RequireDepartment';
@@ -72,6 +74,8 @@ export const router = createBrowserRouter([
                 element: <SepHistoryDetailScreen />,
               },
               { path: '/profile', element: <ProfileScreen /> },
+              { path: '/notes', element: <BlogListScreen /> },
+              { path: '/notes/:slug', element: <BlogPostScreen /> },
             ],
           },
         ],
