@@ -1,0 +1,88 @@
+
+.page { display: flex; flex-direction: column; gap: var(--space-4); max-width: 720px; margin: 0 auto; padding-bottom: var(--space-8); }
+.back { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; min-height: 44px; padding: 0; border: none; background: transparent; color: var(--color-brand-blue); font-size: 14px; font-weight: 600; }
+.article { display: flex; flex-direction: column; gap: var(--space-3); }
+.subject { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.title { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; color: var(--color-text); }
+.body { font-size: 16px; line-height: 1.6; }
+
+.practise {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  margin-top: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-brand-blue);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+}
+.practise:active { transform: scale(0.99); }
+
+/* === Visual polish pass === */
+.page {
+  animation: pageEnter 260ms var(--ease-out) both;
+}
+
+.card,
+.row,
+.topicRow,
+.difficultyCard,
+.actionButton,
+.recentRow,
+.questionCard,
+.summaryCard,
+.subjectSection {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.card:focus-visible,
+.row:focus-visible,
+.topicRow:focus-visible,
+.difficultyCard:focus-visible,
+.actionButton:focus-visible,
+.resumeBanner:focus-visible,
+.resumeSepCard:focus-visible,
+.option:focus-visible,
+.chip:focus-visible,
+.subjectSectionHeader:focus-visible {
+  outline: 0;
+  box-shadow: var(--shadow-focus);
+}
+
+@media (hover: hover) {
+  .card:hover,
+  .row:hover,
+  .topicRow:hover,
+  .difficultyCard:hover,
+  .actionButton:hover,
+  .recentRow:hover,
+  .questionCard:hover,
+  .summaryCard:hover,
+  .subjectSection:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+@media (max-width: 479px) {
+  .page {
+    gap: var(--space-5);
+  }
+
+  .title {
+    font-size: clamp(22px, 7vw, 26px);
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions > * {
+    width: 100%;
+  }
+}

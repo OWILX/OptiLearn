@@ -1,0 +1,10 @@
+{
+  "name": "Avelune",
+  "short_name": "Avelune",
+  "description": "Learn with Clarity.",
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#f8f9fc",
+  "theme_color": "#16248c",
+  "icons": [{"src": "/avelune-logo.png", "sizes": "any", "type": "image/png", "purpose": "any maskable"}]
+}
