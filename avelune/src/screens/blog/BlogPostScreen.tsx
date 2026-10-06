@@ -73,7 +73,7 @@ export function BlogPostScreen() {
             {post.subject}
           </span>
           <h1 className={styles.title}>{post.title}</h1>
-          <Markdown className={styles.body}>{post.body}</Markdown>
+          <Markdown variant="article" className={styles.body}>{post.body}</Markdown>
           <button
             type="button"
             className={styles.practise}

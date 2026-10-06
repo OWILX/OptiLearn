@@ -66,3 +66,105 @@
   --duration-fast: 140ms;
   --duration-normal: 220ms;
 }
+
+
+/* ============================================================================
+   Avelune Learning UI System — semantic tokens
+   ============================================================================ */
+
+:root {
+  /* === Typography hierarchy === */
+  --type-display-size: 30px;
+  --type-display-line: 1.15;
+  --type-display-weight: 750;
+
+  --type-screen-size: 24px;
+  --type-screen-line: 1.2;
+  --type-screen-weight: 750;
+
+  --type-section-size: 18px;
+  --type-section-line: 1.3;
+  --type-section-weight: 700;
+
+  --type-question-size: 17px;
+  --type-question-line: 1.55;
+  --type-question-weight: 600;
+
+  --type-option-size: 14px;
+  --type-option-line: 1.5;
+  --type-option-weight: 400;
+
+  --type-review-question-size: 15px;
+  --type-review-question-line: 1.55;
+  --type-review-question-weight: 600;
+
+  --type-explanation-size: 14px;
+  --type-explanation-line: 1.6;
+  --type-explanation-weight: 400;
+
+  --type-article-size: 16px;
+  --type-article-line: 1.65;
+  --type-article-weight: 400;
+
+  --type-metadata-size: 11px;
+  --type-metadata-line: 1.35;
+  --type-metadata-weight: 600;
+
+  --type-caption-size: 13px;
+  --type-caption-line: 1.5;
+  --type-caption-weight: 400;
+
+  /* === Card hierarchy === */
+  --card-flat-background: var(--color-surface);
+  --card-flat-border: var(--color-border);
+  --card-flat-shadow: none;
+
+  --card-raised-background: var(--color-surface-raised);
+  --card-raised-border: var(--color-border);
+  --card-raised-shadow: var(--shadow-sm);
+
+  --card-floating-background: var(--color-surface);
+  --card-floating-border: var(--color-border-strong);
+  --card-floating-shadow: var(--shadow-lg);
+
+  /* === Learning surfaces === */
+  --learning-question-accent: var(--color-brand-blue);
+  --learning-question-accent-soft: var(--color-brand-blue-soft);
+
+  --learning-explanation-accent: var(--color-brand-purple);
+  --learning-explanation-surface: var(--color-brand-purple-soft);
+
+  --learning-option-background: var(--color-surface);
+  --learning-option-border: var(--color-border);
+
+  /* === Focus / touch === */
+  --learning-focus-ring: 0 0 0 4px rgba(22, 36, 140, 0.14);
+  --learning-focus-outline: var(--color-brand-blue);
+  --touch-target-min: 44px;
+  --touch-target-comfort: 48px;
+
+  /* === Content geometry === */
+  --content-question-max: 68ch;
+  --content-reading-max: 72ch;
+  --content-equation-max: 100%;
+
+  /* === Motion === */
+  --learning-motion-fast:
+    var(--duration-fast) var(--ease-standard);
+  --learning-motion-normal:
+    var(--duration-normal) var(--ease-out);
+}
+
+
+/* ============================================================================
+   Avelune Learning UI System — subject accent aliases
+   ============================================================================ */
+
+:root {
+  --subject-accent-mathematics: var(--subject-mathematics);
+  --subject-accent-physics: var(--subject-physics);
+  --subject-accent-chemistry: var(--subject-chemistry);
+  --subject-accent-english: var(--subject-english);
+  --subject-accent-use-of-english: var(--subject-use-of-english);
+  --subject-accent-current-affairs: var(--subject-current-affairs);
+}

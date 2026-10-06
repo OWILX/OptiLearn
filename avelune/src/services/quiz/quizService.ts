@@ -144,26 +144,38 @@ export const quizService = {
     const syllabusIds = ((sylRows ?? []) as { id: number }[]).map((r) => r.id);
     if (syllabusIds.length === 0) return [];
 
+    // Keep answer keys out of the live query. Difficulty is normalized after
+    // loading because older/generated rows may use a different case.
     const { data: rows, error } = await supabase
       .from('question_bank_live')
       .select(LIVE_COLS)
       .in('syllabus_id', syllabusIds)
-      .eq('question_type', 'mcq')
-      .eq('difficulty', filters.difficulty);
+      .eq('question_type', 'mcq');
 
     if (error)
       throw wrapError(error, `Could not load ${filters.subject} questions.`);
 
+    const requestedDifficulty = filters.difficulty.trim().toLowerCase();
     const candidates: QuizQuestion[] = [];
     for (const row of (rows ?? []) as QuestionBankRow[]) {
+      const rowDifficulty = (row.difficulty ?? '').trim().toLowerCase();
+      if (rowDifficulty !== requestedDifficulty) continue;
+
       const q = parseQuestion(row);
       if (q) candidates.push(q);
       else if (import.meta.env.DEV) {
-        console.warn('[QUIZ] Skipped malformed row id=', row.id);
+        console.warn('[QUIZ] Skipped malformed live row id=', row.id);
       }
     }
 
-    if (candidates.length === 0) return [];
+    if (candidates.length === 0) {
+      if (import.meta.env.DEV) {
+        console.warn(
+          `[QUIZ] No live questions matched subject="${filters.subject}" difficulty="${filters.difficulty}"`,
+        );
+      }
+      return [];
+    }
 
     const ids = candidates.map((c) => c.id);
     const { data: attemptRows, error: attemptErr } = await supabase

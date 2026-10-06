@@ -413,3 +413,104 @@
     width: 100%;
   }
 }
+
+
+/* ============================================================================
+   Avelune Learning UI System — SepHistoryDetailScreen
+   ============================================================================ */
+
+.page {
+  gap: var(--space-4);
+  padding-bottom: var(--space-8);
+}
+
+.subjectSection {
+  background: var(--card-flat-background);
+  border-color: var(--card-flat-border);
+  box-shadow: none;
+}
+
+.subjectHeader {
+  min-height: var(--touch-target-comfort);
+}
+
+.questionCard {
+  position: relative;
+  gap: var(--space-4);
+  padding: 18px;
+  border: 1px solid var(--card-raised-border);
+  border-left: 3px solid var(--learning-question-accent);
+  border-radius: var(--radius-lg);
+  background: var(--card-raised-background);
+  box-shadow: var(--card-raised-shadow);
+}
+
+.questionText {
+  font-size: var(--type-review-question-size);
+  line-height: var(--type-review-question-line);
+  font-weight: var(--type-review-question-weight);
+  letter-spacing: -0.004em;
+}
+
+.options {
+  gap: 8px;
+}
+
+.option {
+  min-height: var(--touch-target-min);
+  padding: 10px 11px;
+  background: var(--learning-option-background);
+}
+
+.optionLetter {
+  width: 25px;
+  height: 25px;
+  flex-basis: 25px;
+}
+
+.optionText {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  padding-top: 2px;
+}
+
+.explanation {
+  position: relative;
+  padding: 14px 15px 14px 17px;
+  border: 1px solid rgba(107, 33, 168, 0.12);
+  border-left: 3px solid var(--learning-explanation-accent);
+  border-radius: var(--radius-md);
+  background: var(--learning-explanation-surface);
+  font-size: var(--type-explanation-size);
+  line-height: var(--type-explanation-line);
+  white-space: normal;
+}
+
+.verdict {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.error {
+  font-size: var(--type-caption-size);
+}
+
+@media (max-width: 767px) {
+  .questionCard {
+    padding: 16px;
+  }
+
+  .subjectHeader {
+    padding-inline: 12px;
+  }
+
+  .subjectBody {
+    padding-inline: 12px;
+  }
+
+  .option {
+    padding-inline: 10px;
+  }
+}

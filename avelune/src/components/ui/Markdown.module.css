@@ -1,9 +1,15 @@
-/* Markdown styling — nested elements only.
-   Base font-size / color / weight come from the parent element. */
+/* Shared Markdown surface. Context variants control typography; screen classes
+   remain responsible for layout, spacing, and state-specific presentation. */
+
+.md {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
 
 .md :global(p) {
   margin: 0 0 0.75em;
 }
+
 .md :global(p:last-child) {
   margin-bottom: 0;
 }
@@ -11,6 +17,7 @@
 .md :global(strong) {
   font-weight: 700;
 }
+
 .md :global(em) {
   font-style: italic;
 }
@@ -20,13 +27,16 @@
   margin: 0 0 0.75em;
   padding-left: 1.4em;
 }
+
 .md :global(ul:last-child),
 .md :global(ol:last-child) {
   margin-bottom: 0;
 }
+
 .md :global(li) {
   margin-bottom: 0.25em;
 }
+
 .md :global(li:last-child) {
   margin-bottom: 0;
 }
@@ -38,14 +48,18 @@
   border-radius: 4px;
   background: rgba(0, 0, 0, 0.05);
 }
+
 .md :global(pre) {
   overflow-x: auto;
+  max-width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.05);
   font-size: 0.9em;
   margin: 0 0 0.75em;
+  -webkit-overflow-scrolling: touch;
 }
+
 .md :global(pre code) {
   padding: 0;
   background: transparent;
@@ -59,6 +73,7 @@
   line-height: 1.3;
   margin: 0.75em 0 0.4em;
 }
+
 .md :global(h1:first-child),
 .md :global(h2:first-child),
 .md :global(h3:first-child),
@@ -85,11 +100,13 @@
 }
 
 .md :global(table) {
+  max-width: 100%;
   border-collapse: collapse;
   margin: 0 0 0.75em;
-  width: 100%;
   font-size: 0.95em;
+  -webkit-overflow-scrolling: touch;
 }
+
 .md :global(th),
 .md :global(td) {
   border: 1px solid var(--color-border);
@@ -97,24 +114,57 @@
   text-align: left;
 }
 
+/* Math tokens: one visual contract across every context. */
 .md :global(.katex) {
-  font-size: 1.06em;
+  font-size: 1.04em;
+  vertical-align: -0.08em;
 }
 
 .md :global(.katex-display) {
   display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 0.9em 0;
+  padding: 0.2em 0;
   overflow-x: auto;
   overflow-y: hidden;
-  max-width: 100%;
-  margin: 0.55em 0;
-  padding: 2px 0;
   -webkit-overflow-scrolling: touch;
 }
 
-.md :global(sub) { font-size: 0.75em; vertical-align: sub; }
-.md :global(sup) { font-size: 0.75em; vertical-align: super; }
-.md :global(u) { text-decoration: underline; }
-.md :global(mark) { background: #fef3c7; padding: 0 2px; }
+.md :global(.katex-display .katex) {
+  font-size: 1.08em;
+  vertical-align: baseline;
+}
+
+.md :global(.katex-display) :global(.katex-html) {
+  min-width: max-content;
+}
+
+.md :global(.katex-error) {
+  color: inherit;
+  font-style: normal;
+  font-weight: inherit;
+}
+
+.md[data-markdown-dev='true'] :global(.katex-error) {
+  outline: 1px dashed currentColor;
+  outline-offset: 2px;
+}
+
+.md :global(sub),
+.md :global(sup) {
+  font-size: 0.75em;
+}
+
+.md :global(u) {
+  text-decoration: underline;
+}
+
+.md :global(mark) {
+  background: #fef3c7;
+  padding: 0 2px;
+}
+
 .md :global(kbd) {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.85em;
@@ -123,17 +173,16 @@
   border-radius: 4px;
   background: var(--color-bg);
 }
-.md :global(img) { max-width: 100%; height: auto; }
-.md :global(del) { text-decoration: line-through; color: var(--color-text-muted); }
-.md :global(.katex) { font-size: 1.06em; }
-.md :global(.katex-display) {
+
+.md :global(img) {
   display: block;
-  overflow-x: auto;
-  overflow-y: hidden;
   max-width: 100%;
-  margin: 0.55em 0;
-  padding: 2px 0;
-  -webkit-overflow-scrolling: touch;
+  height: auto;
+}
+
+.md :global(del) {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
 }
 
 .md :global(.footnotes) {
@@ -143,9 +192,261 @@
   font-size: 0.9em;
   color: var(--color-text-muted);
 }
+
 .md :global(input[type='checkbox']) {
   margin-right: 0.4em;
   vertical-align: middle;
 }
-.md :global(details) { margin: 0 0 0.75em; }
-.md :global(summary) { cursor: pointer; font-weight: 600; }
+
+.md :global(details) {
+  margin: 0 0 0.75em;
+}
+
+.md :global(summary) {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Shared typography variants. Math inherits scale from the same content context. */
+.md.question {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--color-text);
+}
+
+.md.option {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.md.reviewQuestion {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--color-text);
+}
+
+.md.reviewOption {
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.md.explanation {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.md.article {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--color-text);
+}
+
+.md.compact {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+@media (max-width: 480px) {
+  .md :global(.katex-display) {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+
+/* ============================================================================
+   Avelune Learning UI System — Markdown presentation variants
+   Parsing is shared; these classes only alter typography and spacing.
+   ============================================================================ */
+
+.md {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.md :global(p),
+.md :global(li),
+.md :global(blockquote),
+.md :global(td),
+.md :global(th) {
+  overflow-wrap: anywhere;
+}
+
+.variantBody {
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.variantBody :global(p) {
+  margin-bottom: 0.75em;
+}
+
+.variantQuestion {
+  font-size: var(--type-question-size);
+  line-height: var(--type-question-line);
+  font-weight: var(--type-question-weight);
+  color: var(--color-text);
+}
+
+.variantQuestion :global(p) {
+  margin-bottom: 0.7em;
+}
+
+.variantQuestion :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+.variantOption {
+  font-size: var(--type-option-size);
+  line-height: var(--type-option-line);
+  font-weight: var(--type-option-weight);
+  color: var(--color-text);
+}
+
+.variantOption :global(p) {
+  margin-bottom: 0.55em;
+}
+
+.variantOption :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+.variantReviewQuestion {
+  font-size: var(--type-review-question-size);
+  line-height: var(--type-review-question-line);
+  font-weight: var(--type-review-question-weight);
+  color: var(--color-text);
+}
+
+.variantReviewQuestion :global(p) {
+  margin-bottom: 0.65em;
+}
+
+.variantReviewQuestion :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+.variantReviewOption {
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--color-text);
+}
+
+.variantReviewOption :global(p) {
+  margin-bottom: 0.5em;
+}
+
+.variantReviewOption :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+.variantExplanation {
+  font-size: var(--type-explanation-size);
+  line-height: var(--type-explanation-line);
+  font-weight: var(--type-explanation-weight);
+  color: var(--color-text);
+}
+
+.variantExplanation :global(p) {
+  margin-bottom: 0.8em;
+}
+
+.variantExplanation :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+.variantExplanation :global(h2),
+.variantExplanation :global(h3),
+.variantExplanation :global(h4) {
+  margin-top: 1em;
+  margin-bottom: 0.45em;
+  font-weight: 700;
+}
+
+.variantArticle {
+  font-size: var(--type-article-size);
+  line-height: var(--type-article-line);
+  font-weight: var(--type-article-weight);
+  color: var(--color-text);
+}
+
+.variantArticle :global(p) {
+  margin-bottom: 0.95em;
+}
+
+.variantArticle :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+.variantCompact {
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--color-text);
+}
+
+.variantCompact :global(p) {
+  margin-bottom: 0.55em;
+}
+
+.variantCompact :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+/* Math scale belongs to the shared renderer, not to individual screens. */
+.variantQuestion :global(.katex),
+.variantReviewQuestion :global(.katex) {
+  font-size: 1.04em;
+}
+
+.variantOption :global(.katex),
+.variantReviewOption :global(.katex) {
+  font-size: 1.04em;
+}
+
+.variantExplanation :global(.katex) {
+  font-size: 1.04em;
+}
+
+.variantArticle :global(.katex) {
+  font-size: 1.04em;
+}
+
+/* Keep wide display equations inside the Markdown content region. */
+.md :global(.katex-display) {
+  max-width: var(--content-equation-max);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+
+.md :global(.katex-display) > :global(.katex) {
+  max-width: none;
+}
+
+/* Do not clip tall inline equations. */
+.md :global(.katex) {
+  vertical-align: baseline;
+}
+
+.md :global(pre),
+.md :global(table) {
+  max-width: 100%;
+  overflow-x: auto;
+}

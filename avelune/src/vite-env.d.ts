@@ -9,5 +9,4 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
-declare module 'remark-supersub';
 declare module 'remark-breaks';

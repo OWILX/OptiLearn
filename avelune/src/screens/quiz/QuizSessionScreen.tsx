@@ -462,7 +462,7 @@ export function QuizSessionScreen() {
       </div>
 
       <article className={styles.questionCard}>
-        <Markdown className={styles.questionText}>{current.question}</Markdown>
+        <Markdown variant="question" className={styles.questionText}>{current.question}</Markdown>
         <div className={styles.options}>
           {current.options.map((opt, i) => {
             const letter = LETTERS[i];
@@ -477,7 +477,7 @@ export function QuizSessionScreen() {
                 }
               >
                 <span className={styles.optionLetter}>{letter}</span>
-                <Markdown className={styles.optionText}>{opt}</Markdown>
+                <Markdown variant="option" className={styles.optionText}>{opt}</Markdown>
               </button>
             );
           })}
@@ -777,7 +777,7 @@ function QuizReview({
                 </span>
               </div>
 
-              <Markdown className={styles.reviewQuestion}>
+              <Markdown variant="review-question" className={styles.reviewQuestion}>
                 {row.question.question}
               </Markdown>
 
@@ -801,7 +801,7 @@ function QuizReview({
                       <span className={styles.reviewOptionLetter}>
                         {letter}
                       </span>
-                      <Markdown className={styles.reviewOptionText}>
+                      <Markdown variant="review-option" className={styles.reviewOptionText}>
                         {opt}
                       </Markdown>
                     </div>
@@ -811,7 +811,7 @@ function QuizReview({
 
               <div className={styles.reviewExplanation}>
                 {explanation ? (
-                  <Markdown>{explanation}</Markdown>
+                  <Markdown variant="explanation">{explanation}</Markdown>
                 ) : (
                   <span className={styles.reviewExplanationEmpty}>
                     No explanation is available for this question yet.

@@ -360,7 +360,7 @@ useEffect(() => {
             </span>
           )}
         </div>
-        <Markdown className={styles.questionText}>{current.question}</Markdown>
+        <Markdown variant="question" className={styles.questionText}>{current.question}</Markdown>
       </article>
 
       {stage !== 'question' && (
@@ -375,7 +375,7 @@ useEffect(() => {
                   className={`${styles.option} ${isCorrect ? styles.optionCorrect : ''}`}
                 >
                   <span className={styles.optionLetter}>{letter}</span>
-                  <Markdown className={styles.optionText}>{opt}</Markdown>
+                  <Markdown variant="option" className={styles.optionText}>{opt}</Markdown>
                 </div>
               );
             })}
@@ -394,7 +394,7 @@ useEffect(() => {
             </span>
           </div>
           {explanation ? (
-            <Markdown className={styles.explanationBody}>{explanation}</Markdown>
+            <Markdown variant="explanation" className={styles.explanationBody}>{explanation}</Markdown>
           ) : (
             <p className={styles.explanationEmpty}>
               No explanation is available for this question yet.
@@ -431,7 +431,7 @@ useEffect(() => {
 
           {aiAnswer && (
             <div style={{ marginTop: 12 }}>
-              <Markdown className={styles.explanationBody}>{aiAnswer}</Markdown>
+              <Markdown variant="explanation" className={styles.explanationBody}>{aiAnswer}</Markdown>
             </div>
           )}
         </article>

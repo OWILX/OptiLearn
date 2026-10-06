@@ -779,3 +779,332 @@
   color: var(--color-text-muted);
   font-style: italic;
 }
+
+
+/* ============================================================================
+   Avelune Learning UI System — QuizSessionScreen
+   ============================================================================ */
+
+/* Screen density */
+.page {
+  max-width: 700px;
+  gap: var(--space-4);
+  padding-bottom: calc(var(--space-8) + var(--safe-bottom));
+}
+
+/* Sticky progress/timer surface */
+.timerBar {
+  background: rgba(255, 255, 255, 0.97);
+  border-bottom-color: var(--color-border-strong);
+  box-shadow: 0 8px 18px -18px rgba(16, 24, 40, 0.55);
+  backdrop-filter: blur(10px);
+}
+
+.timerProgress {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+/* Quiet metadata: content should win visually. */
+.metaRow {
+  gap: 6px;
+  margin-top: calc(var(--space-1) * -1);
+}
+
+.metaChip {
+  min-height: 28px;
+  padding: 4px 9px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--type-metadata-size);
+  line-height: var(--type-metadata-line);
+  font-weight: var(--type-metadata-weight);
+  text-transform: none;
+}
+
+.metaChip:first-child {
+  color: var(--color-brand-blue);
+  border-color: rgba(22, 36, 140, 0.18);
+  background: var(--color-brand-blue-soft);
+}
+
+/* Raised question surface */
+.questionCard {
+  position: relative;
+  gap: var(--space-5);
+  padding: clamp(16px, 4vw, 24px);
+  border: 1px solid var(--card-raised-border);
+  border-left: 3px solid var(--learning-question-accent);
+  border-radius: var(--radius-lg);
+  background: var(--card-raised-background);
+  box-shadow: var(--card-raised-shadow);
+  overflow: hidden;
+}
+
+.questionText {
+  max-width: var(--content-question-max);
+  font-size: var(--type-question-size);
+  line-height: var(--type-question-line);
+  font-weight: var(--type-question-weight);
+  letter-spacing: -0.006em;
+}
+
+/* Answer comparison area */
+.options {
+  gap: 10px;
+  min-width: 0;
+}
+
+.option {
+  min-height: var(--touch-target-comfort);
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: 11px 13px;
+  border-color: var(--learning-option-border);
+  background: var(--learning-option-background);
+  box-shadow: none;
+}
+
+.option:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-xs);
+}
+
+.option:focus-visible {
+  outline: 0;
+  box-shadow: var(--learning-focus-ring);
+}
+
+.optionSelected {
+  border-color: var(--color-brand-blue);
+  background: var(--color-brand-blue-soft);
+  box-shadow: 0 0 0 3px rgba(22, 36, 140, 0.07);
+}
+
+.optionLetter {
+  width: 27px;
+  height: 27px;
+  flex-basis: 27px;
+  margin-top: 1px;
+  font-size: 12px;
+}
+
+.optionText {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--type-option-size);
+  line-height: var(--type-option-line);
+  font-weight: var(--type-option-weight);
+  padding-top: 2px;
+}
+
+/* Action bar — compact, grouped, and thumb-reachable on mobile. */
+.actions {
+  gap: 10px;
+}
+
+.prevButton,
+.nextButton {
+  min-height: var(--touch-target-comfort);
+  border-radius: var(--radius-md);
+}
+
+.prevButton {
+  padding-inline: 16px;
+  border-color: var(--color-border-strong);
+}
+
+.nextButton {
+  min-width: 104px;
+  padding-inline: 18px;
+  box-shadow: 0 4px 12px rgba(22, 36, 140, 0.13);
+}
+
+/* Navigator = floating surface, not another normal card. */
+.sheet {
+  border-top: 1px solid var(--card-floating-border);
+  box-shadow: var(--card-floating-shadow);
+}
+
+.sheetLegend {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+.navCell {
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+}
+
+.navCell:focus-visible {
+  outline: 0;
+  box-shadow: var(--learning-focus-ring);
+}
+
+/* Review header stays informative without becoming dashboard-heavy. */
+.reviewHeader {
+  gap: 6px;
+  padding-top: var(--space-5);
+}
+
+.reviewScore {
+  font-size: 38px;
+  font-weight: 750;
+}
+
+.reviewStats {
+  gap: 8px;
+  max-width: 420px;
+}
+
+.reviewStat {
+  padding: 11px 8px;
+  background: var(--card-flat-background);
+  border-color: var(--card-flat-border);
+  box-shadow: none;
+}
+
+.reviewStatLabel {
+  font-size: 10px;
+  color: var(--color-text-subtle);
+}
+
+/* Review cards are raised only once; internal layers stay flatter. */
+.reviewCard {
+  gap: var(--space-4);
+  padding: 18px;
+  border-color: var(--card-raised-border);
+  box-shadow: var(--card-raised-shadow);
+}
+
+.reviewQuestion {
+  font-size: var(--type-review-question-size);
+  line-height: var(--type-review-question-line);
+  font-weight: var(--type-review-question-weight);
+}
+
+.reviewOptions {
+  gap: 8px;
+}
+
+.reviewOption {
+  min-height: var(--touch-target-min);
+  padding: 10px 11px;
+  background: var(--learning-option-background);
+}
+
+.reviewOptionText {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.reviewExplanation {
+  position: relative;
+  padding: 14px 15px 14px 17px;
+  border: 1px solid rgba(107, 33, 168, 0.12);
+  border-left: 3px solid var(--learning-explanation-accent);
+  border-radius: var(--radius-md);
+  background: var(--learning-explanation-surface);
+  font-size: var(--type-explanation-size);
+  line-height: var(--type-explanation-line);
+}
+
+.reviewExplanationEmpty {
+  font-size: var(--type-caption-size);
+}
+
+/* Mobile is a primary layout, not a collapsed desktop. */
+@media (max-width: 767px) {
+  .page {
+    gap: 12px;
+    padding-bottom: calc(76px + var(--safe-bottom));
+  }
+
+  .timerBar {
+    padding-inline: 2px;
+  }
+
+  .questionCard {
+    padding: 16px;
+    gap: 18px;
+    border-left-width: 3px;
+  }
+
+  .questionText {
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  .option {
+    padding: 11px 12px;
+  }
+
+  .actions {
+    position: sticky;
+    bottom: calc(8px + var(--safe-bottom));
+    z-index: 9;
+    padding: 8px;
+    margin-inline: -4px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(10px);
+  }
+
+  .prevButton,
+  .nextButton {
+    flex: 1;
+  }
+
+  .reviewCard {
+    padding: 16px;
+  }
+
+  .reviewActions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 389px) {
+  .questionCard {
+    padding: 14px;
+  }
+
+  .option {
+    gap: 10px;
+    padding-inline: 10px;
+  }
+
+  .optionLetter {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+  }
+
+  .actions {
+    gap: 7px;
+  }
+
+  .prevButton,
+  .nextButton {
+    padding-inline: 12px;
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    animation: none;
+  }
+
+  .option,
+  .nextButton,
+  .prevButton {
+    transition: none;
+  }
+}

@@ -46,6 +46,37 @@ export const QUESTION_BANK_LIVE_SELECT =
 export const QUESTION_BANK_KEY_SELECT =
   'id, correct_answer, standard_explanation, premium_explanation';
 
+/**
+ * Parse a row from question_bank_live.
+ *
+ * The live view intentionally omits correct_answer and explanations.
+ * Those authoritative fields are returned by submitSep()/submitQuiz()
+ * after submission. During an active exam, the answer value here is only
+ * a placeholder so the question can safely live in the session state.
+ */
+function parseLiveMCQ(row: QuestionBankRow): MCQQuestion | null {
+  const question = (row.question ?? '').trim();
+  if (!question) return null;
+
+  const options = [
+    (row.option_a ?? '').trim(),
+    (row.option_b ?? '').trim(),
+    (row.option_c ?? '').trim(),
+    (row.option_d ?? '').trim(),
+  ];
+  if (options.some((o) => !o)) return null;
+
+  return {
+    id: row.id,
+    question,
+    options,
+    // Deliberately not the real answer. The live view does not expose it.
+    answer: 'A',
+    standardExplanation: '',
+    premiumExplanation: '',
+  };
+}
+
 export function parseMCQ(row: QuestionBankRow): MCQQuestion | null {
   const question = (row.question ?? '').trim();
   if (!question) return null;
@@ -181,10 +212,10 @@ export const questionService = {
 
     const candidates: MCQQuestion[] = [];
     for (const row of (rows ?? []) as QuestionBankRow[]) {
-      const mcq = parseMCQ(row);
+      const mcq = parseLiveMCQ(row);
       if (mcq) candidates.push(mcq);
       else if (import.meta.env.DEV) {
-        console.warn('[SEP] Skipped malformed row id=', row.id);
+        console.warn('[SEP] Skipped malformed live row id=', row.id);
       }
     }
 

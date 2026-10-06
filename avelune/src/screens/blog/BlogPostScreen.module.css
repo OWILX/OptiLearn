@@ -86,3 +86,76 @@
     width: 100%;
   }
 }
+
+
+/* ============================================================================
+   Avelune Learning UI System — BlogPostScreen
+   ============================================================================ */
+
+.page {
+  max-width: 760px;
+  gap: var(--space-5);
+  padding-bottom: calc(var(--space-10) + var(--safe-bottom));
+}
+
+.article {
+  gap: var(--space-4);
+  max-width: var(--content-reading-max);
+}
+
+.back {
+  min-height: var(--touch-target-min);
+}
+
+.subject {
+  align-self: flex-start;
+  padding: 4px 9px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: var(--type-metadata-size);
+  line-height: var(--type-metadata-line);
+}
+
+.title {
+  max-width: 22ch;
+  font-size: clamp(26px, 6vw, 32px);
+  line-height: var(--type-display-line);
+  font-weight: var(--type-display-weight);
+  letter-spacing: -0.028em;
+}
+
+.body {
+  max-width: var(--content-reading-max);
+  font-size: var(--type-article-size);
+  line-height: var(--type-article-line);
+}
+
+.practise {
+  min-height: var(--touch-target-comfort);
+  margin-top: var(--space-5);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(22, 36, 140, 0.13);
+}
+
+.practise:focus-visible {
+  outline: 0;
+  box-shadow: var(--learning-focus-ring);
+}
+
+@media (max-width: 767px) {
+  .page {
+    gap: var(--space-4);
+  }
+
+  .title {
+    max-width: none;
+    font-size: clamp(24px, 8vw, 30px);
+  }
+
+  .body {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+}

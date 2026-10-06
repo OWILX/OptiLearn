@@ -258,7 +258,7 @@ export function SepHistoryDetailScreen() {
                           </span>
                         </div>
 
-                        <Markdown className={styles.questionText}>
+                        <Markdown variant="review-question" className={styles.questionText}>
                           {q.question}
                         </Markdown>
 
@@ -282,7 +282,7 @@ export function SepHistoryDetailScreen() {
                                 <span className={styles.optionLetter}>
                                   {letter}
                                 </span>
-                                <Markdown className={styles.optionText}>
+                                <Markdown variant="review-option" className={styles.optionText}>
                                   {opt}
                                 </Markdown>
                               </div>
@@ -292,7 +292,7 @@ export function SepHistoryDetailScreen() {
 
                         <div className={styles.explanation}>
                           {explanation ? (
-                            <Markdown>{explanation}</Markdown>
+                            <Markdown variant="explanation">{explanation}</Markdown>
                           ) : (
                             <span className={styles.explanationEmpty}>
                               No explanation available for this question yet.
