@@ -6,10 +6,10 @@
 }
 
 .spinner {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  border: 2.5px solid var(--color-brand-blue-soft);
+  border: 3px solid var(--color-brand-blue-soft);
   border-top-color: var(--color-brand-blue);
   animation: spin 1600ms linear infinite;
 }

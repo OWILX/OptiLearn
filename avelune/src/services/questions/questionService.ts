@@ -179,7 +179,11 @@ export const questionService = {
     const rows = (data ?? []) as QuestionBankRow[];
     const parsed: MCQQuestion[] = [];
     for (const row of rows) {
-      const mcq = parseMCQ(row);
+      const question = (row.question ?? '').trim();
+      const options = [row.option_a, row.option_b, row.option_c, row.option_d].map((o) => (o ?? '').trim());
+      const mcq = question && options.every(Boolean)
+        ? { id: row.id, question, options, answer: 'A' as const, standardExplanation: '', premiumExplanation: '' }
+        : null;
       if (mcq) parsed.push(mcq);
       else if (import.meta.env.DEV) {
         console.warn('[QUESTIONS] Skipped malformed row id=', row.id);

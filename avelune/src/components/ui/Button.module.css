@@ -88,8 +88,8 @@
 
 /* Spinner inside button while loading */
 .spinner {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 2px solid currentColor;
   border-top-color: transparent;
