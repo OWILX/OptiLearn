@@ -234,16 +234,13 @@ export const questionService = {
       .eq('attempt_type', 'sep')
       .in('question_id', ids);
 
-    if (attemptErr)
-      throw wrapError(attemptErr, 'Could not load attempt history.');
-
-    const weights = computeWeights(
-      ids,
-      (attemptRows ?? []) as {
-        question_id: number;
-        is_correct: boolean | null;
-      }[],
-    );
+    const history = attemptErr
+      ? []
+      : ((attemptRows ?? []) as {
+          question_id: number;
+          is_correct: boolean | null;
+        }[]);
+    const weights = computeWeights(ids, history);
     return weightedSampleWithoutReplacement(candidates, weights, count);
   },
 

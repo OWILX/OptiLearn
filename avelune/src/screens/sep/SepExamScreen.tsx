@@ -172,7 +172,7 @@ export function SepExamScreen() {
         if (
           persisted &&
           configMatches(persisted, config) &&
-          persisted.endTime - Date.now() > 0
+          persisted.endTime - Date.now() > 0 && persisted.questions.length > 0
         ) {
           if (cancelled) return;
           setQuestions(persisted.questions);
@@ -205,9 +205,7 @@ export function SepExamScreen() {
 
         if (flat.length === 0) {
           setQuestions([]);
-          setError(
-            'No questions are available for the selected subjects yet.',
-          );
+setError('No questions are available for the selected subjects yet.');
           setLoading(false);
           return;
         }

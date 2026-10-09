@@ -166,7 +166,7 @@ export function QuizSessionScreen() {
 
 
     const stored = readSession<QuizPersistedSession>(QUIZ_SESSION_KEY);
-    if (stored && quizSessionMatches(stored, config)) {
+    if (stored && stored.questions?.length > 0 && quizSessionMatches(stored, config)) {
       setQuestions(stored.questions);
       setAnswers(stored.answers);
       setCurrentIndex(
@@ -191,6 +191,9 @@ export function QuizSessionScreen() {
       })
       .then((qs) => {
         if (cancelled) return;
+        if (qs.length === 0) {
+          setError('No questions match that subject and difficulty yet.');
+        }
         setQuestions(qs);
         if (qs.length > 0) {
           const endMs = Date.now() + config.timeLimitMinutes * 60_000;
@@ -214,9 +217,7 @@ export function QuizSessionScreen() {
         if (import.meta.env.DEV) {
           console.warn('[QUIZ] Load failed:', err);
         }
-        setError(
-          "We couldn't load questions for this quiz. Try a different subject or difficulty.",
-        );
+        setError("We couldn't load questions for this quiz. Try a different subject or difficulty.");
       })
       .finally(() => {
         if (cancelled) return;
