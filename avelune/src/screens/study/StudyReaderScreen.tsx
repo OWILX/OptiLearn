@@ -101,36 +101,34 @@ export function StudyReaderScreen() {
   const isPremium = profile?.premium === true;
 
   async function handleAskAI(raw: string) {
-  const message = String(raw || '').trim();
-  const question = questions?.[currentIndex];
-  if (!question || !message || aiLoading) {
-    alert('blocked ' + JSON.stringify({ hasQuestion: Boolean(question), message, aiLoading }));
-    return;
-  }
-  setAiLoading(true);
-  setAiAnswer(null);
-  setAiError('Sending…');
-  try {
-    const result = await askAI({
-      question_id: question.id,
-      context: 'study',
-      message,
-    });
-    alert('RESULT ' + JSON.stringify(result));
-    if (!result.ok) {
-      setAiError('Rejected: ' + JSON.stringify(result));
-      return;
-    }
+    const message = String(raw || '').trim();
+    const question = questions?.[currentIndex];
+    if (!question || !message || aiLoading) return;
+    setAiLoading(true);
+    setAiAnswer(null);
     setAiError(null);
-    setAiAnswer(result.answer_markdown || 'Empty answer');
-  } catch (err) {
-    const text = err instanceof Error ? err.message : String(err);
-    alert('FAIL ' + text);
-    setAiError(text);
-  } finally {
-    setAiLoading(false);
+    try {
+      const result = await askAI({
+        question_id: question.id,
+        context: 'study',
+        message,
+      });
+      if (!result.ok) {
+        setAiError(
+          result.reason
+            ? `Ask AI could not answer: ${result.reason}`
+            : 'Ask AI could not answer that right now.',
+        );
+        return;
+      }
+      setAiAnswer(result.answer_markdown || 'The answer came back empty.');
+    } catch (err) {
+      const text = err instanceof Error ? err.message : String(err);
+      setAiError(text);
+    } finally {
+      setAiLoading(false);
+    }
   }
-}
 
 useEffect(() => {
     setStage('question');
