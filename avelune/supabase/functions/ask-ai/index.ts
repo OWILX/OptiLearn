@@ -16,10 +16,7 @@ Deno.serve(async (req) => {
 
   const header = req.headers.get("Authorization") ?? "";
   const token = header.replace(/^Bearer\s+/i, "").trim();
-  console.log("[ask-ai] auth header length:", header.length, "token length:", token.length);
-  if (!token) {
-    return json({ ok: false, reason: "unauthenticated", where: "no-token", len: header.length }, 401);
-  }
+  if (!token) return json({ ok: false, reason: "unauthenticated" }, 401);
 
   const url = Deno.env.get("SUPABASE_URL") ?? "";
   const anon = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
@@ -34,12 +31,9 @@ Deno.serve(async (req) => {
   });
   const { data: userData, error: userError } = await userClient.auth.getUser(token);
   if (userError || !userData.user) {
-    console.log("[ask-ai] getUser failed:", userError?.message ?? "no user");
     return json({
       ok: false,
       reason: "unauthenticated",
-      where: "getUser",
-      detail: userError?.message ?? "no user returned",
     }, 401);
   }
 

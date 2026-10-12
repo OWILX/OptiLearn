@@ -1,0 +1,16 @@
+# Supabase project configuration.
+#
+# Read by the Supabase GitHub integration and by the CLI.
+# The GitHub integration syncs function config (and migrations, if any)
+# from this repo into the linked project. Data rows are not synced.
+#
+# See: https://supabase.com/docs/guides/local-development/cli/config
+
+project_id = "jxdllmwdyvhcsdvodnbb"
+
+[functions.ask-ai]
+# The function validates the bearer token itself with auth.getUser(token).
+# Gateway-level JWT enforcement rewrites/strips the Authorization header
+# before the handler runs, which returned a 401 we could not distinguish
+# from our own "unauthenticated" response.
+verify_jwt = false
