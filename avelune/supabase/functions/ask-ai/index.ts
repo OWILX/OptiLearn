@@ -1,3 +1,4 @@
+// MARKER-4d340d -- deploy check, delete after confirming
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -12,6 +13,7 @@ function json(body: unknown, status = 200) {
 }
 
 Deno.serve(async (req) => {
+  console.log("[MARKER-4d340d] handler reached");
   if (req.method !== "POST") return json({ ok: false, reason: "method" }, 405);
 
   const header = req.headers.get("Authorization") ?? "";
