@@ -1,25 +1,18 @@
-// MARKER-4d340d -- deploy check, delete after confirming
-
-import { createClient } from "npm:@supabase/supabase-js@2";
-
-const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-const TUTOR_MODEL = "nvidia/nemotron-3-super-120b-a12b";
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
+ploy chec
+import { createCabase-js@2"
+const NVIDIA_API_URL = icv/a/mlis;osTT_inmr--s
+  return new Response(JSON.stri, {
     status,
     headers: { "Content-Type": "application/json" },
   });
 }
-
 Deno.serve(async (req) => {
   console.log("[MARKER-4d340d] handler reached");
-  if (req.method !== "POST") return json({ ok: false, reason: "method" }, 405);
+  if (req.method !== "POST") return json({
 
   const header = req.headers.get("Authorization") ?? "";
   const token = header.replace(/^Bearer\s+/i, "").trim();
-  console.log("[ask-ai] header len:", header.length, "token len:", token.length, "prefix:", header.slice(0, 12));
-  if (!token) {
+  console.log("[ask-ai] header len:", header.length, "token len:", token.length, "prefix:", header.slice(0, 12)); if (!token) {
     return json({ ok: false, reason: "unauthenticated", where: "no-token", headerLen: header.length }, 401);
   }
 
