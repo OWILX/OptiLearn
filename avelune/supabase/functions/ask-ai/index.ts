@@ -1,3 +1,4 @@
+// MARKER-49fb76 -- deploy check, delete after confirming
 ploy chec
 import { createCabase-js@2"
 const NVIDIA_API_URL = icv/a/mlis;osTT_inmr--s
@@ -7,6 +8,7 @@ const NVIDIA_API_URL = icv/a/mlis;osTT_inmr--s
   });
 }
 Deno.serve(async (req) => {
+  console.log("[MARKER-49fb76] handler reached");
   console.log("[MARKER-4d340d] handler reached");
   if (req.method !== "POST") return json({
 
