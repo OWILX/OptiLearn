@@ -1,0 +1,58 @@
+.viewport {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(88px + var(--safe-bottom));
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: center;
+  pointer-events: none;
+  width: min(440px, calc(100% - 32px));
+}
+
+.toast {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 18px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  box-shadow: var(--shadow-lg);
+  border: none;
+  cursor: pointer;
+  max-width: 100%;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+  transform: translateY(0);
+  opacity: 1;
+  transition:
+    transform 220ms var(--ease-out),
+    opacity 220ms var(--ease-out);
+}
+
+.entering {
+  transform: translateY(12px);
+  opacity: 0;
+}
+
+.success {
+  background: var(--color-success);
+}
+
+.error {
+  background: var(--color-danger);
+}
+
+.info {
+  background: var(--color-text);
+}
+
+@media (min-width: 768px) {
+  .viewport {
+    bottom: calc(96px + var(--safe-bottom));
+  }
+}
