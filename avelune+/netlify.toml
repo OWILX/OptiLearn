@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build:notes && npm run build"
+  publish = "dist"
+
+# The study notes are pre-built static files under public/study-notes, so Vite
+# copies them into dist/. Netlify serves real files before applying rewrites,
+# which is why /study-notes/<slug>/ keeps working despite the SPA catch-all
+# below — nothing needs to be special-cased here.
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
