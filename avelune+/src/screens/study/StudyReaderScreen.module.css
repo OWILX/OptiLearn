@@ -1,0 +1,927 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 720px;
+  margin: 0 auto;
+  padding-bottom: var(--space-8);
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.counter {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.progressTrack {
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-blue);
+  transition: width 260ms var(--ease-out);
+}
+
+.questionCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.moduleHeading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.moduleHeading > span {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.moduleHeading h1,
+.moduleTitle {
+  color: var(--color-text);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.moduleContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.moduleContentTitle {
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.questionHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.qBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-blue-soft);
+  color: var(--color-brand-blue);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.premiumBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-purple-soft);
+  color: var(--color-brand-purple);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.questionText {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--color-text);
+  letter-spacing: -0.005em;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.optionsSlide {
+  min-width: 0;
+}
+
+.revealPanel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    grid-template-rows 300ms var(--ease-out),
+    opacity 220ms var(--ease-out),
+    transform 300ms var(--ease-out);
+  pointer-events: none;
+}
+
+.revealPanelOpen {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.revealPanelInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.optionCorrect {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.optionLetter {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.optionCorrect .optionLetter {
+  color: #ffffff;
+  background: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.optionText {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-text);
+  padding-top: 2px;
+}
+
+.optionCorrect .optionText {
+  color: #14532d;
+  font-weight: 500;
+}
+
+.revealRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.revealButton,
+.revealButtonSecondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 48px;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 600;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 140ms var(--ease-out),
+    border-color 140ms var(--ease-out);
+}
+
+.revealButton {
+  border: 1px dashed var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-brand-blue);
+}
+
+.revealButtonSecondary {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+
+.revealButton:hover {
+  background: var(--color-brand-blue-soft);
+  border-color: var(--color-brand-blue);
+}
+
+.revealButtonSecondary:hover {
+  background: var(--color-surface);
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+
+.revealButton:active,
+.revealButtonSecondary:active {
+  transform: scale(0.99);
+}
+
+.explanationCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-brand-blue-soft);
+  border: 1px solid rgba(22, 36, 140, 0.08);
+}
+
+.explanationHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.explanationTitle {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand-blue);
+}
+
+.explanationBody {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text);
+}
+
+.explanationEmpty {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.aiRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid rgba(22, 36, 140, 0.08);
+}
+
+.aiButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.aiHint {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.prevButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  font-size: 15px;
+  font-weight: 600;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 140ms var(--ease-out),
+    transform 100ms var(--ease-out),
+    opacity 140ms var(--ease-out);
+}
+
+.prevButton:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.prevButton:not(:disabled):hover {
+  background: var(--color-bg);
+}
+
+.prevButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.nextButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 12px 22px;
+  border-radius: var(--radius-md);
+  background: var(--color-brand-blue);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 140ms var(--ease-out),
+    transform 100ms var(--ease-out);
+}
+
+.nextButton:active {
+  transform: scale(0.98);
+}
+
+.nextButton:hover {
+  background: #101d75;
+}
+
+.endCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.endIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-pill);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  display: grid;
+  place-items: center;
+}
+
+.endTitle {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.endText {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  max-width: 36ch;
+  line-height: 1.4;
+}
+
+.endActions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.error {
+  font-size: 13px;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(185, 28, 28, 0.15);
+}
+
+/* === Visual polish pass === */
+.page {
+  animation: pageEnter 260ms var(--ease-out) both;
+}
+
+.card,
+.row,
+.topicRow,
+.difficultyCard,
+.actionButton,
+.recentRow,
+.questionCard,
+.summaryCard,
+.subjectSection {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.card:focus-visible,
+.row:focus-visible,
+.topicRow:focus-visible,
+.difficultyCard:focus-visible,
+.actionButton:focus-visible,
+.resumeBanner:focus-visible,
+.resumeSepCard:focus-visible,
+.option:focus-visible,
+.chip:focus-visible,
+.subjectSectionHeader:focus-visible {
+  outline: 0;
+  box-shadow: var(--shadow-focus);
+}
+
+@media (hover: hover) {
+  .card:hover,
+  .row:hover,
+  .topicRow:hover,
+  .difficultyCard:hover,
+  .actionButton:hover,
+  .recentRow:hover,
+  .questionCard:hover,
+  .summaryCard:hover,
+  .subjectSection:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+@media (max-width: 479px) {
+  .page {
+    gap: var(--space-5);
+  }
+
+  .title {
+    font-size: clamp(22px, 7vw, 26px);
+  }
+
+  .actions {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .prevButton,
+  .nextButton {
+    flex: 1;
+    justify-content: center;
+    min-height: 48px;
+  }
+}
+/* === Targeted visual refinements === */
+
+.questionCard {
+  box-shadow: var(--shadow-md);
+}
+
+.option {
+  transition: border-color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.option:hover {
+  border-color: rgba(22, 36, 140, 0.32);
+  box-shadow: var(--shadow-xs);
+}
+
+
+/* ============================================================================
+   Avelune Learning UI System — StudyReaderScreen
+   ============================================================================ */
+
+.page {
+  max-width: 700px;
+  gap: var(--space-5);
+  padding-bottom: calc(var(--space-8) + var(--safe-bottom));
+}
+
+.topBar {
+  min-height: var(--touch-target-min);
+}
+
+.counter {
+  font-size: var(--type-caption-size);
+  line-height: var(--type-caption-line);
+}
+
+.questionCard {
+  position: relative;
+  gap: var(--space-4);
+  padding: clamp(16px, 4vw, 24px);
+  border: 1px solid var(--card-raised-border);
+  border-left: 3px solid var(--learning-question-accent);
+  border-radius: var(--radius-lg);
+  background: var(--card-raised-background);
+  box-shadow: var(--card-raised-shadow);
+}
+
+.questionText {
+  max-width: var(--content-question-max);
+  font-size: var(--type-question-size);
+  line-height: var(--type-question-line);
+  font-weight: var(--type-question-weight);
+  letter-spacing: -0.006em;
+}
+
+.options {
+  gap: 10px;
+  min-width: 0;
+}
+
+.option {
+  min-height: var(--touch-target-min);
+  gap: var(--space-3);
+  padding: 11px 13px;
+  background: var(--learning-option-background);
+  border-color: var(--learning-option-border);
+}
+
+.optionLetter {
+  width: 27px;
+  height: 27px;
+  flex-basis: 27px;
+  margin-top: 1px;
+}
+
+.optionText {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--type-option-size);
+  line-height: var(--type-option-line);
+  padding-top: 2px;
+}
+
+.revealButton,
+.revealButtonSecondary {
+  min-height: var(--touch-target-comfort);
+  border-radius: var(--radius-md);
+}
+
+.explanationCard {
+  position: relative;
+  gap: var(--space-4);
+  padding: clamp(16px, 4vw, 22px);
+  border: 1px solid rgba(107, 33, 168, 0.12);
+  border-left: 3px solid var(--learning-explanation-accent);
+  border-radius: var(--radius-lg);
+  background: var(--learning-explanation-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.explanationTitle {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.explanationBody {
+  font-size: var(--type-explanation-size);
+  line-height: var(--type-explanation-line);
+  font-weight: var(--type-explanation-weight);
+}
+
+/* Ask AI is an available learning action, not a permanently disabled control. */
+.aiRow {
+  padding-top: var(--space-3);
+  border-top: 1px solid rgba(107, 33, 168, 0.12);
+}
+
+.aiButton {
+  min-height: 44px;
+  padding: 8px 13px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-brand-purple);
+  cursor: pointer;
+  opacity: 1;
+}
+
+.aiButton:not(:disabled):hover {
+  background: #ffffff;
+  border-color: rgba(107, 33, 168, 0.28);
+  box-shadow: var(--shadow-xs);
+}
+
+.aiButton:focus-visible {
+  outline: 0;
+  box-shadow: var(--learning-focus-ring);
+}
+
+.aiButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.aiHint {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.actions {
+  gap: 10px;
+}
+
+.prevButton,
+.nextButton {
+  min-height: var(--touch-target-comfort);
+  border-radius: var(--radius-md);
+}
+
+.nextButton {
+  min-width: 104px;
+  box-shadow: 0 4px 12px rgba(22, 36, 140, 0.13);
+}
+
+.endCard {
+  padding: var(--space-8) 20px;
+  border-color: var(--card-raised-border);
+  box-shadow: var(--card-raised-shadow);
+}
+
+.reportButton {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 7px;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    color 140ms var(--ease-out),
+    border-color 140ms var(--ease-out),
+    background 140ms var(--ease-out);
+}
+
+.reportButton:hover {
+  color: var(--color-brand-blue);
+  border-color: var(--color-brand-blue);
+  background: var(--color-brand-blue-soft);
+}
+
+.reportButton:focus-visible,
+.reportCancel:focus-visible,
+.reportSubmit:focus-visible {
+  outline: 0;
+  box-shadow: var(--learning-focus-ring);
+}
+
+.reportOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.52);
+  backdrop-filter: blur(4px);
+}
+
+.reportDialog {
+  width: min(100%, 480px);
+  max-height: min(90vh, 720px);
+  overflow-y: auto;
+  padding: clamp(20px, 5vw, 28px);
+  border: 1px solid var(--card-raised-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  animation: reportDialogEnter 180ms var(--ease-out) both;
+}
+
+.reportTitle {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.reportDescription {
+  margin: 8px 0 18px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.reportTypes {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 0;
+  border: 0;
+}
+
+.reportType {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 8px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.reportType:has(input:checked) {
+  border-color: var(--color-brand-blue);
+  background: var(--color-brand-blue-soft);
+}
+
+.reportType input {
+  accent-color: var(--color-brand-blue);
+}
+
+.reportFieldLabel {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.reportFieldLabel span {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.reportTextarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 11px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.reportTextarea:focus-visible {
+  outline: 0;
+  border-color: var(--color-brand-blue);
+  box-shadow: var(--learning-focus-ring);
+}
+
+.reportError {
+  margin: 10px 0 0;
+  color: var(--color-danger);
+  font-size: 13px;
+}
+
+.reportActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.reportCancel,
+.reportSubmit {
+  min-height: 42px;
+  padding: 9px 15px;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reportCancel {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.reportSubmit {
+  border: 1px solid var(--color-brand-blue);
+  background: var(--color-brand-blue);
+  color: #fff;
+}
+
+.reportCancel:disabled,
+.reportSubmit:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes reportDialogEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .revealPanel,
+  .reportDialog {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .page {
+    gap: 12px;
+    padding-bottom: calc(76px + var(--safe-bottom));
+  }
+
+  .questionCard,
+  .explanationCard {
+    padding: 16px;
+  }
+
+  .actions {
+    position: sticky;
+    bottom: calc(8px + var(--safe-bottom));
+    z-index: 9;
+    padding: 8px;
+    margin-inline: -4px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(10px);
+  }
+
+  .prevButton,
+  .nextButton {
+    flex: 1;
+  }
+}
+
+@media (max-width: 389px) {
+  .questionCard,
+  .explanationCard {
+    padding: 14px;
+  }
+
+  .option {
+    gap: 10px;
+    padding-inline: 10px;
+  }
+}
