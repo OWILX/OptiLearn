@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowRight,
@@ -24,7 +24,13 @@ import {
 import { BackButton } from '@/components/ui/BackButton';
 import { Button } from '@/components/ui/Button';
 import { Markdown } from '@/components/ui/Markdown';
+import { PremiumExplanationGate } from '@/components/premium/PremiumExplanationGate';
 import { askAI } from '@/services/ai/askAi';
+import {
+  unlockService,
+  type TopicUnlock,
+} from '@/services/usage/unlockService';
+import { rewardedService } from '@/services/ads/rewardedService';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import styles from './StudyReaderScreen.module.css';
@@ -81,10 +87,12 @@ export function StudyReaderScreen() {
   const syllabusId = Number(syllabusIdParam);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { profile } = useProfile();
+  const { profile, limits } = useProfile();
 
   const [syllabus, setSyllabus] = useState<SyllabusRow | null>(null);
-  const [questions, setQuestions] = useState<MCQQuestion[] | null>(null);
+  const [allQuestions, setAllQuestions] = useState<MCQQuestion[] | null>(null);
+  const [topicUnlock, setTopicUnlock] = useState<TopicUnlock | null>(null);
+  const [unlocking, setUnlocking] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [stage, setStage] = useState<Stage>('question');
   const [showEnd, setShowEnd] = useState(false);
@@ -99,6 +107,29 @@ export function StudyReaderScreen() {
 
   const hasRecordedInitial = useRef(false);
   const isPremium = profile?.premium === true;
+
+  // Per-topic study cap: base from the tier, plus any ad-granted extras
+  // for this specific topic. Paid tiers with 'unlimited' bypass the cap.
+  const baseLimit =
+    limits.studyQuestions.kind === 'per-topic'
+      ? limits.studyQuestions.count
+      : Number.POSITIVE_INFINITY;
+
+  const effectiveLimit = useMemo(() => {
+    if (baseLimit === Number.POSITIVE_INFINITY) return baseLimit;
+    return baseLimit + (topicUnlock?.extraQuestions ?? 0);
+  }, [baseLimit, topicUnlock]);
+
+  const questions = useMemo(() => {
+    if (!allQuestions) return null;
+    if (effectiveLimit === Number.POSITIVE_INFINITY) return allQuestions;
+    return allQuestions.slice(0, effectiveLimit);
+  }, [allQuestions, effectiveLimit]);
+
+  const hiddenCount =
+    allQuestions && questions
+      ? Math.max(0, allQuestions.length - questions.length)
+      : 0;
 
   async function handleAskAI(raw: string) {
     const message = String(raw || '').trim();
@@ -130,6 +161,23 @@ export function StudyReaderScreen() {
     }
   }
 
+  async function handleWatchAd() {
+    if (!user || unlocking) return;
+    setUnlocking(true);
+    try {
+      const result = await rewardedService.show();
+      if (result !== 'rewarded') return;
+      const next = await unlockService.grantStudyAdReward(user.id, syllabusId);
+      setTopicUnlock(next);
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.warn('[STUDY] Unlock failed:', err);
+      }
+    } finally {
+      setUnlocking(false);
+    }
+  }
+
 useEffect(() => {
     setStage('question');
     window.scrollTo(0, 0);
@@ -147,30 +195,56 @@ useEffect(() => {
       syllabusService.getById(syllabusId),
       questionService.getMCQsForTopic(syllabusId),
       progressService.getTopicProgress(user.id, syllabusId),
+      unlockService.getTopicUnlock(user.id, syllabusId).catch((err) => {
+        if (import.meta.env.DEV) {
+          console.warn('[STUDY] Unlock lookup failed:', err);
+        }
+        return {
+          extraQuestions: 0,
+          adsWatched: 0,
+          canWatchMore: true,
+          adsRemaining: 2,
+        } as TopicUnlock;
+      }),
     ])
-      .then(([syl, qs, prog]) => {
+      .then(([syl, allQ, prog, unlock]) => {
         if (cancelled) return;
         setSyllabus(syl);
+        setAllQuestions(allQ);
+        setTopicUnlock(unlock);
 
-        if (!syl || qs.length === 0) {
-          setQuestions(qs);
-          return;
-        }
+        if (!syl || allQ.length === 0) return;
+
+        const base =
+          limits.studyQuestions.kind === 'per-topic'
+            ? limits.studyQuestions.count
+            : Number.POSITIVE_INFINITY;
+        const cap =
+          base === Number.POSITIVE_INFINITY
+            ? Number.POSITIVE_INFINITY
+            : base + unlock.extraQuestions;
+        const visibleCount = Number.isFinite(cap)
+          ? Math.min(allQ.length, cap)
+          : allQ.length;
 
         const pct = prog?.progress ?? 0;
-        const viewedCount = Math.round((pct / 100) * qs.length);
+        const viewedCount = Math.round((pct / 100) * visibleCount);
         const resumeIndex = Math.min(
           Math.max(0, viewedCount > 0 ? viewedCount - 1 : 0),
-          qs.length - 1,
+          Math.max(0, visibleCount - 1),
         );
 
-        setQuestions(qs);
         setCurrentIndex(resumeIndex);
 
         if (!prog) {
           hasRecordedInitial.current = true;
           progressService
-            .recordTopicProgress(user.id, syllabusId, resumeIndex + 1, qs.length)
+            .recordTopicProgress(
+              user.id,
+              syllabusId,
+              resumeIndex + 1,
+              visibleCount,
+            )
             .catch((err) => {
               if (import.meta.env.DEV) {
                 console.warn('[STUDY] Initial progress write failed:', err);
@@ -195,7 +269,7 @@ useEffect(() => {
     return () => {
       cancelled = true;
     };
-  }, [user, syllabusId, retryKey]);
+  }, [user, syllabusId, retryKey, limits]);
 
   function goNext() {
     if (!user || !questions) return;
@@ -328,10 +402,6 @@ useEffect(() => {
   const isLast = currentIndex >= questions.length - 1;
   const displayPct = Math.round(((currentIndex + 1) / questions.length) * 100);
 
-  const explanation = isPremium
-    ? current.premiumExplanation
-    : current.standardExplanation;
-
   return (
     <section className={styles.page}>
       <div className={styles.topBar}>
@@ -358,7 +428,13 @@ useEffect(() => {
             </span>
           )}
         </div>
-        <Markdown variant="question" className={styles.questionText}>{current.question}</Markdown>
+{current.passage ? (
+            <div style={{ marginBottom: 14, padding: 12, borderRadius: 12, background: 'rgba(22,36,140,0.06)' }}>
+              <div style={{ fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#16248c', marginBottom: 6 }}>Passage</div>
+              <Markdown variant="question">{current.passage}</Markdown>
+            </div>
+          ) : null}
+          <Markdown variant="question" className={styles.questionText}>{current.question}</Markdown>
       </article>
 
       {stage !== 'question' && (
@@ -391,13 +467,13 @@ useEffect(() => {
               {isPremium ? 'Premium explanation' : 'Explanation'}
             </span>
           </div>
-          {explanation ? (
-            <Markdown variant="explanation" className={styles.explanationBody}>{explanation}</Markdown>
-          ) : (
-            <p className={styles.explanationEmpty}>
-              No explanation is available for this question yet.
-            </p>
-          )}
+          <PremiumExplanationGate
+            questionId={current.id}
+            section={syllabus.section}
+            standardExplanation={current.standardExplanation}
+            premiumExplanation={current.premiumExplanation}
+            className={styles.explanationBody}
+          />
           <div className={styles.aiRow}>
             <button
               type="button"
@@ -480,6 +556,34 @@ useEffect(() => {
           </button>
         )}
       </div>
+
+      {hiddenCount > 0 && !showEnd && (
+        <div className={styles.moreAvailable}>
+          <p className={styles.moreText}>
+            {hiddenCount} more {hiddenCount === 1 ? 'question' : 'questions'}{' '}
+            in this topic
+          </p>
+          {limits.tier === 'free' && topicUnlock?.canWatchMore && (
+            <button
+              type="button"
+              className={styles.moreButton}
+              onClick={handleWatchAd}
+              disabled={unlocking}
+            >
+              {unlocking ? 'Loading video…' : 'Watch a video for +5'}
+            </button>
+          )}
+          {limits.tier !== 'diamond' && (
+            <button
+              type="button"
+              className={styles.moreButtonSecondary}
+              onClick={() => navigate('/subscribe')}
+            >
+              {limits.tier === 'free' ? 'See plans' : 'Upgrade plan'}
+            </button>
+          )}
+        </div>
+      )}
 
       <div className={styles.actions}>
         <button

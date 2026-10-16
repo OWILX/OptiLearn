@@ -263,3 +263,22 @@
     width: 100%;
   }
 }
+
+
+/* === Tier gates === */
+.chipLocked {
+  opacity: 0.55;
+  cursor: pointer;
+  border-style: dashed;
+}
+
+.gateLine {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-brand-blue-soft);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}

@@ -658,3 +658,36 @@
   min-height: 96px;
   justify-content: space-between;
 }
+
+
+/* === Cap pill === */
+.capPill {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(249, 115, 22, 0.08);
+  color: #c2410c;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  text-align: left;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 140ms var(--ease-out);
+}
+
+.capPill:hover {
+  background: rgba(249, 115, 22, 0.12);
+}
+
+.capPill strong {
+  font-weight: 700;
+}
+
+.capPillSep {
+  color: rgba(194, 65, 12, 0.5);
+  font-weight: 700;
+}

@@ -1,6 +1,7 @@
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { wrapError } from '@/utils/errors';
+import type { Tier } from '@/services/tiers/tierService';
 
 /**
  * All reads/writes to public.profiles go through this module.
@@ -14,6 +15,7 @@ export interface Profile {
   avatar_url: string | null;
   department: Department | null;
   premium: boolean;
+  tier: Tier;
   premium_since: string | null;
   premium_expires_at: string | null;
   created_at: string;
@@ -27,7 +29,7 @@ export interface ProfilePatch {
 }
 
 const SELECT_COLUMNS =
-  'id, full_name, avatar_url, department, premium, premium_since, premium_expires_at, created_at, updated_at';
+  'id, full_name, avatar_url, department, premium, tier, premium_since, premium_expires_at, created_at, updated_at';
 
 function seedFromMetadata(user: User): {
   full_name: string | null;

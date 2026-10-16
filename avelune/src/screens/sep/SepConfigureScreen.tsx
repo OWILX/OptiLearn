@@ -13,6 +13,12 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { useProfile } from '@/context/ProfileContext';
 import {
+  entitlementService,
+  type Gate,
+} from '@/services/entitlements/entitlementService';
+import { unlockService } from '@/services/usage/unlockService';
+import { rewardedService } from '@/services/ads/rewardedService';
+import {
   SEP_SESSION_KEY,
   type SEPPersistedSession,
 } from '@/services/exams/sepSession';
@@ -33,7 +39,7 @@ const TIME_LIMIT_MINUTES = 120;
 export function SepConfigureScreen() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { profile, loading: profileLoading } = useProfile();
+  const { profile, loading: profileLoading, limits } = useProfile();
 
   const [subjects, setSubjects] = useState<SubjectSummary[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,6 +48,10 @@ export function SepConfigureScreen() {
 
   const [slots, setSlots] = useState<string[]>(['', '', '', '']);
   const [openSlot, setOpenSlot] = useState<number>(-1);
+  const [sepGate, setSepGate] = useState<Gate | null>(null);
+  const [checkingGate, setCheckingGate] = useState(false);
+  const [capSheetOpen, setCapSheetOpen] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
   const [resumable, setResumable] = useState<{
     subjects: string[];
     timeLimitMinutes: number;
@@ -99,6 +109,24 @@ export function SepConfigureScreen() {
   }, [user, profileLoading, department, retryKey]);
 
   useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    void entitlementService
+      .sepGate(user.id, limits)
+      .then((g) => {
+        if (!cancelled) setSepGate(g);
+      })
+      .catch((err) => {
+        if (import.meta.env.DEV) {
+          console.warn('[SEP] Gate lookup failed:', err);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user, limits]);
+
+  useEffect(() => {
     const s = readSession<SEPPersistedSession>(SEP_SESSION_KEY);
     if (!s || s.endTime <= Date.now()) {
       setResumable(null);
@@ -150,12 +178,49 @@ export function SepConfigureScreen() {
     setOpenSlot(nextEmpty ?? -1);
   }
 
-  function handleContinue() {
-    if (!canContinue) return;
-    const params = new URLSearchParams();
-    params.set('subjects', slots.join(','));
-    params.set('time', String(TIME_LIMIT_MINUTES));
-    navigate(`/sep/instructions?${params.toString()}`);
+  async function handleContinue() {
+    if (!canContinue || !user) return;
+    setCheckingGate(true);
+    try {
+      const gate = await entitlementService.sepGate(user.id, limits);
+      setSepGate(gate);
+      if (gate.state === 'at-cap' || gate.state === 'blocked') {
+        setCapSheetOpen(true);
+        return;
+      }
+      const params = new URLSearchParams();
+      params.set('subjects', slots.join(','));
+      params.set('time', String(TIME_LIMIT_MINUTES));
+      navigate(`/sep/instructions?${params.toString()}`);
+    } finally {
+      setCheckingGate(false);
+    }
+  }
+
+  async function handleWatchSepAd() {
+    if (!user || unlocking) return;
+    setUnlocking(true);
+    try {
+      const result = await rewardedService.show();
+      if (result !== 'rewarded') return;
+      const next = await unlockService.grantSepAdReward(user.id);
+      const gate = await entitlementService.sepGate(user.id, limits);
+      setSepGate(gate);
+      if (gate.state === 'has-room') {
+        setCapSheetOpen(false);
+        const params = new URLSearchParams();
+        params.set('subjects', slots.join(','));
+        params.set('time', String(TIME_LIMIT_MINUTES));
+        navigate(`/sep/instructions?${params.toString()}`);
+      }
+      void next;
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.warn('[SEP] Unlock failed:', err);
+      }
+    } finally {
+      setUnlocking(false);
+    }
   }
 
   function handleResume() {
@@ -404,6 +469,14 @@ export function SepConfigureScreen() {
             </div>
           </div>
 
+          {sepGate && sepGate.state !== 'unlimited' && sepGate.state !== 'blocked' && (
+            <div className={styles.sepGateLine}>
+              {sepGate.remaining > 0
+                ? `${sepGate.remaining} SEP${sepGate.remaining === 1 ? '' : 's'} remaining`
+                : 'No SEPs remaining — watch a video or upgrade'}
+            </div>
+          )}
+
           <div className={styles.summaryBar}>
             <div className={styles.summaryText}>
               <span className={styles.summaryValue}>
@@ -418,14 +491,62 @@ export function SepConfigureScreen() {
             <button
               type="button"
               className={styles.startButton}
-              disabled={!canContinue}
+              disabled={!canContinue || checkingGate}
               onClick={handleContinue}
             >
-              Continue
+              {checkingGate ? 'Checking…' : 'Continue'}
               <ArrowRight size={16} aria-hidden="true" />
             </button>
           </div>
         </>
+      )}
+
+      {capSheetOpen && sepGate && (
+        <div className={styles.confirmOverlay}>
+          <div className={styles.confirmCard} role="dialog" aria-modal="true">
+            <span className={styles.confirmTitle}>
+              {sepGate.state === 'blocked'
+                ? 'No SEPs on this plan'
+                : 'No SEPs remaining'}
+            </span>
+            <p className={styles.confirmText}>
+              {sepGate.canWatchAd
+                ? `Watch a short video to unlock ${sepGate.adReward} more SEP${
+                    sepGate.adReward === 1 ? '' : 's'
+                  }.`
+                : 'You\u2019ve used all your SEP unlocks. Upgrade for unlimited practice.'}
+            </p>
+            <div className={styles.confirmActions}>
+              {sepGate.canWatchAd && (
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  onClick={handleWatchSepAd}
+                  disabled={unlocking}
+                >
+                  {unlocking ? 'Loading video…' : `Watch for +${sepGate.adReward}`}
+                </button>
+              )}
+              <button
+                type="button"
+                className={styles.secondaryButton}
+                onClick={() => {
+                  setCapSheetOpen(false);
+                  navigate('/subscribe');
+                }}
+              >
+                See plans
+              </button>
+              <button
+                type="button"
+                className={styles.secondaryButton}
+                onClick={() => setCapSheetOpen(false)}
+              >
+                Maybe later
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

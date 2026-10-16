@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { LogOut, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/AuthContext';
@@ -44,9 +45,16 @@ function formatProvider(rawProvider: string | undefined): string {
 }
 
 export function ProfileScreen() {
+  const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { profile, loading: profileLoading, error: profileError, updateProfile } =
-    useProfile();
+  const {
+    profile,
+    loading: profileLoading,
+    error: profileError,
+    updateProfile,
+    tier: currentTier,
+    limits,
+  } = useProfile();
   const toast = useToast();
 
   const [editing, setEditing] = useState(false);
@@ -76,9 +84,9 @@ export function ProfileScreen() {
     user?.app_metadata?.provider as string | undefined,
   );
 
-  const isPremium = profile?.premium === true;
   const premiumSince = formatFullDate(profile?.premium_since);
   const premiumExpiresAt = formatFullDate(profile?.premium_expires_at);
+  const isPaid = currentTier !== 'free';
 
   function openEdit() {
     setNameInput(profile?.full_name ?? '');
@@ -236,25 +244,24 @@ export function ProfileScreen() {
 
         <div className={styles.row}>
           <span className={styles.rowLabel}>Plan</span>
-          <span className={styles.rowValue}>
-            {isPremium ? 'Premium' : 'Free'}
-          </span>
-          {isPremium && (
-            <span className={styles.rowPremium} aria-label="Premium active">
-              <Sparkles size={11} aria-hidden="true" />
-              Premium
-            </span>
-          )}
+          <span className={styles.rowValue}>{limits.label}</span>
+          <button
+            type="button"
+            className={styles.rowButton}
+            onClick={() => navigate('/subscribe')}
+          >
+            {currentTier === 'diamond' ? 'Manage' : 'Upgrade'}
+          </button>
         </div>
 
-        {isPremium && premiumSince && (
+        {isPaid && premiumSince && (
           <div className={styles.row}>
-            <span className={styles.rowLabel}>Premium since</span>
+            <span className={styles.rowLabel}>Member since</span>
             <span className={styles.rowValue}>{premiumSince}</span>
           </div>
         )}
 
-        {isPremium && premiumExpiresAt && (
+        {isPaid && premiumExpiresAt && (
           <div className={styles.row}>
             <span className={styles.rowLabel}>Renews</span>
             <span className={styles.rowValue}>{premiumExpiresAt}</span>
@@ -262,9 +269,9 @@ export function ProfileScreen() {
         )}
 
         <p className={styles.hint}>
-          {isPremium
-            ? 'You have access to premium explanations across Study.'
-            : 'You are on the free plan. Premium explanations unlock with a subscription.'}
+          {isPaid
+            ? 'Thanks for supporting Avelune. Your plan includes every feature on the tier you chose.'
+            : 'You are on the free plan. Upgrade to unlock more questions, more SEPs, and Ask AI.'}
         </p>
       </div>
 

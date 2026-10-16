@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { wrapError } from '@/utils/errors';
 import type { Difficulty } from '@/screens/quiz/quizConfig';
+import { attachPassages } from '@/services/questions/questionService';
 
 /**
  * Quiz question fetching.
@@ -18,6 +19,8 @@ export interface QuizQuestion {
   standardExplanation: string;
   premiumExplanation: string;
   difficulty: Difficulty;
+  passageUuid: string | null;
+  passage: string | null;
 }
 
 interface QuestionBankRow {
@@ -69,7 +72,33 @@ function parseQuestion(row: QuestionBankRow): QuizQuestion | null {
     standardExplanation: (row.standard_explanation ?? '').trim(),
     premiumExplanation: (row.premium_explanation ?? '').trim(),
     difficulty: row.difficulty as Difficulty,
+    passageUuid: null,
+    passage: null,
   };
+}
+
+function clusterByPassage<T extends { passageUuid?: string | null }>(items: T[]): T[] {
+  const groups = new Map<string, T[]>();
+  for (const item of items) {
+    const key = item.passageUuid;
+    if (!key) continue;
+    const list = groups.get(key) ?? [];
+    list.push(item);
+    groups.set(key, list);
+  }
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const item of items) {
+    const key = item.passageUuid;
+    if (!key) {
+      out.push(item);
+      continue;
+    }
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(...(groups.get(key) ?? [item]));
+  }
+  return out;
 }
 
 interface AttemptHistoryEntry {
@@ -190,7 +219,9 @@ export const quizService = {
       is_correct: boolean | null;
     }[]);
     const weights = computeWeights(ids, history);
-    return weightedSample(candidates, weights, filters.count);
+    const sampled = weightedSample(candidates, weights, filters.count);
+    const withPassages = await attachPassages(sampled);
+    return clusterByPassage(withPassages);
   },
 
   async attachQuizKeys(questions: QuizQuestion[]): Promise<QuizQuestion[]> {

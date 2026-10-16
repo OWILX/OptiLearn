@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Target, Timer, ArrowRight, Flame, Play } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -14,6 +14,10 @@ import {
   type RecentAttempt,
 } from '@/services/exams/examService';
 import { streakService, type StreakInfo } from '@/services/streaks/streakService';
+import {
+  entitlementService,
+  type Gate,
+} from '@/services/entitlements/entitlementService';
 import { subjectColor } from '@/utils/subjectColor';
 import {
   blogService,
@@ -99,7 +103,7 @@ interface ResumableSep {
 export function HomeScreen() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { profile, refresh: refreshProfile } = useProfile();
+  const { profile, refresh: refreshProfile, limits } = useProfile();
 
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -108,6 +112,9 @@ export function HomeScreen() {
   const [resumableSep, setResumableSep] = useState<ResumableSep | null>(null);
   const [sepCountdown, setSepCountdown] = useState(0);
   const [notes, setNotes] = useState<ConceptPostListItem[]>([]);
+  const [lowCaps, setLowCaps] = useState<
+    { label: string; remaining: number }[]
+  >([]);
 
 
   // Ticks once a minute so the greeting and date roll over correctly
@@ -167,6 +174,40 @@ export function HomeScreen() {
     return () => window.clearInterval(id);
   }, [resumableSep]);
 
+
+  // Compute which caps the user is close to running out on.
+  useEffect(() => {
+    if (!user) {
+      setLowCaps([]);
+      return;
+    }
+    let cancelled = false;
+
+    Promise.all([
+      entitlementService.sepGate(user.id, limits),
+      entitlementService.quizGate(user.id, limits, 'easy'),
+    ])
+      .then(([sep, quiz]) => {
+        if (cancelled) return;
+        const items: { label: string; remaining: number }[] = [];
+        if (sep.state !== 'unlimited' && sep.state !== 'blocked' && sep.remaining <= 1) {
+          items.push({ label: 'SEP', remaining: sep.remaining });
+        }
+        if (quiz.state !== 'unlimited' && quiz.state !== 'blocked' && quiz.remaining <= 2) {
+          items.push({ label: 'quiz', remaining: quiz.remaining });
+        }
+        setLowCaps(items);
+      })
+      .catch((err) => {
+        if (import.meta.env.DEV) {
+          console.warn('[HOME] Cap lookup failed:', err);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, limits]);
 
   useEffect(() => {
     let cancelled = false;
@@ -264,6 +305,29 @@ export function HomeScreen() {
           </span>
         )}
       </div>
+
+      {lowCaps.length > 0 && (
+        <button
+          type="button"
+          className={styles.capPill}
+          onClick={() => navigate('/subscribe')}
+        >
+          {lowCaps.map((c, i) => (
+            <Fragment key={c.label}>
+              {i > 0 && (
+                <span className={styles.capPillSep} aria-hidden="true">
+                  ·
+                </span>
+              )}
+              <span>
+                <strong>{c.remaining}</strong>{' '}
+                {c.label}
+                {c.remaining === 1 ? '' : 'zes'} left
+              </span>
+            </Fragment>
+          ))}
+        </button>
+      )}
 
       {resumableSep && (
         <button

@@ -1,0 +1,83 @@
+.prompt {
+  margin-top: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px dashed rgba(107, 33, 168, 0.32);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.promptHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-brand-purple);
+}
+
+.promptTitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.promptText {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.promptActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 140ms var(--ease-out);
+}
+
+.primary {
+  background: var(--color-brand-purple);
+  color: #ffffff;
+  border: none;
+}
+
+.primary:hover:not(:disabled) {
+  background: #581c87;
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.secondary:hover {
+  background: var(--color-bg);
+}
+
+@media (min-width: 480px) {
+  .promptActions {
+    flex-wrap: nowrap;
+  }
+}

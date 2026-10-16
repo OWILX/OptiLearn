@@ -26,7 +26,7 @@ export async function askAI(
     throw new Error("no session on this page; sign in again");
   }
   const { data, error } = await supabase.functions.invoke("ask-ai", {
-    body: request,
+    body: { ...request, access_token: token },
     headers: { Authorization: "Bearer " + token },
   });
 

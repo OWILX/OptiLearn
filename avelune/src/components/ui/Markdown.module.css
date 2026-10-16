@@ -450,3 +450,58 @@
   max-width: 100%;
   overflow-x: auto;
 }
+
+/* Math display only. Do not change parsing. */
+.md :global(.katex) {
+  display: inline-block;
+  line-height: 1.2;
+  vertical-align: middle;
+  padding: 0.18em 0.02em;
+  text-indent: 0;
+}
+
+.md :global(.katex),
+.md :global(.katex *) {
+  box-sizing: content-box;
+}
+
+.md :global(.katex-display) {
+  display: block;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 0.5em 0;
+}
+
+.md :global(.katex .vlist-t) {
+  display: inline-table;
+  border-collapse: collapse;
+}
+
+.md :global(.katex .vlist-r) {
+  display: table-row;
+}
+
+.md :global(.katex .vlist) {
+  display: table-cell;
+  vertical-align: bottom;
+  position: relative;
+}
+
+.md :global(.katex .vlist > span) {
+  display: block;
+  height: 0;
+  position: relative;
+}
+
+.md :global(.katex .vlist > span > span) {
+  display: inline-block;
+}
+
+.md :global(.katex .frac-line) {
+  display: inline-block;
+  width: 100%;
+  border-bottom: 0.05em solid currentColor;
+  min-height: 1px;
+  margin: 0.22em 0;
+}
+

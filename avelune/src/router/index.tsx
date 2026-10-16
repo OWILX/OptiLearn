@@ -39,6 +39,7 @@ export const router = createBrowserRouter([
 
   {
     element: <ProtectedRoute />,
+    errorElement: <RouteError />,
     children: [
       { path: '/choose-department', element: <ChooseDepartmentScreen /> },
 

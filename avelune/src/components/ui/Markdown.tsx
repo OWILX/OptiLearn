@@ -531,7 +531,12 @@ function normalizeLegacyBareMath(source: string): string {
 export function normalizeExamMarkup(raw: string): string {
   if (!raw) return raw;
 
-  const normalized = raw.replace(/\r\n?/g, '\n');
+  const repaired = raw
+    .replace(/(^|[^\\])(?:d|t|c)?frac\{/g, '$1\\frac{')
+    .replace(/(^|[^\\])rac\{/g, '$1\\frac{');
+  const normalized = repaired
+    .replace(/\r\n?/g, '\n')
+    .replace(/_(\([^)]+\))_/g, '\\_$1\\_');
   const protectedSource = protect(normalized);
   const converted = normalizeLegacyBareMath(protectedSource.text);
   return restorePlaceholders(converted, protectedSource.restore);

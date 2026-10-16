@@ -35,6 +35,8 @@ export interface MCQQuestion {
   answer: 'A' | 'B' | 'C' | 'D';
   standardExplanation: string;
   premiumExplanation: string;
+  passageUuid: string | null;
+  passage: string | null;
 }
 
 const VALID_ANSWERS = ['A', 'B', 'C', 'D'] as const;
@@ -74,6 +76,8 @@ function parseLiveMCQ(row: QuestionBankRow): MCQQuestion | null {
     answer: 'A',
     standardExplanation: '',
     premiumExplanation: '',
+    passageUuid: null,
+    passage: null,
   };
 }
 
@@ -101,72 +105,84 @@ export function parseMCQ(row: QuestionBankRow): MCQQuestion | null {
     answer: answer as MCQQuestion['answer'],
     standardExplanation: (row.standard_explanation ?? '').trim(),
     premiumExplanation: (row.premium_explanation ?? '').trim(),
+    passageUuid: null,
+    passage: null,
   };
 }
 
-/* ============================================================
-   Weighted sampling
-   ============================================================ */
-
-const W_NEVER_ATTEMPTED = 4;
-const W_ALWAYS_CORRECT = 1;
-const W_ALWAYS_WRONG = 8;
-
-interface AttemptHistoryEntry {
-  correct: number;
-  total: number;
-}
-
-function computeWeights(
-  candidateIds: number[],
-  attempts: { question_id: number; is_correct: boolean | null }[],
-): Map<number, number> {
-  const history = new Map<number, AttemptHistoryEntry>();
-  for (const a of attempts) {
-    if (a.is_correct === null) continue;
-    const h = history.get(a.question_id) ?? { correct: 0, total: 0 };
-    h.total += 1;
-    if (a.is_correct) h.correct += 1;
-    history.set(a.question_id, h);
+function clusterByPassage<T extends { passageUuid?: string | null }>(items: T[]): T[] {
+  const groups = new Map<string, T[]>();
+  for (const item of items) {
+    const key = item.passageUuid;
+    if (!key) continue;
+    const list = groups.get(key) ?? [];
+    list.push(item);
+    groups.set(key, list);
   }
-
-  const weights = new Map<number, number>();
-  for (const id of candidateIds) {
-    const h = history.get(id);
-    if (!h || h.total === 0) {
-      weights.set(id, W_NEVER_ATTEMPTED);
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const item of items) {
+    const key = item.passageUuid;
+    if (!key) {
+      out.push(item);
       continue;
     }
-    const ratio = h.correct / h.total;
-    const w =
-      W_ALWAYS_CORRECT +
-      (1 - ratio) * (W_ALWAYS_WRONG - W_ALWAYS_CORRECT);
-    weights.set(id, w);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(...(groups.get(key) ?? [item]));
   }
-  return weights;
+  return out;
 }
 
-function weightedSampleWithoutReplacement<T extends { id: number }>(
-  items: T[],
-  weights: Map<number, number>,
-  k: number,
-): T[] {
-  if (k <= 0) return [];
-  if (k >= items.length) return [...items];
+function passageText(row: Record<string, unknown>): string {
+  for (const key of ['passage', 'content', 'body', 'text', 'passage_text']) {
+    const value = row[key];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+}
 
-  const keyed = items.map((item) => {
-    const w = Math.max(0.0001, weights.get(item.id) ?? 1);
-    const key = Math.pow(Math.random(), 1 / w);
-    return { item, key };
+export async function attachPassages<T extends { id: number; passageUuid?: string | null; passage?: string | null }>(
+  questions: T[],
+): Promise<T[]> {
+  if (questions.length === 0) return questions;
+  const ids = questions.map((q) => q.id);
+  const { data: linkRows, error: linkError } = await supabase
+    .from('question_bank')
+    .select('id, passage_id')
+    .in('id', ids);
+  if (linkError) {
+    console.warn('[PASSAGE] question_bank', linkError.message);
+    return questions;
+  }
+
+  const uuidById = new Map<number, string>();
+  for (const row of (linkRows ?? []) as { id: number; passage_id: string | null }[]) {
+    if (row.passage_id) uuidById.set(row.id, row.passage_id);
+  }
+  const uuids = Array.from(new Set(uuidById.values()));
+  if (uuids.length === 0) return questions;
+
+  const { data: passages, error: passageError } = await supabase
+    .from('question_passages')
+    .select('id, passage_text')
+    .in('id', uuids);
+  if (passageError) {
+    console.warn('[PASSAGE] question_passages', passageError.message);
+    return questions;
+  }
+
+  const textByUuid = new Map<string, string>();
+  for (const row of (passages ?? []) as { id: string; passage_text: string | null }[]) {
+    const text = (row.passage_text ?? '').trim();
+    if (row.id && text) textByUuid.set(row.id, text);
+  }
+
+  return questions.map((q) => {
+    const uuid = uuidById.get(q.id) ?? null;
+    return { ...q, passageUuid: uuid, passage: uuid ? textByUuid.get(uuid) ?? null : null };
   });
-
-  keyed.sort((a, b) => b.key - a.key);
-  return keyed.slice(0, k).map((x) => x.item);
 }
-
-/* ============================================================
-   Service
-   ============================================================ */
 
 export const questionService = {
   async getMCQsForTopic(syllabusId: number): Promise<MCQQuestion[]> {
@@ -179,17 +195,15 @@ export const questionService = {
     const rows = (data ?? []) as QuestionBankRow[];
     const parsed: MCQQuestion[] = [];
     for (const row of rows) {
-      const question = (row.question ?? '').trim();
-      const options = [row.option_a, row.option_b, row.option_c, row.option_d].map((o) => (o ?? '').trim());
-      const mcq = question && options.every(Boolean)
-        ? { id: row.id, question, options, answer: 'A' as const, standardExplanation: '', premiumExplanation: '' }
-        : null;
+      const mcq = parseLiveMCQ(row);
       if (mcq) parsed.push(mcq);
       else if (import.meta.env.DEV) {
         console.warn('[QUESTIONS] Skipped malformed row id=', row.id);
       }
     }
-    return parsed;
+    const keyed = await questionService.attachAnswerKeys(parsed);
+    const withPassages = await attachPassages(keyed);
+    return clusterByPassage(withPassages);
   },
 
   async getSEPQuestions(
@@ -241,7 +255,9 @@ export const questionService = {
           is_correct: boolean | null;
         }[]);
     const weights = computeWeights(ids, history);
-    return weightedSampleWithoutReplacement(candidates, weights, count);
+    const sampled = weightedSampleWithoutReplacement(candidates, weights, count);
+    const withPassages = await attachPassages(sampled);
+    return clusterByPassage(withPassages);
   },
 
   async attachAnswerKeys(questions: MCQQuestion[]): Promise<MCQQuestion[]> {

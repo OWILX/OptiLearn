@@ -4,6 +4,12 @@ import { ArrowRight } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useProfile } from '@/context/ProfileContext';
 import {
+  entitlementService,
+  type Gate,
+} from '@/services/entitlements/entitlementService';
+import { unlockService } from '@/services/usage/unlockService';
+import { rewardedService } from '@/services/ads/rewardedService';
+import {
   syllabusService,
   type SubjectSummary,
 } from '@/services/syllabus/syllabusService';
@@ -39,7 +45,7 @@ export function QuizSetupScreen() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { user } = useAuth();
-  const { profile, loading: profileLoading } = useProfile();
+  const { profile, loading: profileLoading, limits } = useProfile();
 
   const initialDifficulty = parseDifficulty(params.get('difficulty'));
 
@@ -53,6 +59,12 @@ export function QuizSetupScreen() {
   const [timeMinutes, setTimeMinutes] = useState<number>(DEFAULT_TIME_MINUTES);
   const [count, setCount] = useState<number>(DEFAULT_QUESTION_COUNT);
   const [resumable, setResumable] = useState<QuizPersistedSession | null>(null);
+  const [quizGate, setQuizGate] = useState<Gate | null>(null);
+  const [checkingGate, setCheckingGate] = useState(false);
+  const [capSheetOpen, setCapSheetOpen] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
+
+  const allowedDifficulties = limits.quizzes.difficulties;
 
   const department = profile?.department ?? null;
 
@@ -60,6 +72,32 @@ export function QuizSetupScreen() {
     const stored = readSession<QuizPersistedSession>(QUIZ_SESSION_KEY);
     setResumable(isLiveQuizSession(stored) ? stored : null);
   }, []);
+
+  // Force difficulty to an allowed one on load.
+  useEffect(() => {
+    if (!allowedDifficulties.includes(difficulty)) {
+      setDifficulty(allowedDifficulties[0]);
+    }
+  }, [allowedDifficulties, difficulty]);
+
+  // Refresh the gate on every difficulty change.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    void entitlementService
+      .quizGate(user.id, limits, difficulty)
+      .then((g) => {
+        if (!cancelled) setQuizGate(g);
+      })
+      .catch((err) => {
+        if (import.meta.env.DEV) {
+          console.warn('[QUIZ] Gate lookup failed:', err);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user, limits, difficulty]);
 
   useEffect(() => {
     if (!user || profileLoading) return;
@@ -95,14 +133,46 @@ export function QuizSetupScreen() {
 
   const canStart = subject !== null;
 
-  function handleStart() {
-    if (!canStart || !subject) return;
-    const p = new URLSearchParams();
-    p.set('subject', subject);
-    p.set('difficulty', difficulty);
-    p.set('time', String(timeMinutes));
-    p.set('count', String(count));
-    navigate(`/quiz/session?${p.toString()}`);
+  async function handleStart() {
+    if (!canStart || !subject || !user) return;
+    setCheckingGate(true);
+    try {
+      const gate = await entitlementService.quizGate(user.id, limits, difficulty);
+      setQuizGate(gate);
+      if (gate.state === 'at-cap' || gate.state === 'blocked') {
+        setCapSheetOpen(true);
+        return;
+      }
+      const p = new URLSearchParams();
+      p.set('subject', subject);
+      p.set('difficulty', difficulty);
+      p.set('time', String(timeMinutes));
+      p.set('count', String(count));
+      navigate(`/quiz/session?${p.toString()}`);
+    } finally {
+      setCheckingGate(false);
+    }
+  }
+
+  async function handleWatchQuizAd() {
+    if (!user || unlocking) return;
+    setUnlocking(true);
+    try {
+      const result = await rewardedService.show();
+      if (result !== 'rewarded') return;
+      await unlockService.grantQuizAdReward(user.id);
+      const gate = await entitlementService.quizGate(user.id, limits, difficulty);
+      setQuizGate(gate);
+      if (gate.state === 'has-room') {
+        setCapSheetOpen(false);
+      }
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.warn('[QUIZ] Unlock failed:', err);
+      }
+    } finally {
+      setUnlocking(false);
+    }
   }
 
   return (
@@ -189,18 +259,29 @@ export function QuizSetupScreen() {
           <div className={styles.section}>
             <span className={styles.sectionLabel}>Difficulty</span>
             <div className={styles.chipRow}>
-              {DIFFICULTIES.map((d) => (
-                <button
-                  key={d.key}
-                  type="button"
-                  className={`${styles.chip} ${
-                    difficulty === d.key ? styles.chipActive : ''
-                  }`}
-                  onClick={() => setDifficulty(d.key)}
-                >
-                  {d.label}
-                </button>
-              ))}
+              {DIFFICULTIES.map((d) => {
+                const locked = !allowedDifficulties.includes(d.key);
+                return (
+                  <button
+                    key={d.key}
+                    type="button"
+                    className={`${styles.chip} ${
+                      difficulty === d.key ? styles.chipActive : ''
+                    } ${locked ? styles.chipLocked : ''}`}
+                    onClick={() => {
+                      if (locked) {
+                        setCapSheetOpen(true);
+                        return;
+                      }
+                      setDifficulty(d.key);
+                    }}
+                    aria-disabled={locked}
+                  >
+                    {d.label}
+                    {locked && ' \u00b7 Upgrade'}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -240,6 +321,14 @@ export function QuizSetupScreen() {
             </div>
           </div>
 
+          {quizGate && quizGate.state !== 'unlimited' && quizGate.state !== 'blocked' && (
+            <div className={styles.gateLine}>
+              {quizGate.remaining > 0
+                ? `${quizGate.remaining} quiz${quizGate.remaining === 1 ? '' : 'zes'} remaining today`
+                : 'No quizzes remaining today — watch a video or upgrade'}
+            </div>
+          )}
+
           <div className={styles.summaryBar}>
             <div className={styles.summaryText}>
               <span className={styles.summaryMain}>
@@ -253,13 +342,61 @@ export function QuizSetupScreen() {
               type="button"
               className={styles.startButton}
               onClick={handleStart}
-              disabled={!canStart}
+              disabled={!canStart || checkingGate}
             >
-              Start
+              {checkingGate ? 'Checking…' : 'Start'}
               <ArrowRight size={16} aria-hidden="true" />
             </button>
           </div>
         </>
+      )}
+
+      {capSheetOpen && (
+        <div className={styles.confirmOverlay}>
+          <div className={styles.confirmCard} role="dialog" aria-modal="true">
+            <span className={styles.confirmTitle}>
+              {!allowedDifficulties.includes(difficulty)
+                ? 'Upgrade to unlock this difficulty'
+                : 'No quizzes remaining'}
+            </span>
+            <p className={styles.confirmText}>
+              {!allowedDifficulties.includes(difficulty)
+                ? 'Medium and Hard quizzes are available on Pro and above.'
+                : quizGate?.canWatchAd
+                  ? `Watch a short video to unlock ${quizGate.adReward} more quiz.`
+                  : 'You\u2019ve used all your quiz unlocks for today. Upgrade for unlimited practice.'}
+            </p>
+            <div className={styles.confirmActions}>
+              {quizGate?.canWatchAd && allowedDifficulties.includes(difficulty) && (
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  onClick={handleWatchQuizAd}
+                  disabled={unlocking}
+                >
+                  {unlocking ? 'Loading video…' : `Watch for +${quizGate.adReward}`}
+                </button>
+              )}
+              <button
+                type="button"
+                className={styles.secondaryButton}
+                onClick={() => {
+                  setCapSheetOpen(false);
+                  navigate('/subscribe');
+                }}
+              >
+                See plans
+              </button>
+              <button
+                type="button"
+                className={styles.secondaryButton}
+                onClick={() => setCapSheetOpen(false)}
+              >
+                Maybe later
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

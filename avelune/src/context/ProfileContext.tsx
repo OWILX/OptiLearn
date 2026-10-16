@@ -15,6 +15,11 @@ import {
   type Profile,
   type ProfilePatch,
 } from '@/services/profile/profileService';
+import {
+  limitFor,
+  type Tier,
+  type TierLimits,
+} from '@/services/tiers/tierService';
 
 interface ProfileContextValue {
   profile: Profile | null;
@@ -23,6 +28,8 @@ interface ProfileContextValue {
   refresh: () => Promise<void>;
   updateProfile: (patch: ProfilePatch) => Promise<void>;
   setDepartment: (dept: Department) => Promise<void>;
+  tier: Tier;
+  limits: TierLimits;
 }
 
 const ProfileContext = createContext<ProfileContextValue | null>(null);
@@ -99,6 +106,9 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
     [updateProfile],
   );
 
+  const tier: Tier = profile?.tier ?? 'free';
+  const limits = useMemo<TierLimits>(() => limitFor(tier), [tier]);
+
   const value = useMemo<ProfileContextValue>(
     () => ({
       profile,
@@ -107,8 +117,19 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
       refresh,
       updateProfile,
       setDepartment,
+      tier,
+      limits,
     }),
-    [profile, loading, error, refresh, updateProfile, setDepartment],
+    [
+      profile,
+      loading,
+      error,
+      refresh,
+      updateProfile,
+      setDepartment,
+      tier,
+      limits,
+    ],
   );
 
   return (

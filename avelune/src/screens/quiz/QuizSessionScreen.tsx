@@ -12,14 +12,17 @@ import {
   Save,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { useProfile } from '@/context/ProfileContext';
+
 import { quizService, type QuizQuestion } from '@/services/quiz/quizService';
+import { usageService } from '@/services/usage/usageService';
 import { submitService } from '@/services/attempts/submitService';
 import { attemptService } from '@/services/attempts/attemptService';
 import { streakService } from '@/services/streaks/streakService';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Markdown } from '@/components/ui/Markdown';
+import { ReviewAsk } from '@/components/ai/ReviewAsk';
+import { PremiumExplanationGate } from '@/components/premium/PremiumExplanationGate';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import {
@@ -93,10 +96,8 @@ function formatTime(ms: number): string {
 export function QuizSessionScreen() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { profile } = useProfile();
   const [params] = useSearchParams();
   const config = useMemo(() => parseConfig(params), [params]);
-  const isPremium = profile?.premium === true;
 
   useEffect(() => {
     if (!config) navigate('/quiz', { replace: true });
@@ -196,6 +197,12 @@ export function QuizSessionScreen() {
         }
         setQuestions(qs);
         if (qs.length > 0) {
+          void usageService.record(
+            user.id,
+            'quiz',
+            null,
+            config.difficulty,
+          );
           const endMs = Date.now() + config.timeLimitMinutes * 60_000;
           setEndTime(endMs);
           setRemainingMs(config.timeLimitMinutes * 60_000);
@@ -397,7 +404,6 @@ export function QuizSessionScreen() {
       <QuizReview
         results={results}
         timedOut={timedOut}
-        isPremium={isPremium}
         onRetake={restart}
         onBack={backToSetup}
       />
@@ -463,7 +469,13 @@ export function QuizSessionScreen() {
       </div>
 
       <article className={styles.questionCard}>
-        <Markdown variant="question" className={styles.questionText}>{current.question}</Markdown>
+{current.passage ? (
+            <div style={{ marginBottom: 14, padding: 12, borderRadius: 12, background: 'rgba(22,36,140,0.06)' }}>
+              <div style={{ fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#16248c', marginBottom: 6 }}>Passage</div>
+              <Markdown variant="question">{current.passage}</Markdown>
+            </div>
+          ) : null}
+          <Markdown variant="question" className={styles.questionText}>{current.question}</Markdown>
         <div className={styles.options}>
           {current.options.map((opt, i) => {
             const letter = LETTERS[i];
@@ -675,7 +687,6 @@ export function QuizSessionScreen() {
 interface QuizReviewProps {
   results: ResultRow[];
   timedOut: boolean;
-  isPremium: boolean;
   onRetake: () => void;
   onBack: () => void;
 }
@@ -683,7 +694,6 @@ interface QuizReviewProps {
 function QuizReview({
   results,
   timedOut,
-  isPremium,
   onRetake,
   onBack,
 }: QuizReviewProps) {
@@ -761,10 +771,6 @@ function QuizReview({
                 ? styles.reviewVerdictWrong
                 : styles.reviewVerdictSkipped;
 
-          const explanation = isPremium
-            ? row.question.premiumExplanation
-            : row.question.standardExplanation;
-
           return (
             <article key={row.question.id} className={styles.reviewCard}>
               <div className={styles.reviewCardHeader}>
@@ -778,6 +784,12 @@ function QuizReview({
                 </span>
               </div>
 
+{row.question.passage ? (
+                <div style={{ marginBottom: 14, padding: 12, borderRadius: 12, background: 'rgba(22,36,140,0.06)' }}>
+                  <div style={{ fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#16248c', marginBottom: 6 }}>Passage</div>
+                  <Markdown variant="review-question">{row.question.passage}</Markdown>
+                </div>
+              ) : null}
               <Markdown variant="review-question" className={styles.reviewQuestion}>
                 {row.question.question}
               </Markdown>
@@ -811,14 +823,14 @@ function QuizReview({
               </div>
 
               <div className={styles.reviewExplanation}>
-                {explanation ? (
-                  <Markdown variant="explanation">{explanation}</Markdown>
-                ) : (
-                  <span className={styles.reviewExplanationEmpty}>
-                    No explanation is available for this question yet.
-                  </span>
-                )}
+                <PremiumExplanationGate
+                  questionId={row.question.id}
+                  section={row.question.id ? 'quiz' : 'quiz'}
+                  standardExplanation={row.question.standardExplanation}
+                  premiumExplanation={row.question.premiumExplanation}
+                />
               </div>
+              <ReviewAsk questionId={row.question.id} context="quiz_review" />
             </article>
           );
         })}
