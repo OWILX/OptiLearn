@@ -19,6 +19,7 @@ export type UsageKind =
   | 'premium_explanation'
   | 'premium_explanation_ad'
   | 'ask_ai'
+  | 'ask_ai_ad'
   | 'ai_quiz';
 
 /**

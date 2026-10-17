@@ -179,4 +179,35 @@ export const entitlementService = {
       rule.rewardPerAd,
     );
   },
+
+  async askAiGate(
+    userId: string,
+    limits: TierLimits,
+    topicId?: string | number | null,
+  ): Promise<Gate> {
+    const cap = limits.askAi;
+    if (cap.kind === 'unlimited') return UNLIMITED;
+    if (cap.kind === 'none') return BLOCKED;
+
+    const rule = limits.askAiAds;
+
+    const [used, adsWatched] = await Promise.all([
+      cap.kind === 'per-topic-daily' && topicId != null
+        ? usageService.countTodayInTopic(userId, 'ask_ai', String(topicId))
+        : usageService.countToday(userId, 'ask_ai'),
+      rule.maxAds > 0
+        ? usageService.countToday(userId, 'ask_ai_ad')
+        : Promise.resolve(0),
+    ]);
+
+    const extras = adsWatched * rule.rewardPerAd;
+    return capped(
+      cap.count,
+      extras,
+      used,
+      adsWatched,
+      rule.maxAds,
+      rule.rewardPerAd,
+    );
+  },
 };

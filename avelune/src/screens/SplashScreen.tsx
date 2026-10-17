@@ -18,10 +18,6 @@ export function SplashScreen() {
     // First visit: full branding moment (~2s).
     // Repeat visits: brief flash (~600ms) so returning users aren't
     // held up by a screen they've already seen.
-    const seenSplash =
-      typeof window !== 'undefined' &&
-      window.localStorage.getItem('optilearn.splash.seen') === '1';
-
     const holdMs = 2500;
     const fadeMs = 400;
 

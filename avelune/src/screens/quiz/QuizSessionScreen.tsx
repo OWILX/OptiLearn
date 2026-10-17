@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { useBlocker, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -16,7 +16,6 @@ import { useAuth } from '@/context/AuthContext';
 import { quizService, type QuizQuestion } from '@/services/quiz/quizService';
 import { usageService } from '@/services/usage/usageService';
 import { submitService } from '@/services/attempts/submitService';
-import { attemptService } from '@/services/attempts/attemptService';
 import { streakService } from '@/services/streaks/streakService';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -697,7 +696,16 @@ function QuizReview({
   onRetake,
   onBack,
 }: QuizReviewProps) {
+  const [visibleCount, setVisibleCount] = useState(10);
+  const [isPending, startTransition] = useTransition();
+  const [ready, setReady] = useState(false);
   const total = results.length;
+
+  // Give the browser a tick to paint the header before blocking on KaTeX
+  useEffect(() => {
+    const id = setTimeout(() => setReady(true), 50);
+    return () => clearTimeout(id);
+  }, []);
   const correct = results.filter((r) => r.verdict === 'correct').length;
   const wrong = results.filter((r) => r.verdict === 'wrong').length;
   const skipped = results.filter((r) => r.verdict === 'skipped').length;
@@ -763,8 +771,13 @@ function QuizReview({
       </div>
 
       <div className={styles.reviewList}>
-        {results.map((row, i) => {
-          const verdictClass =
+        {!ready ? (
+          <div style={{ padding: 24, textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 14 }}>
+            Loading questions…
+          </div>
+        ) : (
+          results.slice(0, visibleCount).map((row, i) => {
+            const verdictClass =
             row.verdict === 'correct'
               ? styles.reviewVerdictCorrect
               : row.verdict === 'wrong'
@@ -830,10 +843,30 @@ function QuizReview({
                   premiumExplanation={row.question.premiumExplanation}
                 />
               </div>
-              <ReviewAsk questionId={row.question.id} context="quiz_review" />
+              <ReviewAsk
+                questionId={row.question.id}
+                context="quiz_review"
+                fetchOnMount={i === 0}
+              />
             </article>
           );
-        })}
+        })
+        )}
+        {ready && visibleCount < results.length && (
+          <button
+            type="button"
+            className={styles.secondaryButton}
+            disabled={isPending}
+            onClick={() => {
+              startTransition(() => {
+                setVisibleCount((c) => c + 10);
+              });
+            }}
+            style={{ width: '100%', marginTop: 12 }}
+          >
+            {isPending ? 'Loading…' : 'Load 10 more'}
+          </button>
+        )}
       </div>
     </section>
   );

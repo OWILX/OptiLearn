@@ -29,6 +29,7 @@ import {
   type SubjectSummary,
 } from '@/services/syllabus/syllabusService';
 import { Button } from '@/components/ui/Button';
+import { CapSheet } from '@/components/tiers/CapSheet';
 import styles from './SepConfigureScreen.module.css';
 
 const TOTAL_SLOTS = 4;
@@ -501,53 +502,29 @@ export function SepConfigureScreen() {
         </>
       )}
 
-      {capSheetOpen && sepGate && (
-        <div className={styles.confirmOverlay}>
-          <div className={styles.confirmCard} role="dialog" aria-modal="true">
-            <span className={styles.confirmTitle}>
-              {sepGate.state === 'blocked'
-                ? 'No SEPs on this plan'
-                : 'No SEPs remaining'}
-            </span>
-            <p className={styles.confirmText}>
-              {sepGate.canWatchAd
-                ? `Watch a short video to unlock ${sepGate.adReward} more SEP${
-                    sepGate.adReward === 1 ? '' : 's'
-                  }.`
-                : 'You\u2019ve used all your SEP unlocks. Upgrade for unlimited practice.'}
-            </p>
-            <div className={styles.confirmActions}>
-              {sepGate.canWatchAd && (
-                <button
-                  type="button"
-                  className={styles.primaryButton}
-                  onClick={handleWatchSepAd}
-                  disabled={unlocking}
-                >
-                  {unlocking ? 'Loading video…' : `Watch for +${sepGate.adReward}`}
-                </button>
-              )}
-              <button
-                type="button"
-                className={styles.secondaryButton}
-                onClick={() => {
-                  setCapSheetOpen(false);
-                  navigate('/subscribe');
-                }}
-              >
-                See plans
-              </button>
-              <button
-                type="button"
-                className={styles.secondaryButton}
-                onClick={() => setCapSheetOpen(false)}
-              >
-                Maybe later
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CapSheet
+        open={capSheetOpen && sepGate !== null}
+        title={
+          sepGate?.state === 'blocked'
+            ? 'No SEPs on this plan'
+            : 'No SEPs remaining'
+        }
+        body={
+          sepGate?.canWatchAd
+            ? `Watch a short video to unlock ${sepGate.adReward} more SEP${
+                sepGate.adReward === 1 ? '' : 's'
+              }.`
+            : 'You\u2019ve used all your SEP unlocks. Upgrade for unlimited practice.'
+        }
+        onWatchAd={sepGate?.canWatchAd ? handleWatchSepAd : undefined}
+        watchLabel={sepGate ? `Watch for +${sepGate.adReward}` : undefined}
+        onSeePlans={() => {
+          setCapSheetOpen(false);
+          navigate('/subscribe');
+        }}
+        onDismiss={() => setCapSheetOpen(false)}
+        busy={unlocking}
+      />
     </section>
   );
 }

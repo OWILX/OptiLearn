@@ -14,10 +14,7 @@ import {
   type RecentAttempt,
 } from '@/services/exams/examService';
 import { streakService, type StreakInfo } from '@/services/streaks/streakService';
-import {
-  entitlementService,
-  type Gate,
-} from '@/services/entitlements/entitlementService';
+import { entitlementService } from '@/services/entitlements/entitlementService';
 import { subjectColor } from '@/utils/subjectColor';
 import {
   blogService,

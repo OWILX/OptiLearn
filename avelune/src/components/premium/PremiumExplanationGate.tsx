@@ -141,6 +141,14 @@ export function PremiumExplanationGate({
     }
   }
 
+  if (!standardExplanation.trim() && !premiumExplanation.trim()) {
+    return (
+      <p className={styles.promptText} style={{ fontStyle: 'italic' }}>
+        No explanation is available for this question yet.
+      </p>
+    );
+  }
+
   if (view === 'checking') {
     return (
       <Markdown variant={variant} className={className}>

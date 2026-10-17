@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { useBlocker, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -17,7 +17,6 @@ import { useAuth } from '@/context/AuthContext';
 import { questionService } from '@/services/questions/questionService';
 import { usageService } from '@/services/usage/usageService';
 import { submitService } from '@/services/attempts/submitService';
-import { examService } from '@/services/exams/examService';
 import { streakService } from '@/services/streaks/streakService';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -124,6 +123,8 @@ export function SepExamScreen() {
   const [timedOut, setTimedOut] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const [wasResumed, setWasResumed] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const submittedRef = useRef(false);
 
@@ -296,6 +297,8 @@ export function SepExamScreen() {
     (isTimeout: boolean) => {
       if (submittedRef.current || !questions || !user || !config) return;
       submittedRef.current = true;
+      setSubmitError(null);
+      setSubmitting(true);
       clearSession(SEP_SESSION_KEY);
 
       void submitService
@@ -346,23 +349,20 @@ export function SepExamScreen() {
       setSubmitted(true);
       setShowNavigator(false);
       setShowConfirm(false);
+      setSubmitting(false);
       window.scrollTo(0, 0);
-
-      const correct = rows.filter((r) => r.verdict === 'correct').length;
-      const answered = rows.filter((r) => r.userAnswer !== null).length;
-      const score =
-        rows.length > 0
-          ? Math.round((correct / rows.length) * 10000) / 100
-          : 0;
 
       streakService.bumpStreak().catch((err) => {
         if (import.meta.env.DEV) {
           console.warn('[SEP] Failed to bump streak:', err);
         }
       });
-      }).catch((err) => {
+      }).catch((err: unknown) => {
         submittedRef.current = false;
-        if (import.meta.env.DEV) console.warn('[SEP] Key load failed:', err);
+        setSubmitting(false);
+        const msg = err instanceof Error ? err.message : String(err);
+        setSubmitError(msg);
+        if (import.meta.env.DEV) console.warn('[SEP] Submit failed:', err);
       });
     },
     [answers, questions, user, config, startedAt],
@@ -611,7 +611,12 @@ export function SepExamScreen() {
         <SepConfirmSubmit
           total={questions.length}
           answered={answeredCount}
-          onCancel={() => setShowConfirm(false)}
+          submitting={submitting}
+          error={submitError}
+          onCancel={() => {
+            setShowConfirm(false);
+            setSubmitError(null);
+          }}
           onConfirm={() => doSubmit(false)}
         />
       )}
@@ -795,6 +800,8 @@ function SepNavigator({
 interface SepConfirmSubmitProps {
   total: number;
   answered: number;
+  submitting?: boolean;
+  error?: string | null;
   onCancel: () => void;
   onConfirm: () => void;
 }
@@ -802,6 +809,8 @@ interface SepConfirmSubmitProps {
 function SepConfirmSubmit({
   total,
   answered,
+  submitting = false,
+  error = null,
   onCancel,
   onConfirm,
 }: SepConfirmSubmitProps) {
@@ -824,11 +833,27 @@ function SepConfirmSubmit({
             All {total} questions answered. Ready to submit?
           </p>
         )}
+        {error && (
+          <p
+            style={{
+              fontSize: 13,
+              color: '#8a4b4b',
+              background: 'rgba(185, 28, 28, 0.08)',
+              padding: '8px 12px',
+              borderRadius: 8,
+              margin: 0,
+              wordBreak: 'break-word',
+            }}
+          >
+            {error}
+          </p>
+        )}
         <div className={styles.confirmActions}>
           <button
             type="button"
             className={styles.secondaryButton}
             onClick={onCancel}
+            disabled={submitting}
           >
             Keep working
           </button>
@@ -836,8 +861,9 @@ function SepConfirmSubmit({
             type="button"
             className={styles.primaryButton}
             onClick={onConfirm}
+            disabled={submitting}
           >
-            Submit
+            {submitting ? 'Submitting…' : 'Submit'}
           </button>
         </div>
       </div>
@@ -871,6 +897,8 @@ function SepReview({
   onBack,
 }: SepReviewProps) {
   const [openSubjects, setOpenSubjects] = useState<Set<string>>(new Set());
+  const [visibleCounts, setVisibleCounts] = useState<Record<string, number>>({});
+  const [isPending, startTransition] = useTransition();
 
   const total = results.length;
   const correct = results.filter((r) => r.verdict === 'correct').length;
@@ -896,11 +924,13 @@ function SepReview({
   }, [results]);
 
   function toggleSubject(s: string) {
-    setOpenSubjects((prev) => {
-      const next = new Set(prev);
-      if (next.has(s)) next.delete(s);
-      else next.add(s);
-      return next;
+    startTransition(() => {
+      setOpenSubjects((prev) => {
+        const next = new Set(prev);
+        if (next.has(s)) next.delete(s);
+        else next.add(s);
+        return next;
+      });
     });
   }
 
@@ -996,7 +1026,12 @@ function SepReview({
 
               {open && (
                 <div className={styles.subjectSectionBody}>
-                  {g.rows.map((row) => {
+                  {isPending && !visibleCounts[g.subject] ? (
+                    <div style={{ padding: 20, textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 14 }}>
+                      Loading questions…
+                    </div>
+                  ) : null}
+                  {(isPending && !visibleCounts[g.subject] ? [] : g.rows.slice(0, visibleCounts[g.subject] ?? 10)).map((row, i) => {
                     const qIndex = results.indexOf(row) + 1;
                     const verdictClass =
                       row.verdict === 'correct'
@@ -1068,10 +1103,33 @@ function SepReview({
                             premiumExplanation={row.question.premiumExplanation}
                           />
                         </div>
-                        <ReviewAsk questionId={row.question.id} context="sep_review" />
+                        <ReviewAsk
+                          questionId={row.question.id}
+                          context="sep_review"
+                          topicId={row.question.syllabusId}
+                          fetchOnMount={i === 0}
+                        />
                       </div>
                     );
                   })}
+                  {g.rows.length > (visibleCounts[g.subject] ?? 10) && (
+                    <button
+                      type="button"
+                      className={styles.secondaryButton}
+                      disabled={isPending}
+                      onClick={() => {
+                        startTransition(() => {
+                          setVisibleCounts((prev) => ({
+                            ...prev,
+                            [g.subject]: (prev[g.subject] ?? 10) + 10,
+                          }));
+                        });
+                      }}
+                      style={{ width: '100%', marginTop: 12 }}
+                    >
+                      {isPending ? 'Loading…' : 'Load 10 more'}
+                    </button>
+                  )}
                 </div>
               )}
             </div>

@@ -13,6 +13,8 @@ import { attachPassages } from '@/services/questions/questionService';
 
 export interface QuizQuestion {
   id: number;
+  /** The syllabus topic this question belongs to. Used by Ask AI per-topic caps. */
+  syllabusId: number | null;
   question: string;
   options: string[];
   answer: 'A' | 'B' | 'C' | 'D';
@@ -25,6 +27,7 @@ export interface QuizQuestion {
 
 interface QuestionBankRow {
   id: number;
+  syllabus_id: number;
   question: string;
   option_a: string;
   option_b: string;
@@ -39,7 +42,7 @@ interface QuestionBankRow {
 const VALID_ANSWERS = ['A', 'B', 'C', 'D'] as const;
 
 const LIVE_COLS =
-  'id, question, option_a, option_b, option_c, option_d, difficulty';
+  'id, syllabus_id, question, option_a, option_b, option_c, option_d, difficulty';
 const KEY_COLS =
   'id, correct_answer, standard_explanation, premium_explanation';
 
@@ -66,6 +69,7 @@ function parseQuestion(row: QuestionBankRow): QuizQuestion | null {
 
   return {
     id: row.id,
+    syllabusId: row.syllabus_id ?? null,
     question,
     options,
     answer,

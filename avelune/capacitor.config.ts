@@ -1,10 +1,15 @@
-import { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.avelune.app',
+  appId: 'app.avelune.study',
   appName: 'Avelune',
   webDir: 'dist',
-  bundledWebRuntime: false
+  android: {
+    allowMixedContent: false,
+  },
+  server: {
+    androidScheme: 'https',
+  },
 };
 
 export default config;

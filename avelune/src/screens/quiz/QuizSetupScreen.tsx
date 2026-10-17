@@ -24,6 +24,7 @@ import {
   type QuizPersistedSession,
 } from './quizSession';
 import { Button } from '@/components/ui/Button';
+import { CapSheet } from '@/components/tiers/CapSheet';
 import { Skeleton } from '@/components/ui/Skeleton';
 import {
   TIME_OPTIONS,
@@ -351,53 +352,33 @@ export function QuizSetupScreen() {
         </>
       )}
 
-      {capSheetOpen && (
-        <div className={styles.confirmOverlay}>
-          <div className={styles.confirmCard} role="dialog" aria-modal="true">
-            <span className={styles.confirmTitle}>
-              {!allowedDifficulties.includes(difficulty)
-                ? 'Upgrade to unlock this difficulty'
-                : 'No quizzes remaining'}
-            </span>
-            <p className={styles.confirmText}>
-              {!allowedDifficulties.includes(difficulty)
-                ? 'Medium and Hard quizzes are available on Pro and above.'
-                : quizGate?.canWatchAd
-                  ? `Watch a short video to unlock ${quizGate.adReward} more quiz.`
-                  : 'You\u2019ve used all your quiz unlocks for today. Upgrade for unlimited practice.'}
-            </p>
-            <div className={styles.confirmActions}>
-              {quizGate?.canWatchAd && allowedDifficulties.includes(difficulty) && (
-                <button
-                  type="button"
-                  className={styles.primaryButton}
-                  onClick={handleWatchQuizAd}
-                  disabled={unlocking}
-                >
-                  {unlocking ? 'Loading video…' : `Watch for +${quizGate.adReward}`}
-                </button>
-              )}
-              <button
-                type="button"
-                className={styles.secondaryButton}
-                onClick={() => {
-                  setCapSheetOpen(false);
-                  navigate('/subscribe');
-                }}
-              >
-                See plans
-              </button>
-              <button
-                type="button"
-                className={styles.secondaryButton}
-                onClick={() => setCapSheetOpen(false)}
-              >
-                Maybe later
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CapSheet
+        open={capSheetOpen}
+        title={
+          !allowedDifficulties.includes(difficulty)
+            ? 'Upgrade to unlock this difficulty'
+            : 'No quizzes remaining'
+        }
+        body={
+          !allowedDifficulties.includes(difficulty)
+            ? 'Medium and Hard quizzes are available on Pro and above.'
+            : quizGate?.canWatchAd
+              ? `Watch a short video to unlock ${quizGate.adReward} more quiz.`
+              : 'You\u2019ve used all your quiz unlocks for today. Upgrade for unlimited practice.'
+        }
+        onWatchAd={
+          quizGate?.canWatchAd && allowedDifficulties.includes(difficulty)
+            ? handleWatchQuizAd
+            : undefined
+        }
+        watchLabel={quizGate ? `Watch for +${quizGate.adReward}` : undefined}
+        onSeePlans={() => {
+          setCapSheetOpen(false);
+          navigate('/subscribe');
+        }}
+        onDismiss={() => setCapSheetOpen(false)}
+        busy={unlocking}
+      />
     </section>
   );
 }

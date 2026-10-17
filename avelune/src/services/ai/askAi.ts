@@ -15,6 +15,7 @@ export interface AskAIResponse {
   ok: boolean;
   answer_markdown?: string;
   reason?: string;
+  remaining?: number | "unlimited";
 }
 
 export async function askAI(
@@ -26,7 +27,17 @@ export async function askAI(
     throw new Error("no session on this page; sign in again");
   }
   const { data, error } = await supabase.functions.invoke("ask-ai", {
-    body: { ...request, access_token: token },
+    body: {
+      ...request,
+      access_token: token,
+      // Send the user's local midnight so the server's daily cap resets
+      // at the same time as the client's UI.
+      since_iso: (() => {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        return d.toISOString();
+      })(),
+    },
     headers: { Authorization: "Bearer " + token },
   });
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowRight,
@@ -6,7 +6,9 @@ import {
   Eye,
   EyeOff,
   Lightbulb,
+  Lock,
   Sparkles,
+  X,
   BookOpen,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -25,6 +27,12 @@ import { BackButton } from '@/components/ui/BackButton';
 import { Button } from '@/components/ui/Button';
 import { Markdown } from '@/components/ui/Markdown';
 import { PremiumExplanationGate } from '@/components/premium/PremiumExplanationGate';
+import { CapSheet } from '@/components/tiers/CapSheet';
+import {
+  entitlementService,
+  type Gate,
+} from '@/services/entitlements/entitlementService';
+import { usageService } from '@/services/usage/usageService';
 import { askAI } from '@/services/ai/askAi';
 import {
   unlockService,
@@ -87,7 +95,7 @@ export function StudyReaderScreen() {
   const syllabusId = Number(syllabusIdParam);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { profile, limits } = useProfile();
+  const { limits } = useProfile();
 
   const [syllabus, setSyllabus] = useState<SyllabusRow | null>(null);
   const [allQuestions, setAllQuestions] = useState<MCQQuestion[] | null>(null);
@@ -99,14 +107,32 @@ export function StudyReaderScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
-  const [aiMessage, setAiMessage] = useState('');
   const [aiAnswer, setAiAnswer] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [showAiInput, setShowAiInput] = useState(false);
+  const [askAiGate, setAskAiGate] = useState<Gate | null>(null);
+  const [askAiCapOpen, setAskAiCapOpen] = useState(false);
+  const [askAiAdBusy, setAskAiAdBusy] = useState(false);
 
   const hasRecordedInitial = useRef(false);
-  const isPremium = profile?.premium === true;
+  const isPremium = limits.tier !== 'free';
+
+  const refreshAskAiGate = useCallback(async () => {
+    if (!user) return;
+    try {
+      const g = await entitlementService.askAiGate(user.id, limits, syllabusId);
+      setAskAiGate(g);
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.warn('[STUDY] Ask AI gate lookup failed:', err);
+      }
+    }
+  }, [user, limits, syllabusId]);
+
+  useEffect(() => {
+    void refreshAskAiGate();
+  }, [refreshAskAiGate]);
 
   // Per-topic study cap: base from the tier, plus any ad-granted extras
   // for this specific topic. Paid tiers with 'unlimited' bypass the cap.
@@ -158,6 +184,25 @@ export function StudyReaderScreen() {
       setAiError(text);
     } finally {
       setAiLoading(false);
+      void refreshAskAiGate();
+    }
+  }
+
+  async function handleAskAiWatchAd() {
+    if (!user || askAiAdBusy) return;
+    setAskAiAdBusy(true);
+    try {
+      const result = await rewardedService.show();
+      if (result !== 'rewarded') return;
+      await usageService.record(user.id, 'ask_ai_ad');
+      await refreshAskAiGate();
+      setAskAiCapOpen(false);
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.warn('[STUDY] Ask AI ad failed:', err);
+      }
+    } finally {
+      setAskAiAdBusy(false);
     }
   }
 
@@ -402,6 +447,14 @@ useEffect(() => {
   const isLast = currentIndex >= questions.length - 1;
   const displayPct = Math.round(((currentIndex + 1) / questions.length) * 100);
 
+  const aiBlocked = askAiGate?.state === 'blocked';
+  const aiAtCap = askAiGate?.state === 'at-cap';
+  const aiRemaining = askAiGate?.remaining;
+  const aiHintText =
+    aiRemaining === undefined || !Number.isFinite(aiRemaining)
+      ? 'Ask about this question'
+      : `${aiRemaining} left today`;
+
   return (
     <section className={styles.page}>
       <div className={styles.topBar}>
@@ -475,21 +528,43 @@ useEffect(() => {
             className={styles.explanationBody}
           />
           <div className={styles.aiRow}>
-            <button
-              type="button"
-              className={styles.aiButton}
-              onClick={() => {
-                setShowAiInput((visible) => !visible);
-                setAiError(null);
-              }}
-              disabled={aiLoading}
-            >
-              <Sparkles size={14} aria-hidden="true" />
-              {showAiInput ? 'Close' : 'Ask AI'}
-            </button>
+            {aiBlocked ? (
+              <button
+                type="button"
+                className={styles.aiButton}
+                onClick={() => navigate('/subscribe')}
+              >
+                <Lock size={14} aria-hidden="true" />
+                Ask AI — Upgrade
+              </button>
+            ) : aiAtCap ? (
+              <button
+                type="button"
+                className={styles.aiButton}
+                onClick={() => setAskAiCapOpen(true)}
+              >
+                <Sparkles size={14} aria-hidden="true" />
+                Ask AI — Limit reached
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className={styles.aiButton}
+                  onClick={() => {
+                    setShowAiInput((visible) => !visible);
+                    setAiError(null);
+                  }}
+                  disabled={aiLoading}
+                >
+                  <Sparkles size={14} aria-hidden="true" />
+                  {showAiInput ? 'Close' : 'Ask AI'}
+                </button>
 
-            {!showAiInput && !aiAnswer && !aiError && (
-              <span className={styles.aiHint}>Ask about this question</span>
+                {!showAiInput && !aiAnswer && !aiError && (
+                  <span className={styles.aiHint}>{aiHintText}</span>
+                )}
+              </>
             )}
           </div>
 
@@ -584,6 +659,28 @@ useEffect(() => {
           )}
         </div>
       )}
+
+      <CapSheet
+        open={askAiCapOpen}
+        title="Ask AI limit reached"
+        body={
+          askAiGate?.canWatchAd
+            ? `Watch a short video to unlock ${askAiGate.adReward} more Ask AI questions today.`
+            : limits.tier === 'free'
+              ? 'Ask AI is a paid feature. Upgrade to ask questions about any problem.'
+              : 'You\u2019ve used every unlock available today. Upgrade for unlimited Ask AI.'
+        }
+        onWatchAd={askAiGate?.canWatchAd ? handleAskAiWatchAd : undefined}
+        watchLabel={
+          askAiGate ? `Watch for +${askAiGate.adReward}` : undefined
+        }
+        onSeePlans={() => {
+          setAskAiCapOpen(false);
+          navigate('/subscribe');
+        }}
+        onDismiss={() => setAskAiCapOpen(false)}
+        busy={askAiAdBusy}
+      />
 
       <div className={styles.actions}>
         <button

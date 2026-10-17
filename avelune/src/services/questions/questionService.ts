@@ -30,6 +30,11 @@ export interface QuestionBankRow {
 
 export interface MCQQuestion {
   id: number;
+  /**
+   * The syllabus topic this question belongs to.
+   * Used by Ask AI to scope the per-topic daily cap on Platinum.
+   */
+  syllabusId: number | null;
   question: string;
   options: string[];
   answer: 'A' | 'B' | 'C' | 'D';
@@ -70,6 +75,7 @@ function parseLiveMCQ(row: QuestionBankRow): MCQQuestion | null {
 
   return {
     id: row.id,
+    syllabusId: row.syllabus_id ?? null,
     question,
     options,
     // Deliberately not the real answer. The live view does not expose it.
@@ -100,6 +106,7 @@ export function parseMCQ(row: QuestionBankRow): MCQQuestion | null {
 
   return {
     id: row.id,
+    syllabusId: row.syllabus_id ?? null,
     question,
     options,
     answer: answer as MCQQuestion['answer'],
@@ -132,14 +139,6 @@ function clusterByPassage<T extends { passageUuid?: string | null }>(items: T[])
     out.push(...(groups.get(key) ?? [item]));
   }
   return out;
-}
-
-function passageText(row: Record<string, unknown>): string {
-  for (const key of ['passage', 'content', 'body', 'text', 'passage_text']) {
-    const value = row[key];
-    if (typeof value === 'string' && value.trim()) return value.trim();
-  }
-  return '';
 }
 
 export async function attachPassages<T extends { id: number; passageUuid?: string | null; passage?: string | null }>(
@@ -182,6 +181,69 @@ export async function attachPassages<T extends { id: number; passageUuid?: strin
     const uuid = uuidById.get(q.id) ?? null;
     return { ...q, passageUuid: uuid, passage: uuid ? textByUuid.get(uuid) ?? null : null };
   });
+}
+
+/**
+ * Sampling weights per question id, matching the model guide:
+ * never attempted 4, always correct 1, always wrong 8, mixed 4.
+ */
+function computeWeights(
+  ids: number[],
+  history: { question_id: number; is_correct: boolean | null }[],
+): Map<number, number> {
+  const byId = new Map<number, { correct: number; wrong: number }>();
+  for (const row of history) {
+    const entry = byId.get(row.question_id) ?? { correct: 0, wrong: 0 };
+    if (row.is_correct === true) entry.correct += 1;
+    else if (row.is_correct === false) entry.wrong += 1;
+    byId.set(row.question_id, entry);
+  }
+  const weights = new Map<number, number>();
+  for (const id of ids) {
+    const h = byId.get(id);
+    if (!h || (h.correct === 0 && h.wrong === 0)) {
+      weights.set(id, 4);
+    } else if (h.wrong === 0) {
+      weights.set(id, 1);
+    } else if (h.correct === 0) {
+      weights.set(id, 8);
+    } else {
+      weights.set(id, 4);
+    }
+  }
+  return weights;
+}
+
+/**
+ * Sample `count` items without replacement, weighted by `weights`.
+ * Ids missing from the map default to weight 4.
+ */
+function weightedSampleWithoutReplacement<T extends { id: number }>(
+  items: T[],
+  weights: Map<number, number>,
+  count: number,
+): T[] {
+  const pool = items.slice();
+  const w = pool.map((item) => weights.get(item.id) ?? 4);
+  const out: T[] = [];
+  const target = Math.min(count, pool.length);
+  for (let i = 0; i < target; i += 1) {
+    const total = w.reduce((a, b) => a + b, 0);
+    if (total <= 0) break;
+    let r = Math.random() * total;
+    let pick = 0;
+    for (let j = 0; j < w.length; j += 1) {
+      r -= w[j];
+      if (r <= 0) {
+        pick = j;
+        break;
+      }
+    }
+    out.push(pool[pick]);
+    pool.splice(pick, 1);
+    w.splice(pick, 1);
+  }
+  return out;
 }
 
 export const questionService = {

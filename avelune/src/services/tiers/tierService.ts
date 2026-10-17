@@ -44,6 +44,8 @@ export interface TierLimits {
 
   /** Rewarded-ad rule for premium explanations on this tier. */
   premiumExplanationAds: AdUnlockRule;
+  /** Rewarded-ad rule for Ask AI on this tier. */
+  askAiAds: AdUnlockRule;
 }
 
 export const TIER_LIMITS: Record<Tier, TierLimits> = {
@@ -67,6 +69,7 @@ export const TIER_LIMITS: Record<Tier, TierLimits> = {
       maxAds: 2,
       scope: 'global',
     },
+    askAiAds: { rewardPerAd: 0, maxAds: 0, scope: 'global' },
   },
 
   pro: {
@@ -89,6 +92,7 @@ export const TIER_LIMITS: Record<Tier, TierLimits> = {
       maxAds: 5,
       scope: 'per-section-daily',
     },
+    askAiAds: { rewardPerAd: 3, maxAds: 5, scope: 'daily' },
   },
 
   platinum: {
@@ -111,6 +115,7 @@ export const TIER_LIMITS: Record<Tier, TierLimits> = {
       maxAds: 0,
       scope: 'global',
     },
+    askAiAds: { rewardPerAd: 0, maxAds: 0, scope: 'global' },
   },
 
   diamond: {
@@ -133,6 +138,7 @@ export const TIER_LIMITS: Record<Tier, TierLimits> = {
       maxAds: 0,
       scope: 'global',
     },
+    askAiAds: { rewardPerAd: 0, maxAds: 0, scope: 'global' },
   },
 };
 
@@ -183,11 +189,13 @@ export interface AdUnlockRule {
   /** Maximum ads a user can watch for this feature. */
   maxAds: number;
   /**
-   * How the watched-ad count is scoped. 'global' means one counter per
-   * user; 'per-section-daily' means one counter per section, resetting
-   * at local midnight.
+   * How the watched-ad count is scoped:
+   *   - 'global'            one counter per user, never resets
+   *   - 'daily'             one counter per user per local day
+   *   - 'per-section-daily' one counter per section per local day
+   *   - 'per-topic-daily'   one counter per topic per local day
    */
-  scope?: 'global' | 'per-section-daily';
+  scope?: 'global' | 'daily' | 'per-section-daily' | 'per-topic-daily';
 }
 
 export const AD_UNLOCK_RULES = {
