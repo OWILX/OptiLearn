@@ -532,8 +532,14 @@ export function normalizeExamMarkup(raw: string): string {
   if (!raw) return raw;
 
   const repaired = raw
-    .replace(/(^|[^\\])(?:d|t|c)?frac\{/g, '$1\\frac{')
-    .replace(/(^|[^\\])rac\{/g, '$1\\frac{');
+    // Force display fractions so they don't look squashed on mobile
+    .replace(/\\frac\{/g, '\\dfrac{')
+    // Fix \dfrac, \tfrac, \cfrac
+    .replace(/\\\\?(?:d|t|c)frac\{/g, '\\dfrac{')
+    // Fix log10 -> log_{10} and ln2 -> ln_{2} etc
+    .replace(/\\(log|ln|exp)(\d+)/g, '\\$1_{$2}')
+    // Fix missing backslash: frac{ -> \dfrac{
+    .replace(/(^|[^a-zA-Z\\])frac\{/g, '$1\\dfrac{');
   const normalized = repaired
     .replace(/\r\n?/g, '\n')
     .replace(/_(\([^)]+\))_/g, '\\_$1\\_');

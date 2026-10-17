@@ -11,7 +11,7 @@ import { subjectColor } from '@/utils/subjectColor';
 import { BackButton } from '@/components/ui/BackButton';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { PageLoader } from '@/components/ui/PageLoader';
 import styles from './SectionDetailScreen.module.css';
 
 export function SectionDetailScreen() {
@@ -97,13 +97,7 @@ export function SectionDetailScreen() {
         </>
       )}
 
-      {loading && (
-        <div className={styles.list}>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} height={62} />
-          ))}
-        </div>
-      )}
+      {loading && <PageLoader text="Loading topics..." />}
 
       {!loading && topics && topics.length === 0 && (
         <EmptyState

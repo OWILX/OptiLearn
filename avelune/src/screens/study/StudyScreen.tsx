@@ -10,7 +10,7 @@ import {
 import { subjectColor } from '@/utils/subjectColor';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { PageLoader } from '@/components/ui/PageLoader';
 import styles from './StudyScreen.module.css';
 
 export function StudyScreen() {
@@ -79,13 +79,7 @@ export function StudyScreen() {
         </>
       )}
 
-      {loading && (
-        <div className={styles.grid}>
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} height={152} />
-          ))}
-        </div>
-      )}
+      {loading && <PageLoader text="Loading subjects..." />}
 
       {!loading && subjects && subjects.length === 0 && (
         <EmptyState

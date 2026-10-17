@@ -66,9 +66,7 @@ export function QuizScreen() {
         <div className={styles.personalizedBody}>
           <span className={styles.personalizedTitle}>Personalized quiz</span>
           <span className={styles.personalizedMeta}>
-            {isPremium
-              ? 'Answer 300 questions to unlock'
-              : 'Premium only'}
+            Coming soon
           </span>
         </div>
         <Lock size={16} className={styles.personalizedLock} aria-hidden="true" />

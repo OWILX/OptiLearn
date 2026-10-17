@@ -40,7 +40,7 @@ import {
 } from '@/services/usage/unlockService';
 import { rewardedService } from '@/services/ads/rewardedService';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { PageLoader } from '@/components/ui/PageLoader';
 import styles from './StudyReaderScreen.module.css';
 
 const LETTERS = ['A', 'B', 'C', 'D'] as const;
@@ -376,7 +376,10 @@ useEffect(() => {
   if (loading) {
     return (
       <section className={styles.page}>
-        <Skeleton height={300} />
+        <div className={styles.topBar}>
+          <BackButton label="Loading..." onClick={() => navigate('/study')} />
+        </div>
+        <PageLoader text="Fetching questions..." />
       </section>
     );
   }

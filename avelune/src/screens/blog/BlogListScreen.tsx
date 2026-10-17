@@ -9,7 +9,7 @@ import {
 } from '@/services/blog/blogService';
 import { subjectColor } from '@/utils/subjectColor';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { PageLoader } from '@/components/ui/PageLoader';
 import { Button } from '@/components/ui/Button';
 import styles from './BlogListScreen.module.css';
 
@@ -72,8 +72,8 @@ export function BlogListScreen() {
 
       {loading && (
         <div className={styles.list}>
-          <Skeleton height={96} />
-          <Skeleton height={96} />
+          <PageLoader />
+          <PageLoader />
         </div>
       )}
 

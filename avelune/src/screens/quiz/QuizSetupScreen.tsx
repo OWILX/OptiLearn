@@ -25,7 +25,7 @@ import {
 } from './quizSession';
 import { Button } from '@/components/ui/Button';
 import { CapSheet } from '@/components/tiers/CapSheet';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { PageLoader } from '@/components/ui/PageLoader';
 import {
   TIME_OPTIONS,
   QUESTION_OPTIONS,
@@ -218,7 +218,7 @@ export function QuizSetupScreen() {
         </>
       )}
 
-      {loading && <Skeleton height={280} />}
+      {loading && <PageLoader />}
 
       {!loading && !error && subjects && subjects.length === 0 && (
         <div className={styles.empty}>

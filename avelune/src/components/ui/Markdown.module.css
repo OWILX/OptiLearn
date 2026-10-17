@@ -114,43 +114,6 @@
   text-align: left;
 }
 
-/* Math tokens: one visual contract across every context. */
-.md :global(.katex) {
-  font-size: 1.04em;
-  vertical-align: -0.08em;
-}
-
-.md :global(.katex-display) {
-  display: block;
-  box-sizing: border-box;
-  max-width: 100%;
-  margin: 0.9em 0;
-  padding: 0.2em 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-}
-
-.md :global(.katex-display .katex) {
-  font-size: 1.08em;
-  vertical-align: baseline;
-}
-
-.md :global(.katex-display) :global(.katex-html) {
-  min-width: max-content;
-}
-
-.md :global(.katex-error) {
-  color: inherit;
-  font-style: normal;
-  font-weight: inherit;
-}
-
-.md[data-markdown-dev='true'] :global(.katex-error) {
-  outline: 1px dashed currentColor;
-  outline-offset: 2px;
-}
-
 .md :global(sub),
 .md :global(sup) {
   font-size: 0.75em;
@@ -185,29 +148,7 @@
   color: var(--color-text-muted);
 }
 
-.md :global(.footnotes) {
-  margin-top: 1em;
-  padding-top: 0.75em;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.9em;
-  color: var(--color-text-muted);
-}
-
-.md :global(input[type='checkbox']) {
-  margin-right: 0.4em;
-  vertical-align: middle;
-}
-
-.md :global(details) {
-  margin: 0 0 0.75em;
-}
-
-.md :global(summary) {
-  cursor: pointer;
-  font-weight: 600;
-}
-
-/* Shared typography variants. Math inherits scale from the same content context. */
+/* Shared typography variants. */
 .md.question {
   font-size: 17px;
   font-weight: 600;
@@ -257,251 +198,48 @@
   color: var(--color-text);
 }
 
-@media (max-width: 480px) {
-  .md :global(.katex-display) {
-    max-width: 100%;
-    overflow-x: auto;
-  }
-}
-
-
 /* ============================================================================
-   Avelune Learning UI System — Markdown presentation variants
-   Parsing is shared; these classes only alter typography and spacing.
+   KaTeX Math Rendering
+   We let KaTeX handle its own vertical layout entirely. We only constrain 
+   the width so long equations scroll horizontally instead of breaking the screen.
    ============================================================================ */
 
-.md {
-  min-width: 0;
-  max-width: 100%;
-  overflow-wrap: anywhere;
-}
-
-.md :global(p),
-.md :global(li),
-.md :global(blockquote),
-.md :global(td),
-.md :global(th) {
-  overflow-wrap: anywhere;
-}
-
-.variantBody {
-  font-size: 15px;
-  line-height: 1.5;
-  font-weight: 400;
-}
-
-.variantBody :global(p) {
-  margin-bottom: 0.75em;
-}
-
-.variantQuestion {
-  font-size: var(--type-question-size);
-  line-height: var(--type-question-line);
-  font-weight: var(--type-question-weight);
+.md :global(.katex) {
+  font-size: 1.05em;
   color: var(--color-text);
 }
 
-.variantQuestion :global(p) {
-  margin-bottom: 0.7em;
-}
-
-.variantQuestion :global(p:last-child) {
-  margin-bottom: 0;
-}
-
-.variantOption {
-  font-size: var(--type-option-size);
-  line-height: var(--type-option-line);
-  font-weight: var(--type-option-weight);
-  color: var(--color-text);
-}
-
-.variantOption :global(p) {
-  margin-bottom: 0.55em;
-}
-
-.variantOption :global(p:last-child) {
-  margin-bottom: 0;
-}
-
-.variantReviewQuestion {
-  font-size: var(--type-review-question-size);
-  line-height: var(--type-review-question-line);
-  font-weight: var(--type-review-question-weight);
-  color: var(--color-text);
-}
-
-.variantReviewQuestion :global(p) {
-  margin-bottom: 0.65em;
-}
-
-.variantReviewQuestion :global(p:last-child) {
-  margin-bottom: 0;
-}
-
-.variantReviewOption {
-  font-size: 13px;
-  line-height: 1.5;
-  font-weight: 400;
-  color: var(--color-text);
-}
-
-.variantReviewOption :global(p) {
-  margin-bottom: 0.5em;
-}
-
-.variantReviewOption :global(p:last-child) {
-  margin-bottom: 0;
-}
-
-.variantExplanation {
-  font-size: var(--type-explanation-size);
-  line-height: var(--type-explanation-line);
-  font-weight: var(--type-explanation-weight);
-  color: var(--color-text);
-}
-
-.variantExplanation :global(p) {
-  margin-bottom: 0.8em;
-}
-
-.variantExplanation :global(p:last-child) {
-  margin-bottom: 0;
-}
-
-.variantExplanation :global(h2),
-.variantExplanation :global(h3),
-.variantExplanation :global(h4) {
-  margin-top: 1em;
-  margin-bottom: 0.45em;
-  font-weight: 700;
-}
-
-.variantArticle {
-  font-size: var(--type-article-size);
-  line-height: var(--type-article-line);
-  font-weight: var(--type-article-weight);
-  color: var(--color-text);
-}
-
-.variantArticle :global(p) {
-  margin-bottom: 0.95em;
-}
-
-.variantArticle :global(p:last-child) {
-  margin-bottom: 0;
-}
-
-.variantCompact {
-  font-size: 13px;
-  line-height: 1.5;
-  font-weight: 400;
-  color: var(--color-text);
-}
-
-.variantCompact :global(p) {
-  margin-bottom: 0.55em;
-}
-
-.variantCompact :global(p:last-child) {
-  margin-bottom: 0;
-}
-
-/* Math scale belongs to the shared renderer, not to individual screens. */
-.variantQuestion :global(.katex),
-.variantReviewQuestion :global(.katex) {
-  font-size: 1.04em;
-}
-
-.variantOption :global(.katex),
-.variantReviewOption :global(.katex) {
-  font-size: 1.04em;
-}
-
-.variantExplanation :global(.katex) {
-  font-size: 1.04em;
-}
-
-.variantArticle :global(.katex) {
-  font-size: 1.04em;
-}
-
-/* Keep wide display equations inside the Markdown content region. */
 .md :global(.katex-display) {
-  max-width: var(--content-equation-max);
+  display: block;
+  max-width: 100%;
+  margin: 0.8em 0;
+  padding: 0.4em 0;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-inline: contain;
-  scrollbar-width: thin;
 }
 
-.md :global(.katex-display) > :global(.katex) {
-  max-width: none;
+.md :global(.katex-display .katex) {
+  font-size: 1.08em;
 }
 
-/* Do not clip tall inline equations. */
-.md :global(.katex) {
-  vertical-align: baseline;
+.md :global(.katex-display .katex-html) {
+  min-width: max-content;
 }
 
-.md :global(pre),
-.md :global(table) {
-  max-width: 100%;
-  overflow-x: auto;
+.md :global(.katex-error) {
+  color: inherit;
+  font-style: normal;
+  font-weight: inherit;
 }
 
-/* Math display only. Do not change parsing. */
-.md :global(.katex) {
-  display: inline-block;
-  line-height: 1.2;
-  vertical-align: middle;
-  padding: 0.18em 0.02em;
-  text-indent: 0;
+.md[data-markdown-dev='true'] :global(.katex-error) {
+  outline: 1px dashed currentColor;
+  outline-offset: 2px;
 }
 
-.md :global(.katex),
-.md :global(.katex *) {
-  box-sizing: content-box;
-}
 
-.md :global(.katex-display) {
-  display: block;
-  overflow-x: auto;
-  overflow-y: visible;
-  padding: 0.5em 0;
-}
-
-.md :global(.katex .vlist-t) {
-  display: inline-table;
-  border-collapse: collapse;
-}
-
-.md :global(.katex .vlist-r) {
-  display: table-row;
-}
-
-.md :global(.katex .vlist) {
-  display: table-cell;
-  vertical-align: bottom;
-  position: relative;
-}
-
-.md :global(.katex .vlist > span) {
-  display: block;
-  height: 0;
-  position: relative;
-}
-
-.md :global(.katex .vlist > span > span) {
-  display: inline-block;
-}
-
-.md :global(.katex .frac-line) {
-  display: inline-block;
-  width: 100%;
-  border-bottom: 0.05em solid currentColor;
-  min-height: 1px;
-  margin: 0.22em 0;
-}
-
+/* Shrink exponents and subscripts so they look like proper indices */
+.md :global(.katex .msupsub) { font-size: 0.72em !important; }
+.md :global(.katex .frac-line) { border-bottom-width: 1px !important; min-height: 1px; }
+.md :global(.katex) { padding: 0 0.1em; }

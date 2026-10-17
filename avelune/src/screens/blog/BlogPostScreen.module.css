@@ -130,6 +130,9 @@
   max-width: var(--content-reading-max);
   font-size: var(--type-article-size);
   line-height: var(--type-article-line);
+  /* Ensure long math doesn't blow out the reading column */
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .practise {

@@ -15,7 +15,7 @@
 }
 
 .title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-text);
@@ -23,7 +23,7 @@
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
   color: var(--color-text-muted);
   margin: 0;
@@ -44,12 +44,12 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-sm);
 }
 
 .tierCardRecommended {
-  border-color: rgba(22, 36, 140, 0.24);
-  box-shadow: var(--shadow-sm);
+  border-color: var(--color-brand-blue);
+  box-shadow: 0 4px 20px rgba(22, 36, 140, 0.1);
 }
 
 .tierCardCurrent {
@@ -59,11 +59,14 @@
 
 .recommendedTag {
   position: absolute;
-  top: -10px;
+  top: -12px;
   left: var(--space-5);
-  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
@@ -75,11 +78,16 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-3);
+}
+
+.tierNameWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .tierName {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--color-text);
@@ -87,21 +95,25 @@
 }
 
 .tierPrice {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
   color: var(--color-brand-blue);
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
-.tierCardCurrent .tierPrice {
-  color: var(--color-brand-purple);
+.tierPeriod {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  letter-spacing: normal;
 }
 
 .featureList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  margin: 0;
+  gap: var(--space-3);
+  margin: var(--space-2) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -109,7 +121,7 @@
 .featureItem {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-2);
+  gap: var(--space-3);
   font-size: 14px;
   line-height: 1.4;
   color: var(--color-text);
@@ -117,7 +129,7 @@
 
 .featureItem svg {
   flex-shrink: 0;
-  margin-top: 3px;
+  margin-top: 2px;
   color: var(--color-success);
 }
 
@@ -125,14 +137,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
   width: 100%;
-  height: 48px;
+  height: 52px;
+  margin-top: var(--space-2);
   padding: 0 var(--space-5);
   border-radius: var(--radius-md);
   background: var(--color-brand-blue);
   color: #ffffff;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   border: none;
   -webkit-tap-highlight-color: transparent;
@@ -153,18 +165,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  font-size: 12px;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--color-text-muted);
   text-align: center;
   margin: var(--space-2) 0 0;
-}
-
-@media (max-width: 479px) {
-  .page {
-    gap: var(--space-4);
-  }
-  .tierCard {
-    padding: var(--space-4);
-  }
 }

@@ -15,6 +15,7 @@ export interface AppNotification {
   title: string;
   body: string;
   to: string;
+  timeAgo?: string;
 }
 
 function remainingLabel(endTime: number): string {
@@ -46,6 +47,9 @@ export const notificationService = {
         title: 'Exam in progress',
         body: String(answered) + '/' + String(total) + ' answered - ' + remainingLabel(stored.endTime),
         to: '/sep/exam?' + params.toString(),
+        timeAgo: 'In progress',
+        timeAgo: 'In progress',
+        timeAgo: 'In progress',
       });
     }
 
@@ -81,6 +85,9 @@ export const notificationService = {
               ? 'Solid score. Review the misses while they are fresh.'
               : 'Review the missed questions before your next attempt.',
         to: '/sep/history/' + String(last.id),
+        timeAgo: 'Recent',
+        timeAgo: 'Recent',
+        timeAgo: 'Recent',
       });
     }
 
@@ -111,7 +118,7 @@ export const notificationService = {
         to: '/study',
       });
     }
-
-    return items;
+    const order: Record<NotificationKind, number> = { sep_resume: 1, sep_result: 2, continue: 3, streak: 4 };
+    return items.sort((a, b) => order[a.kind] - order[b.kind]);
   },
 };

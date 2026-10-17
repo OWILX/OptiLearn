@@ -28,7 +28,8 @@ import {
   readSession,
   clearSession,
 } from '@/utils/sessionStorage';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { PageLoader } from '@/components/ui/PageLoader';
+import { TierShowcaseModal } from '@/components/tiers/TierShowcaseModal';
 import styles from './HomeScreen.module.css';
 
 interface DashboardData {
@@ -112,6 +113,7 @@ export function HomeScreen() {
   const [lowCaps, setLowCaps] = useState<
     { label: string; remaining: number }[]
   >([]);
+  const [showTierModal, setShowTierModal] = useState(false);
 
 
   // Ticks once a minute so the greeting and date roll over correctly
@@ -171,6 +173,18 @@ export function HomeScreen() {
     return () => window.clearInterval(id);
   }, [resumableSep]);
 
+
+  // Show the premium upsell once per session for free users.
+  useEffect(() => {
+    if (loading || !profile) return;
+    if (profile.tier !== 'free') return;
+
+    const shown = sessionStorage.getItem('optilearn.tier_modal_shown');
+    if (!shown) {
+      setShowTierModal(true);
+      sessionStorage.setItem('optilearn.tier_modal_shown', '1');
+    }
+  }, [loading, profile]);
 
   // Compute which caps the user is close to running out on.
   useEffect(() => {
@@ -524,6 +538,11 @@ export function HomeScreen() {
         )}
       </div>
 
+      <TierShowcaseModal
+        open={showTierModal}
+        onClose={() => setShowTierModal(false)}
+      />
+
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>Recent performance</h2>
@@ -538,7 +557,7 @@ export function HomeScreen() {
           )}
         </div>
         {loading ? (
-          <Skeleton height={80} />
+          <PageLoader />
         ) : recentAttempts.length === 0 ? (
           <div className={styles.recentEmpty}>
             No SEP attempts yet. Take one to see your scores here.

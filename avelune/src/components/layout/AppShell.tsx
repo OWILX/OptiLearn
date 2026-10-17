@@ -32,6 +32,7 @@ export function AppShell() {
   const [inbox, setInbox] = useState<AppNotification[]>([]);
   const [inboxLoading, setInboxLoading] = useState(false);
   const lastInboxLoad = useRef(0);
+  const [hasUnread, setHasUnread] = useState(false);
 
   const isFocusMode = FOCUS_ROUTE_PREFIXES.some((p) =>
     location.pathname.startsWith(p),
@@ -63,6 +64,8 @@ export function AppShell() {
     try {
       const rows = await notificationService.getInbox(user.id);
       setInbox(rows);
+      
+
       lastInboxLoad.current = Date.now();
     } catch (err: unknown) {
       if (import.meta.env.DEV) console.warn('[INBOX] Load failed:', err);
@@ -107,7 +110,16 @@ export function AppShell() {
             <button
               type="button"
               className={styles.iconButton}
-              onClick={() => setNotificationsOpen(true)}
+              onClick={() => {
+                setNotificationsOpen(true);
+                setHasUnread(false);
+                try {
+                  const ids = inbox.map((n) => n.id);
+                  localStorage.setItem('optilearn.notifications.seen', JSON.stringify(ids));
+                } catch {
+                  /* ignore */
+                }
+              }}
               aria-label={
                 inbox.length > 0
                   ? `Notifications, ${inbox.length} items`
@@ -115,7 +127,7 @@ export function AppShell() {
               }
             >
               <Bell size={20} aria-hidden="true" />
-              {inbox.length > 0 && (
+              {hasUnread && (
                 <span className={styles.badge} aria-hidden="true" />
               )}
             </button>

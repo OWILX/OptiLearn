@@ -6,6 +6,7 @@ import { RouteError } from '@/components/errors/RouteError';
 import { HomeScreen } from '@/screens/home/HomeScreen';
 import { LoginScreen } from '@/screens/auth/LoginScreen';
 import { ProfileScreen } from '@/screens/profile/ProfileScreen';
+import { SubscribeScreen } from '@/screens/subscribe/SubscribeScreen';
 import { StudyScreen } from '@/screens/study/StudyScreen';
 import { SubjectDetailScreen } from '@/screens/study/SubjectDetailScreen';
 import { SectionDetailScreen } from '@/screens/study/SectionDetailScreen';
@@ -75,6 +76,7 @@ export const router = createBrowserRouter([
                 element: <SepHistoryDetailScreen />,
               },
               { path: '/profile', element: <ProfileScreen /> },
+              { path: '/subscribe', element: <SubscribeScreen /> },
               { path: '/notes', element: <BlogListScreen /> },
               { path: '/notes/:slug', element: <BlogPostScreen /> },
             ],

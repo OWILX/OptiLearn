@@ -111,7 +111,12 @@ export function NotificationPanel({
                       <Icon size={16} aria-hidden="true" />
                     </span>
                     <span className={styles.itemBody}>
-                      <span className={styles.itemTitle}>{item.title}</span>
+                      <span className={styles.itemTitle}>
+                        {item.title}
+                        {item.timeAgo && (
+                          <span className={styles.timeAgo}>{item.timeAgo}</span>
+                        )}
+                      </span>
                       <span className={styles.itemText}>{item.body}</span>
                     </span>
                     <ChevronRight

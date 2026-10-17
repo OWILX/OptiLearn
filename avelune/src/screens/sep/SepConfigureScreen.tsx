@@ -1,3 +1,4 @@
+import { PageLoader } from '@/components/ui/PageLoader';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -305,7 +306,7 @@ export function SepConfigureScreen() {
         </>
       )}
 
-      {loading && <div className={styles.skeleton} aria-hidden="true" />}
+      {loading && <PageLoader text="Loading subjects..." />}
 
       {!loading && !hasCompulsory && subjects && subjects.length > 0 && (
         <div className={styles.error}>

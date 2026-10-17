@@ -9,7 +9,7 @@ import {
 import { BackButton } from '@/components/ui/BackButton';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { PageLoader } from '@/components/ui/PageLoader';
 import styles from './SepHistoryScreen.module.css';
 
 function formatDate(iso: string): string {
@@ -110,13 +110,7 @@ export function SepHistoryScreen() {
         </>
       )}
 
-      {loading && (
-        <div className={styles.list}>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} height={80} />
-          ))}
-        </div>
-      )}
+      {loading && <PageLoader text="Loading history..." />}
 
       {!loading && attempts && attempts.length === 0 && (
         <EmptyState

@@ -12,7 +12,8 @@ import { BackButton } from '@/components/ui/BackButton';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Markdown } from '@/components/ui/Markdown';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { PageLoader } from '@/components/ui/PageLoader';
+import { PremiumExplanationGate } from '@/components/premium/PremiumExplanationGate';
 import styles from './SepHistoryDetailScreen.module.css';
 
 const LETTERS = ['A', 'B', 'C', 'D'] as const;
@@ -41,8 +42,6 @@ export function SepHistoryDetailScreen() {
   const attemptId = Number(attemptIdParam);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { profile } = useProfile();
-  const isPremium = profile?.premium === true;
 
   const [detail, setDetail] = useState<AttemptDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -114,7 +113,8 @@ export function SepHistoryDetailScreen() {
   if (loading) {
     return (
       <section className={styles.page}>
-        <Skeleton height={280} />
+        <BackButton label="History" onClick={() => navigate('/sep/history')} />
+        <PageLoader text="Loading attempt..." />
       </section>
     );
   }
@@ -237,10 +237,6 @@ export function SepHistoryDetailScreen() {
                         : q.verdict === 'wrong'
                           ? styles.verdictWrong
                           : styles.verdictSkipped;
-                    const explanation = isPremium
-                      ? q.premiumExplanation
-                      : q.standardExplanation;
-
                     return (
                       <div key={q.questionId} className={styles.questionCard}>
                         <div className={styles.questionHeader}>
@@ -291,13 +287,12 @@ export function SepHistoryDetailScreen() {
                         </div>
 
                         <div className={styles.explanation}>
-                          {explanation ? (
-                            <Markdown variant="explanation">{explanation}</Markdown>
-                          ) : (
-                            <span className={styles.explanationEmpty}>
-                              No explanation available for this question yet.
-                            </span>
-                          )}
+                          <PremiumExplanationGate
+                            questionId={q.questionId}
+                            section={q.subject}
+                            standardExplanation={q.standardExplanation}
+                            premiumExplanation={q.premiumExplanation}
+                          />
                         </div>
                       </div>
                     );

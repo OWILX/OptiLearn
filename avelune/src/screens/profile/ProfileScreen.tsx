@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
+import { PageLoader } from '@/components/ui/PageLoader';
 import { useAuth } from '@/context/AuthContext';
 import { useProfile } from '@/context/ProfileContext';
 import { useToast } from '@/context/ToastContext';
@@ -149,8 +150,9 @@ export function ProfileScreen() {
   if (profileLoading) {
     return (
       <section className={styles.page}>
-        <div className={styles.loadingWrap}>
-          <div className={styles.spinner} role="status" aria-label="Loading profile" />
+        <div className={styles.headerBlock}>
+          <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--color-border)' }} />
+          <PageLoader text="Loading profile..." />
         </div>
       </section>
     );
