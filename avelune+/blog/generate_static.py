@@ -1121,7 +1121,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    global BASE_PATH, ADS_ENABLED
+    global BASE_PATH, ADS_ENABLED, SITE_URL
     args = parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -1131,6 +1131,12 @@ def main() -> None:
         "off", "0", "false", "no",
     ):
         ADS_ENABLED = False
+
+    # Canonical origin: canonical tags, the sitemap and the robots.txt Sitemap
+    # line all need an absolute URL. Derive it from the app URL plus the serve
+    # path so a default build is correct without extra configuration.
+    if not SITE_URL:
+        SITE_URL = f"{APP_URL}{BASE_PATH}".rstrip("/")
 
     publisher = None
     if args.source == "local":
@@ -1156,11 +1162,7 @@ def main() -> None:
             "Serving under %s — links, assets and canonical URLs use that prefix.",
             BASE_PATH,
         )
-    if not SITE_URL:
-        log.info(
-            "Tip: set ARTICLE_SITE_URL (e.g. https://notes.avelune.app) for canonical "
-            "URLs, sitemap.xml and Open Graph links."
-        )
+    log.info("Canonical origin: %s (override with ARTICLE_SITE_URL).", SITE_URL)
     if not ADS_ENABLED:
         log.info("Ad widgets omitted (--no-ads / ARTICLE_ADS=off).")
 
