@@ -15,6 +15,9 @@ import { QuizScreen } from '@/screens/quiz/QuizScreen';
 import { QuizSetupScreen } from '@/screens/quiz/QuizSetupScreen';
 import { QuizSessionScreen } from '@/screens/quiz/QuizSessionScreen';
 import { QuizHistoryDetailScreen } from '@/screens/quiz/QuizHistoryDetailScreen';
+import { GeneratedQuizHistoryScreen } from '@/screens/quiz/GeneratedQuizHistoryScreen';
+import { GeneratedQuizSetupScreen } from '@/screens/quiz/GeneratedQuizSetupScreen';
+import { GeneratedQuizSessionScreen } from '@/screens/quiz/GeneratedQuizSessionScreen';
 import { ChooseDepartmentScreen } from '@/screens/onboarding/ChooseDepartmentScreen';
 import { BlogListScreen } from '@/screens/blog/BlogListScreen';
 import { BlogPostScreen } from '@/screens/blog/BlogPostScreen';
@@ -70,6 +73,18 @@ export const router = createBrowserRouter([
               {
                 path: '/quiz/history/:quizId',
                 element: <QuizHistoryDetailScreen />,
+              },
+              {
+                path: '/quiz/generated',
+                element: <GeneratedQuizHistoryScreen />,
+              },
+              {
+                path: '/quiz/generated/new',
+                element: <GeneratedQuizSetupScreen />,
+              },
+              {
+                path: '/quiz/generated/session/:quizId',
+                element: <GeneratedQuizSessionScreen />,
               },
               { path: '/profile', element: <ProfileScreen /> },
               { path: '/plans', element: <PlansScreen /> },

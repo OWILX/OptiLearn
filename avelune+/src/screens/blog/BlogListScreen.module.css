@@ -14,6 +14,70 @@
 .cardTitle { font-size: 16px; font-weight: 700; color: var(--color-text); }
 .excerpt { font-size: 13px; color: var(--color-text-muted); line-height: 1.45; }
 
+/* === Link to the full study notes site === */
+.studyNotesLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-brand-blue-soft);
+  border: 1px solid rgba(22, 36, 140, 0.16);
+  text-decoration: none;
+  color: var(--color-text);
+  transition: border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+}
+
+.studyNotesLink:hover {
+  border-color: var(--color-brand-blue);
+  box-shadow: var(--shadow-sm);
+}
+
+.studyNotesLink:focus-visible {
+  outline: 0;
+  box-shadow: var(--shadow-focus);
+}
+
+.studyNotesIcon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  background: var(--color-surface);
+  color: var(--color-brand-blue);
+}
+
+.studyNotesText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.studyNotesLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-brand-blue);
+}
+
+.studyNotesSub {
+  font-size: 13px;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.studyNotesArrow {
+  flex-shrink: 0;
+  color: var(--color-brand-blue);
+  font-size: 18px;
+  font-weight: 600;
+}
+
 /* === Visual polish pass === */
 .page {
   animation: pageEnter 260ms var(--ease-out) both;

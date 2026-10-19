@@ -23,6 +23,9 @@ function features(plan: PlanOption): string[] {
     `${plan.quizNewDailyLimit} new quiz questions daily`,
     `${plan.studyNewDailyLimit} new study questions daily`,
     `${plan.aiDailyLimit} AI messages daily`,
+    ...(plan.generatedQuestionDailyLimit > 0
+      ? [`${plan.generatedQuestionDailyLimit} personalized questions daily`]
+      : []),
     `${plan.historyRetentionDays} days of quiz history`,
     ...(plan.premiumExplanations ? ['Premium explanations when available'] : []),
   ];

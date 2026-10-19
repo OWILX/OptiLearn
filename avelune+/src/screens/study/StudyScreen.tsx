@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Library } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useProfile } from '@/context/ProfileContext';
 import {
   syllabusService,
   type SubjectSummary,
 } from '@/services/syllabus/syllabusService';
+import { STUDY_NOTES_INDEX_URL } from '@/services/notes/notesLinkService';
 import { subjectColor } from '@/utils/subjectColor';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -63,6 +64,21 @@ export function StudyScreen() {
           Read questions, reveal answers, and work through the curriculum.
         </p>
       </div>
+
+      <a className={styles.notesBanner} href={STUDY_NOTES_INDEX_URL}>
+        <span className={styles.notesBannerIcon}>
+          <Library size={18} aria-hidden="true" />
+        </span>
+        <span className={styles.notesBannerText}>
+          <span className={styles.notesBannerLabel}>Study notes</span>
+          <span className={styles.notesBannerSub}>
+            Read the written note for any subtopic before you practise
+          </span>
+        </span>
+        <span className={styles.notesBannerArrow} aria-hidden="true">
+          →
+        </span>
+      </a>
 
       {error && (
         <>

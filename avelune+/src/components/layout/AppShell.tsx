@@ -25,6 +25,7 @@ const EXIT_SCROLLED = 4;
 const FOCUS_ROUTE_PREFIXES = [
   '/study/topic/',
   '/quiz/session',
+  '/quiz/generated/session/',
   '/quiz/history/',
   '/notes/',
 ];

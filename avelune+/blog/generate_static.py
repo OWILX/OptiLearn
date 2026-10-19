@@ -169,7 +169,7 @@ def _fetch_pages(syl, only_slug: str | None, statuses: tuple[str, ...]) -> list[
     start = 0
     while True:
         query = syl.table(PAGES_TABLE).select(
-            "slug, title, markdown, generated_at, status"
+            "slug, title, markdown, generated_at, status, subtopic_id"
         ).in_("status", list(statuses))
         if only_slug:
             query = query.eq("slug", only_slug)
@@ -242,6 +242,7 @@ def load_pages_from_supabase(
             "subject": None,
             "course": None,
             "status": row.get("status"),
+            "subtopic_id": row.get("subtopic_id"),
         })
     pages = _attach_subjects(syl, pages)
     if limit:
@@ -293,6 +294,13 @@ def _attach_subjects(syl, pages: list[dict]) -> list[dict]:
     return pages
 
 
+def _int_or_none(value: object) -> int | None:
+    try:
+        return int(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+
+
 def load_pages_from_local(directory: Path, limit: int | None) -> list[dict]:
     """Offline mode: read *.md files, optional front matter."""
     if not directory.is_dir():
@@ -316,6 +324,7 @@ def load_pages_from_local(directory: Path, limit: int | None) -> list[dict]:
             "subject": meta.get("subject"),
             "course": meta.get("course"),
             "status": "published",
+            "subtopic_id": _int_or_none(meta.get("subtopic_id")),
         })
     if limit:
         pages = pages[:limit]
@@ -708,6 +717,27 @@ KATEX_HEAD = """    <link
       onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']});"></script>"""
 
 
+def _app_subtopic_url(page: dict) -> str:
+    """Deep link into the app's subtopic screen for this note."""
+    course = page.get("course")
+    topic = page.get("subject")
+    subtopic = page.get("title")
+    if not (course and topic and subtopic):
+        return APP_URL
+    return (
+        f"{APP_URL}/study/subtopic/"
+        f"{quote(course, safe='')}/{quote(topic, safe='')}/{quote(subtopic, safe='')}"
+    )
+
+
+def _app_generated_quiz_url(page: dict) -> str:
+    """Deep link into the app's personalized-quiz generator for this note."""
+    subtopic_id = page.get("subtopic_id")
+    if not subtopic_id:
+        return ""
+    return f"{APP_URL}/quiz/generated/new?subtopic={int(subtopic_id)}"
+
+
 def render_article(page: dict, base_url: str, with_math: bool) -> str:
     body_html, toc = render_markdown(page["markdown"])
     canonical = f"{base_url}/articles/{page['slug']}/" if base_url else ""
@@ -747,12 +777,23 @@ def render_article(page: dict, base_url: str, with_math: bool) -> str:
     # Native banner sits below the article, above the call to action.
     parts.append(_native_banner())
 
+    generate_url = _app_generated_quiz_url(page)
+    generate_button = (
+        f'\n          <a class="cta__button cta__button--secondary" '
+        f'href="{html.escape(generate_url, quote=True)}" rel="noopener">'
+        f"Generate a personalized quiz</a>"
+        if generate_url
+        else ""
+    )
+
     parts.append(f"""      <aside class="cta">
         <h2 class="cta__title">Put this into practice</h2>
         <p class="cta__text">Test yourself on this topic with timed quizzes, spaced
           repetition and instant explanations on Avelune+.</p>
-        <a class="cta__button" href="{html.escape(APP_URL, quote=True)}" rel="noopener">
-          Start practising</a>
+        <div class="cta__actions">
+          <a class="cta__button" href="{html.escape(_app_subtopic_url(page), quote=True)}" rel="noopener">
+            Practise this subtopic</a>{generate_button}
+        </div>
       </aside>
       </div>
     </main>""")

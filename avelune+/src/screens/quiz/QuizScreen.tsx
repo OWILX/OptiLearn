@@ -32,7 +32,12 @@ const TYPE_ICONS: Record<QuizType, typeof BookOpen> = {
 export function QuizScreen() {
   const navigate = useNavigate();
   const { plan } = useProfile();
-  const isPremium = plan?.premiumExplanations === true;
+  const generatedLimit = plan?.generatedQuestionDailyLimit ?? 0;
+  const generatedRemaining = Math.max(
+    0,
+    generatedLimit - (plan?.generatedQuestionUsed ?? 0),
+  );
+  const hasPersonalized = generatedLimit > 0;
   const [resumable] = useState<QuizPersistedSession | null>(() => {
     const stored = readSession<QuizPersistedSession>(QUIZ_SESSION_KEY);
     return isLiveQuizSession(stored) ? stored : null;
@@ -67,18 +72,32 @@ export function QuizScreen() {
         </p>
       </div>
 
-      <div className={styles.personalizedCard} aria-disabled="true">
-        <div className={styles.personalizedIcon}>
+      <button
+        type="button"
+        className={styles.personalizedCard}
+        onClick={() => navigate(hasPersonalized ? '/quiz/generated' : '/plans')}
+      >
+        <span className={styles.personalizedIcon}>
           <Sparkles size={22} aria-hidden="true" />
-        </div>
-        <div className={styles.personalizedBody}>
-          <span className={styles.personalizedTitle}>Personalized quiz</span>
+        </span>
+        <span className={styles.personalizedBody}>
+          <span className={styles.personalizedTitle}>Personalized quizzes</span>
           <span className={styles.personalizedMeta}>
-            {isPremium ? 'Answer 300 questions to unlock' : 'Premium only'}
+            {hasPersonalized
+              ? `${generatedRemaining} of ${generatedLimit} questions left today`
+              : 'Available on Plus and Pro'}
           </span>
-        </div>
-        <Lock size={16} className={styles.personalizedLock} aria-hidden="true" />
-      </div>
+        </span>
+        {hasPersonalized ? (
+          <ChevronRight
+            size={18}
+            className={styles.personalizedLock}
+            aria-hidden="true"
+          />
+        ) : (
+          <Lock size={16} className={styles.personalizedLock} aria-hidden="true" />
+        )}
+      </button>
 
       <div className={styles.difficultyGrid}>
         <h2 className={styles.typeHeading}>Available question types</h2>

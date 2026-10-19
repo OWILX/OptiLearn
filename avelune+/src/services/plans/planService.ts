@@ -21,11 +21,13 @@ export interface PlanSummary {
   quizNewDailyLimit: number;
   studyNewDailyLimit: number;
   aiDailyLimit: number;
+  generatedQuestionDailyLimit: number;
   historyRetentionDays: number;
   premiumExplanations: boolean;
   quizNewUsed: number;
   studyNewUsed: number;
   aiUsed: number;
+  generatedQuestionUsed: number;
   planIntroSeenAt: string | null;
   pendingTier: PlanTier | null;
   pendingTierRequestedAt: string | null;
@@ -38,6 +40,7 @@ export interface PlanOption {
   quizNewDailyLimit: number;
   studyNewDailyLimit: number;
   aiDailyLimit: number;
+  generatedQuestionDailyLimit: number;
   historyRetentionDays: number;
   premiumExplanations: boolean;
 }
@@ -113,6 +116,10 @@ function parsePlanOption(value: unknown): PlanOption | null {
     quizNewDailyLimit: value.quiz_new_daily_limit,
     studyNewDailyLimit: value.study_new_daily_limit,
     aiDailyLimit: value.ai_daily_limit,
+    generatedQuestionDailyLimit:
+      typeof value.generated_question_daily_limit === 'number'
+        ? value.generated_question_daily_limit
+        : 0,
     historyRetentionDays: value.history_retention_days,
     premiumExplanations: value.premium_explanations,
   };
@@ -148,11 +155,19 @@ function parsePlanSummary(value: unknown): PlanSummary {
     quizNewDailyLimit: value.quiz_new_daily_limit,
     studyNewDailyLimit: value.study_new_daily_limit,
     aiDailyLimit: value.ai_daily_limit,
+    generatedQuestionDailyLimit:
+      typeof value.generated_question_daily_limit === 'number'
+        ? value.generated_question_daily_limit
+        : 0,
     historyRetentionDays: value.history_retention_days,
     premiumExplanations: value.premium_explanations,
     quizNewUsed: value.quiz_new_used,
     studyNewUsed: value.study_new_used,
     aiUsed: value.ai_used,
+    generatedQuestionUsed:
+      typeof value.generated_question_used === 'number'
+        ? value.generated_question_used
+        : 0,
     planIntroSeenAt:
       typeof value.plan_intro_seen_at === 'string'
         ? value.plan_intro_seen_at
@@ -176,7 +191,7 @@ export const planService = {
     const { data, error } = await supabase
       .from('plan_catalog')
       .select(
-        'tier_key, display_name, monthly_price_ngn, quiz_new_daily_limit, study_new_daily_limit, ai_daily_limit, history_retention_days, premium_explanations',
+        'tier_key, display_name, monthly_price_ngn, quiz_new_daily_limit, study_new_daily_limit, ai_daily_limit, generated_question_daily_limit, history_retention_days, premium_explanations',
       )
       .order('monthly_price_ngn', { ascending: true });
     if (error) throw wrapError(error, 'Could not load plans.');

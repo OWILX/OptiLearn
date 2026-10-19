@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Library } from 'lucide-react';
 import { useProfile } from '@/context/ProfileContext';
 import { filterSubjectsByDepartment } from '@/constants/departments';
 import {
   blogService,
   type ConceptPostListItem,
 } from '@/services/blog/blogService';
+import { STUDY_NOTES_INDEX_URL } from '@/services/notes/notesLinkService';
 import { subjectColor } from '@/utils/subjectColor';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -66,6 +67,21 @@ export function BlogListScreen() {
           Short notes on one idea at a time — not the whole topic.
         </p>
       </div>
+
+      <a className={styles.studyNotesLink} href={STUDY_NOTES_INDEX_URL}>
+        <span className={styles.studyNotesIcon}>
+          <Library size={18} aria-hidden="true" />
+        </span>
+        <span className={styles.studyNotesText}>
+          <span className={styles.studyNotesLabel}>Full study notes</span>
+          <span className={styles.studyNotesSub}>
+            Every subtopic in your curriculum, written out in full
+          </span>
+        </span>
+        <span className={styles.studyNotesArrow} aria-hidden="true">
+          →
+        </span>
+      </a>
 
       {error && (
         <>

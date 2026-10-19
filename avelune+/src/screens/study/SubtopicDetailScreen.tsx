@@ -12,6 +12,8 @@ import { BackButton } from '@/components/ui/BackButton';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { StudyNoteLink } from '@/components/notes/StudyNoteLink';
+import { GeneratedQuizLink } from '@/components/quiz/GeneratedQuizLink';
 import styles from './SectionDetailScreen.module.css';
 
 export function SubtopicDetailScreen() {
@@ -85,6 +87,17 @@ export function SubtopicDetailScreen() {
           </p>
         )}
       </div>
+
+      {!loading && modules && modules.length > 0 && modules[0].subtopicId && (
+        <StudyNoteLink
+          subtopicId={modules[0].subtopicId}
+          label="Study note for this subtopic"
+        />
+      )}
+
+      {!loading && modules && modules.length > 0 && modules[0].subtopicId && (
+        <GeneratedQuizLink subtopicId={modules[0].subtopicId} />
+      )}
 
       {currentError && (
         <>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Atom,
   Cpu,
@@ -23,25 +23,15 @@ interface DeptOption {
   description: string;
   icon: React.ReactNode;
   iconClass: string;
+  /**
+   * Only departments whose curriculum is actually loaded can be chosen.
+   * The rest are shown so students can see what is coming, but the card is
+   * disabled — picking one would leave them with an empty Study screen.
+   */
+  available: boolean;
 }
 
 const OPTIONS: DeptOption[] = [
-  {
-    value: 'engineering',
-    title: 'Engineering',
-    description:
-      'Mechanical, Electrical, Civil, Computer Science, Chemical and related subjects.',
-    icon: <Cpu size={24} aria-hidden="true" />,
-    iconClass: 'cardIconEngineering',
-  },
-  {
-    value: 'natural-sciences',
-    title: 'Natural Sciences',
-    description:
-      'Physics, Chemistry, Biology, Mathematics, Earth Sciences and related subjects.',
-    icon: <Atom size={24} aria-hidden="true" />,
-    iconClass: 'cardIconNaturalSciences',
-  },
   {
     value: 'basic-medical-science',
     title: 'Basic Medical Science',
@@ -49,6 +39,7 @@ const OPTIONS: DeptOption[] = [
       'Anatomy, Physiology, Biochemistry, Pathology, Pharmacology and related subjects.',
     icon: <FlaskConical size={24} aria-hidden="true" />,
     iconClass: 'cardIconBasicMedicalScience',
+    available: true,
   },
   {
     value: 'medicine',
@@ -57,6 +48,25 @@ const OPTIONS: DeptOption[] = [
       'Pre clinicals, Internal Medicine, Surgery, Pediatrics, Obstetrics, Psychiatry and clinical subjects.',
     icon: <Stethoscope size={24} aria-hidden="true" />,
     iconClass: 'cardIconMedicine',
+    available: true,
+  },
+  {
+    value: 'engineering',
+    title: 'Engineering',
+    description:
+      'Mechanical, Electrical, Civil, Computer Science, Chemical and related subjects.',
+    icon: <Cpu size={24} aria-hidden="true" />,
+    iconClass: 'cardIconEngineering',
+    available: false,
+  },
+  {
+    value: 'natural-sciences',
+    title: 'Natural Sciences',
+    description:
+      'Physics, Chemistry, Biology, Mathematics, Earth Sciences and related subjects.',
+    icon: <Atom size={24} aria-hidden="true" />,
+    iconClass: 'cardIconNaturalSciences',
+    available: false,
   },
   {
     value: 'pharmacy',
@@ -65,12 +75,21 @@ const OPTIONS: DeptOption[] = [
       'Pharmaceutics, Pharmacology, Medicinal Chemistry, Pharmacognosy and related subjects.',
     icon: <Pill size={24} aria-hidden="true" />,
     iconClass: 'cardIconPharmacy',
+    available: false,
   },
 ];
 
 export function ChooseDepartmentScreen() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { profile, loading, setDepartment } = useProfile();
+
+  // Where to go after choosing: the page that required a department,
+  // falling back to the home screen.
+  const destination =
+    typeof (location.state as { from?: unknown } | null)?.from === 'string'
+      ? ((location.state as { from: string }).from)
+      : '/home';
 
   const [selected, setSelected] = useState<Department | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -81,19 +100,17 @@ export function ChooseDepartmentScreen() {
   useEffect(() => {
     if (loading) return;
     if (profile?.department) {
-      navigate('/home', { replace: true });
+      navigate(destination, { replace: true });
     }
-  }, [loading, profile, navigate]);
+  }, [loading, profile, navigate, destination]);
 
-  // Pre-select their existing department if somehow set.
-  useEffect(() => {
-    if (profile?.department && !selected) {
-      setSelected(profile.department);
-    }
-  }, [profile, selected]);
+  // No pre-selection: anyone who already has a department is redirected
+  // above, and closed departments can't be chosen.
 
   function handleContinueTap() {
     if (!selected || saving) return;
+    const option = OPTIONS.find((o) => o.value === selected);
+    if (!option?.available) return;
     setError(null);
     setShowConfirm(true);
   }
@@ -106,7 +123,7 @@ export function ChooseDepartmentScreen() {
     setSaving(true);
     try {
       await setDepartment(selected);
-      navigate('/home', { replace: true });
+      navigate(destination, { replace: true });
     } catch (err) {
       setError(
         userFacingErrorMessage(
@@ -151,20 +168,39 @@ export function ChooseDepartmentScreen() {
               <button
                 key={opt.value}
                 type="button"
-                className={`${styles.card} ${active ? styles.cardSelected : ''}`}
-                onClick={() => setSelected(opt.value)}
+                className={`${styles.card} ${active ? styles.cardSelected : ''} ${
+                  opt.available ? '' : styles.cardDisabled
+                }`}
+                onClick={() => {
+                  if (!opt.available) return;
+                  setSelected(opt.value);
+                }}
+                disabled={!opt.available}
                 aria-pressed={active}
+                aria-disabled={!opt.available}
+                title={
+                  opt.available
+                    ? undefined
+                    : `${opt.title} is coming soon`
+                }
               >
                 <div className={`${styles.cardIcon} ${styles[opt.iconClass]}`}>
                   {opt.icon}
                 </div>
                 <div className={styles.cardText}>
-                  <span className={styles.cardTitle}>{opt.title}</span>
+                  <span className={styles.cardTitleRow}>
+                    <span className={styles.cardTitle}>{opt.title}</span>
+                    {!opt.available && (
+                      <span className={styles.soonBadge}>Coming soon</span>
+                    )}
+                  </span>
                   <span className={styles.cardDesc}>{opt.description}</span>
                 </div>
-                <span className={styles.cardCheck}>
-                  <Check size={14} strokeWidth={3} />
-                </span>
+                {opt.available && (
+                  <span className={styles.cardCheck}>
+                    <Check size={14} strokeWidth={3} />
+                  </span>
+                )}
               </button>
             );
           })}

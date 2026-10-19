@@ -24,11 +24,12 @@
   color: var(--color-text-muted);
 }
 
-/* === Personalized (locked) card === */
+/* === Personalized card === */
 .personalizedCard {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  width: 100%;
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   background: linear-gradient(
@@ -37,7 +38,20 @@
     var(--color-brand-blue-soft) 100%
   );
   border: 1px solid rgba(107, 33, 168, 0.12);
-  opacity: 0.85;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    box-shadow 160ms var(--ease-out),
+    transform 100ms var(--ease-out);
+}
+
+.personalizedCard:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.personalizedCard:active {
+  transform: scale(0.995);
 }
 
 .personalizedIcon {

@@ -1,6 +1,7 @@
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { wrapError } from '@/utils/errors';
+import { peekReturnTo } from '@/utils/returnTo';
 
 /**
  * Every Supabase auth call in the app goes through this module.
@@ -14,7 +15,8 @@ import { wrapError } from '@/utils/errors';
  */
 
 function authRedirectUrl(): string {
-  return `${window.location.origin}/home`;
+  // Land back on the page that sent the visitor to sign in, if any.
+  return `${window.location.origin}${peekReturnTo() ?? '/home'}`;
 }
 
 export const authService = {

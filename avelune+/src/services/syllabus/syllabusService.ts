@@ -12,6 +12,7 @@ import type { Department } from '@/services/profile/profileService';
 
 export interface SyllabusRow {
   id: number;
+  subtopicId: number | null;
   courseName: string;
   topicName: string;
   subtopicName: string;
@@ -56,6 +57,7 @@ export type TopicStatus = 'not_started' | 'in_progress' | 'completed';
 
 export interface ModuleSummary {
   syllabusId: number;
+  subtopicId: number | null;
   module: string;
   status: TopicStatus;
   progressPct: number;
@@ -145,7 +147,7 @@ export const syllabusService = {
     const { data, error } = await supabase
       .from('syllabus')
       .select(
-        'id, courseName:course_name, topicName:topic_name, subtopicName:subtopic_name, moduleName:module_name, content, objectives, createdAt:created_at',
+        'id, subtopicId:subtopic_id, courseName:course_name, topicName:topic_name, subtopicName:subtopic_name, moduleName:module_name, content, objectives, createdAt:created_at',
       )
       .eq('id', id)
       .maybeSingle();
@@ -365,7 +367,7 @@ export const syllabusService = {
     const [rowsRes, progressRes] = await Promise.all([
       supabase
         .from('syllabus')
-        .select('id, module_name')
+        .select('id, subtopic_id, module_name')
         .eq('course_name', courseName)
         .eq('topic_name', topicName)
         .eq('subtopic_name', subtopicName)
@@ -392,16 +394,19 @@ export const syllabusService = {
       });
     }
 
-    return ((rowsRes.data ?? []) as { id: number; module_name: string }[]).map(
-      (row) => {
-        const progress = progressById.get(row.id);
-        return {
-          syllabusId: row.id,
-          module: row.module_name,
-          status: progress?.status ?? 'not_started',
-          progressPct: progress ? Math.round(progress.progress) : 0,
-        };
-      },
-    );
+    return ((rowsRes.data ?? []) as {
+      id: number;
+      subtopic_id: number | null;
+      module_name: string;
+    }[]).map((row) => {
+      const progress = progressById.get(row.id);
+      return {
+        syllabusId: row.id,
+        subtopicId: row.subtopic_id,
+        module: row.module_name,
+        status: progress?.status ?? 'not_started',
+        progressPct: progress ? Math.round(progress.progress) : 0,
+      };
+    });
   },
 };

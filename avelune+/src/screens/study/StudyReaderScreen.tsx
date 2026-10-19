@@ -28,6 +28,8 @@ import {
 import { BackButton } from '@/components/ui/BackButton';
 import { Button } from '@/components/ui/Button';
 import { Markdown } from '@/components/ui/Markdown';
+import { StudyNoteLink } from '@/components/notes/StudyNoteLink';
+import { GeneratedQuizLink } from '@/components/quiz/GeneratedQuizLink';
 import { askAI } from '@/services/ai/askAi';
 import {
   questionReportService,
@@ -450,6 +452,15 @@ export function StudyReaderScreen() {
               <span>{syllabus.courseName} · {syllabus.topicName}</span>
               <h1>{syllabus.moduleName}</h1>
             </div>
+            {syllabus.subtopicId && (
+              <StudyNoteLink
+                subtopicId={syllabus.subtopicId}
+                label="Read the study note"
+              />
+            )}
+            {syllabus.subtopicId && (
+              <GeneratedQuizLink subtopicId={syllabus.subtopicId} compact />
+            )}
             {syllabus.content?.trim() && (
               <article className={styles.moduleContent}>
                 <Markdown variant="explanation" className={styles.explanationBody}>
@@ -518,6 +529,19 @@ export function StudyReaderScreen() {
               Back to modules
             </button>
           </div>
+          {syllabus.subtopicId && (
+            <div style={{ marginTop: 'var(--space-4)', width: '100%' }}>
+              <StudyNoteLink
+                subtopicId={syllabus.subtopicId}
+                label="Read the study note"
+              />
+            </div>
+          )}
+          {syllabus.subtopicId && (
+            <div style={{ marginTop: 'var(--space-2)', width: '100%' }}>
+              <GeneratedQuizLink subtopicId={syllabus.subtopicId} compact />
+            </div>
+          )}
         </div>
       </section>
     );
@@ -585,6 +609,17 @@ export function StudyReaderScreen() {
           style={{ width: `${displayPct}%` }}
         />
       </div>
+
+      {syllabus.subtopicId && (
+        <StudyNoteLink
+          subtopicId={syllabus.subtopicId}
+          label="Read the study note"
+          emptyMessage="A written study note for this subtopic is still being prepared."
+        />
+      )}
+      {syllabus.subtopicId && (
+        <GeneratedQuizLink subtopicId={syllabus.subtopicId} compact />
+      )}
 
       {(syllabus.content?.trim() || syllabus.objectives?.trim()) && (
         <article className={styles.moduleContent}>
