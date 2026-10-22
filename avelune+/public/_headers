@@ -9,3 +9,11 @@
 
 /study-notes/articles/*.html
   Cache-Control: public, max-age=0, must-revalidate
+
+# Vite emits content-hashed filenames, so these never change under the same URL.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The brand icon is not hashed; keep the TTL short enough to allow updates.
+/avelune-logo.png
+  Cache-Control: public, max-age=86400

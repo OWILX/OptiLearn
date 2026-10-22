@@ -50,7 +50,7 @@ log = logging.getLogger("static")
 HERE = Path(__file__).resolve().parent
 OUT_DIR = HERE / "dist"
 ASSET_DIR = HERE / "assets"
-LOGO_SOURCE = HERE.parent / "public" / "avelune-logo.png"
+LOGO_SOURCE = HERE.parent / "public" / "logo-mark.png"
 FAVICON_SOURCE = HERE.parent / "public" / "favicon.svg"
 
 PAGES_TABLE = "pages"
