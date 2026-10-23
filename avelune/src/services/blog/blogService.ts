@@ -1,7 +1,5 @@
 import { supabase } from '@/lib/supabase';
 import { wrapError } from '@/utils/errors';
-import { filterSubjectsByDepartment } from '@/constants/departments';
-import type { Department } from '@/services/profile/profileService';
 
 export interface ConceptPostListItem {
   id: number;
@@ -39,7 +37,7 @@ function toListItem(row: PostRow): ConceptPostListItem {
 
 export const blogService = {
   async listPublished(
-    department: Department | null,
+    department?: any, // Kept for compatibility with existing screens, but ignored
     subject?: string | null,
   ): Promise<ConceptPostListItem[]> {
     let query = supabase
@@ -53,14 +51,8 @@ export const blogService = {
     const { data, error } = await query;
     if (error) throw wrapError(error, 'Could not load concept posts.');
 
-    const rows = ((data ?? []) as PostRow[]).map(toListItem);
-    const allowed = new Set(
-      filterSubjectsByDepartment(
-        Array.from(new Set(rows.map((r) => r.subject))),
-        department,
-      ),
-    );
-    return rows.filter((r) => allowed.has(r.subject));
+    // No department filtering applied
+    return ((data ?? []) as PostRow[]).map(toListItem);
   },
 
   async getBySlug(slug: string): Promise<ConceptPost | null> {

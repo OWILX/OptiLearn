@@ -9,13 +9,8 @@ import 'katex/dist/katex.min.css';
 import styles from './Markdown.module.css';
 
 export type MarkdownVariant =
-  | 'question'
-  | 'option'
-  | 'review-question'
-  | 'review-option'
-  | 'explanation'
-  | 'article'
-  | 'compact';
+  | 'question' | 'option' | 'review-question' | 'review-option'
+  | 'explanation' | 'article' | 'compact';
 
 interface MarkdownProps {
   children: string;
@@ -27,115 +22,20 @@ const SANITIZE_SCHEMA = {
   ...defaultSchema,
   tagNames: [
     ...(defaultSchema.tagNames ?? []),
-    'sub',
-    'sup',
-    'u',
-    'mark',
-    'kbd',
-    'input',
-    'section',
-    'details',
-    'summary',
+    'sub', 'sup', 'u', 'mark', 'kbd', 'input', 'section', 'details', 'summary',
   ],
   attributes: {
     ...defaultSchema.attributes,
-    code: [
-      ...(defaultSchema.attributes?.code ?? []),
-      ['className', /^language-./, 'math-inline', 'math-display'],
-    ],
-    div: [
-      ...(defaultSchema.attributes?.div ?? []),
-      ['className', 'math', 'math-display'],
-    ],
-    span: [
-      ...(defaultSchema.attributes?.span ?? []),
-      ['className', 'math', 'math-inline'],
-    ],
-    section: [['className', 'footnotes']],
-    li: [...(defaultSchema.attributes?.li ?? []), 'className'],
-    ul: [...(defaultSchema.attributes?.ul ?? []), 'className'],
-    ol: [...(defaultSchema.attributes?.ol ?? []), 'className', 'start'],
-    a: [
-      ...(defaultSchema.attributes?.a ?? []),
-      'className',
-      'dataFootnoteRef',
-      'dataFootnoteBackref',
-    ],
+    code: [...(defaultSchema.attributes?.code ?? []), ['className', /^language-./, 'math-inline', 'math-display']],
+    div: [...(defaultSchema.attributes?.div ?? []), ['className', 'math', 'math-display']],
+    span: [...(defaultSchema.attributes?.span ?? []), ['className', 'math', 'math-inline']],
     input: [['type', 'checkbox'], 'checked', 'disabled'],
-    img: [...(defaultSchema.attributes?.img ?? []), 'src', 'alt', 'title'],
   },
 };
 
 const MATH_COMMANDS = new Set([
-  'log',
-  'ln',
-  'lg',
-  'sin',
-  'cos',
-  'tan',
-  'sec',
-  'csc',
-  'cot',
-  'arcsin',
-  'arccos',
-  'arctan',
-  'sinh',
-  'cosh',
-  'tanh',
-  'lim',
-  'exp',
-  'frac',
-  'dfrac',
-  'tfrac',
-  'cfrac',
-  'sqrt',
-  'sum',
-  'prod',
-  'int',
-  'oint',
-  'pm',
-  'mp',
-  'cdot',
-  'times',
-  'div',
-  'leq',
-  'geq',
-  'neq',
-  'approx',
-  'infty',
-  'mathrm',
-  'mathbf',
-  'mathbb',
-  'operatorname',
-  'text',
-  'left',
-  'right',
-  'alpha',
-  'beta',
-  'gamma',
-  'delta',
-  'epsilon',
-  'theta',
-  'lambda',
-  'mu',
-  'pi',
-  'sigma',
-  'phi',
-  'omega',
-  'in',
-  'subseteq',
-  'forall',
-  'exists',
-  'Rightarrow',
-  'Leftrightarrow',
-  'mid',
-  'bar',
-  'hat',
-  'vec',
-  'overrightarrow',
-  'angle',
-  'triangle',
-  'mathcal',
+  'log', 'ln', 'lg', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'arcsin', 'arccos', 'arctan', 'sinh', 'cosh', 'tanh', 'lim', 'exp', 'frac', 'dfrac', 'tfrac', 'cfrac', 'sqrt', 'sum', 'prod', 'int', 'oint', 'pm', 'mp', 'cdot', 'times', 'div', 'leq', 'geq', 'neq', 'approx', 'infty', 'mathrm', 'mathbf', 'mathbb', 'operatorname', 'text', 'left', 'right', 'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'theta', 'lambda', 'mu', 'pi', 'sigma', 'phi', 'omega', 'in', 'subseteq', 'forall', 'exists', 'Rightarrow', 'Leftrightarrow', 'mid', 'bar', 'hat', 'vec', 'overrightarrow', 'angle', 'triangle', 'mathcal',
+  'circ', 'degree', 'widehat', 'widetilde', 'overline'
 ]);
 
 const PLACEHOLDER_PREFIX = '\uE000AVELUNE_MATH_';
@@ -153,47 +53,27 @@ function readBalanced(source: string, start: number, open: string, close: string
   if (source[start] !== open) return -1;
   let depth = 0;
   let escaped = false;
-
   for (let i = start; i < source.length; i += 1) {
     const char = source[i];
-
-    if (escaped) {
-      escaped = false;
-      continue;
-    }
-
-    if (char === '\\') {
-      escaped = true;
-      continue;
-    }
-
+    if (escaped) { escaped = false; continue; }
+    if (char === '\\') { escaped = true; continue; }
     if (char === open) depth += 1;
     else if (char === close) {
       depth -= 1;
       if (depth === 0) return i + 1;
     }
   }
-
   return -1;
 }
 
-function readBalancedBraces(source: string, start: number): number {
-  return readBalanced(source, start, '{', '}');
-}
-
-function readBalancedParens(source: string, start: number): number {
-  return readBalanced(source, start, '(', ')');
-}
-
-function readBalancedBrackets(source: string, start: number): number {
-  return readBalanced(source, start, '[', ']');
-}
+function readBalancedBraces(source: string, start: number): number { return readBalanced(source, start, '{', '}'); }
+function readBalancedParens(source: string, start: number): number { return readBalanced(source, start, '(', ')'); }
+function readBalancedBrackets(source: string, start: number): number { return readBalanced(source, start, '[', ']'); }
 
 function readInlineCode(source: string, start: number): number {
   let ticks = 0;
   while (source[start + ticks] === '`') ticks += 1;
   if (ticks === 0) return -1;
-
   const marker = '`'.repeat(ticks);
   const end = source.indexOf(marker, start + ticks);
   return end === -1 ? -1 : end + ticks;
@@ -209,23 +89,18 @@ function readFencedCode(source: string, start: number): number {
 
 function readMathDollar(source: string, start: number): { end: number; value: string } | null {
   if (source[start] !== '$') return null;
-
   const display = source[start + 1] === '$';
   const delimiter = display ? '$$' : '$';
   const searchFrom = start + delimiter.length;
-
   for (let i = searchFrom; i < source.length; i += 1) {
     if (source[i] !== '$') continue;
     if (!display && source[i - 1] === '\\') continue;
     if (display) {
-      if (source.slice(i, i + 2) === '$$') {
-        return { end: i + 2, value: source.slice(start, i + 2) };
-      }
+      if (source.slice(i, i + 2) === '$$') return { end: i + 2, value: source.slice(start, i + 2) };
     } else {
       return { end: i + 1, value: source.slice(start, i + 1) };
     }
   }
-
   return null;
 }
 
@@ -233,30 +108,21 @@ function readEscapedMath(source: string, start: number): { end: number; value: s
   const inline = source.startsWith('\\(', start);
   const display = source.startsWith('\\[', start);
   if (!inline && !display) return null;
-
   const close = inline ? '\\)' : '\\]';
   const closeAt = source.indexOf(close, start + 2);
   if (closeAt === -1) return null;
-
   const inner = source.slice(start + 2, closeAt);
-  return {
-    end: closeAt + 2,
-    value: display ? `$$\n${inner}\n$$` : `$${inner}$`,
-  };
+  return { end: closeAt + 2, value: display ? `$$\n${inner}\n$$` : `$${inner}$` };
 }
 
 function readMarkdownLinkOrImage(source: string, start: number): number {
   const isImage = source[start] === '!' && source[start + 1] === '[';
   const isLink = source[start] === '[';
   if (!isImage && !isLink) return -1;
-
   const labelStart = isImage ? start + 1 : start;
   const labelEnd = readBalancedBrackets(source, labelStart);
   if (labelEnd === -1 || source[labelEnd] !== '(') return -1;
-
-  const destinationEnd = readBalancedParens(source, labelEnd);
-  if (destinationEnd === -1) return -1;
-  return destinationEnd;
+  return readBalancedParens(source, labelEnd);
 }
 
 function protect(source: string): { text: string; restore: Map<string, string> } {
@@ -264,60 +130,32 @@ function protect(source: string): { text: string; restore: Map<string, string> }
   let output = '';
   let i = 0;
   let index = 0;
-
   const save = (value: string) => {
     const token = placeholder(index);
     index += 1;
     restore.set(token, value);
     output += token;
   };
-
   while (i < source.length) {
     if (source[i] === '`') {
       const end = readFencedCode(source, i);
-      if (end !== -1) {
-        save(source.slice(i, end));
-        i = end;
-        continue;
-      }
-
+      if (end !== -1) { save(source.slice(i, end)); i = end; continue; }
       const endInline = readInlineCode(source, i);
-      if (endInline !== -1) {
-        save(source.slice(i, endInline));
-        i = endInline;
-        continue;
-      }
+      if (endInline !== -1) { save(source.slice(i, endInline)); i = endInline; continue; }
     }
-
     if (source[i] === '$') {
       const math = readMathDollar(source, i);
-      if (math) {
-        save(math.value);
-        i = math.end;
-        continue;
-      }
+      if (math) { save(math.value); i = math.end; continue; }
     }
-
     if (source[i] === '\\') {
       const math = readEscapedMath(source, i);
-      if (math) {
-        save(math.value);
-        i = math.end;
-        continue;
-      }
+      if (math) { save(math.value); i = math.end; continue; }
     }
-
     const linkEnd = readMarkdownLinkOrImage(source, i);
-    if (linkEnd !== -1) {
-      save(source.slice(i, linkEnd));
-      i = linkEnd;
-      continue;
-    }
-
+    if (linkEnd !== -1) { save(source.slice(i, linkEnd)); i = linkEnd; continue; }
     output += source[i];
     i += 1;
   }
-
   return { text: output, restore };
 }
 
@@ -382,24 +220,17 @@ function isSingleMathIdentifier(source: string, start: number): number {
 
 function readMathAtom(source: string, start: number): number {
   if (start >= source.length) return -1;
-
   const char = source[start];
-
   if (char === '\\') {
     const command = readCommand(source, start);
     if (!command || !MATH_COMMANDS.has(command.name)) return -1;
     return command.end;
   }
-
   if (/[0-9]/.test(char)) {
     const match = source.slice(start).match(/^\d+(?:\.\d+)?/);
     return match ? start + match[0].length : start + 1;
   }
-
-  if (/[A-Za-z]/.test(char)) {
-    return isSingleMathIdentifier(source, start);
-  }
-
+  if (/[A-Za-z]/.test(char)) return isSingleMathIdentifier(source, start);
   if (char === '(') return readBalancedParens(source, start);
   if (char === '[') return readBalancedBrackets(source, start);
   if (char === '{') return readBalancedBraces(source, start);
@@ -408,19 +239,15 @@ function readMathAtom(source: string, start: number): number {
 
 function expandLegacyExpressionEnd(source: string, end: number): number {
   let i = end;
-
   while (i < source.length) {
     while (/\s/.test(source[i] ?? '')) i += 1;
-
     if (isBoundary(source, i)) break;
-
     if (source[i] === '^' || source[i] === '_') {
       const scriptEnd = readScript(source, i);
       if (scriptEnd === -1) break;
       i = scriptEnd;
       continue;
     }
-
     const char = source[i];
     if (char === '\\') {
       const command = readCommand(source, i);
@@ -428,38 +255,23 @@ function expandLegacyExpressionEnd(source: string, end: number): number {
       i = command.end;
       continue;
     }
-
-    if (isMathOperatorStart(char)) {
-      i += 1;
-      continue;
-    }
-
+    if (isMathOperatorStart(char)) { i += 1; continue; }
     const atomEnd = readMathAtom(source, i);
-    if (atomEnd !== -1) {
-      i = atomEnd;
-      continue;
-    }
-
+    if (atomEnd !== -1) { i = atomEnd; continue; }
     if (char === '(' || char === '[' || char === '{') {
       const opener = char;
       const closer = char === '(' ? ')' : char === '[' ? ']' : '}';
       const balanced = readBalanced(source, i, opener, closer);
-      if (balanced !== -1) {
-        i = balanced;
-        continue;
-      }
+      if (balanced !== -1) { i = balanced; continue; }
     }
-
     break;
   }
-
   return i;
 }
 
 function convertLegacyExponentParens(expression: string): string {
   let result = '';
   let i = 0;
-
   while (i < expression.length) {
     const char = expression[i];
     if ((char === '^' || char === '_') && expression[i + 1] === '(') {
@@ -474,7 +286,6 @@ function convertLegacyExponentParens(expression: string): string {
     result += char;
     i += 1;
   }
-
   return result;
 }
 
@@ -485,7 +296,6 @@ function looksLikeLegacyMath(expression: string): boolean {
 function normalizeLegacyBareMath(source: string): string {
   let output = '';
   let i = 0;
-
   while (i < source.length) {
     if (isPlaceholderAt(source, i)) {
       const end = source.indexOf(PLACEHOLDER_SUFFIX, i + PLACEHOLDER_PREFIX.length);
@@ -496,11 +306,9 @@ function normalizeLegacyBareMath(source: string): string {
         continue;
       }
     }
-
     let start = -1;
     let end = -1;
     const command = source[i] === '\\' ? readCommand(source, i) : null;
-
     if (command && MATH_COMMANDS.has(command.name)) {
       start = i;
       end = expandLegacyExpressionEnd(source, command.end);
@@ -511,7 +319,6 @@ function normalizeLegacyBareMath(source: string): string {
         end = expandLegacyExpressionEnd(source, atomEnd);
       }
     }
-
     if (start !== -1 && end > start) {
       const expression = source.slice(start, end).trim();
       if (looksLikeLegacyMath(expression)) {
@@ -520,30 +327,34 @@ function normalizeLegacyBareMath(source: string): string {
         continue;
       }
     }
-
     output += source[i];
     i += 1;
   }
-
   return output;
 }
 
 export function normalizeExamMarkup(raw: string): string {
   if (!raw) return raw;
+  let text = raw;
 
-  const repaired = raw
-    // Force display fractions so they don't look squashed on mobile
-    .replace(/\\frac\{/g, '\\dfrac{')
-    // Fix \dfrac, \tfrac, \cfrac
-    .replace(/\\\\?(?:d|t|c)frac\{/g, '\\dfrac{')
-    // Fix log10 -> log_{10} and ln2 -> ln_{2} etc
-    .replace(/\\(log|ln|exp)(\d+)/g, '\\$1_{$2}')
-    // Fix missing backslash: frac{ -> \dfrac{
-    .replace(/(^|[^a-zA-Z\\])frac\{/g, '$1\\dfrac{');
-  const normalized = repaired
-    .replace(/\r\n?/g, '\n')
-    .replace(/_(\([^)]+\))_/g, '\\_$1\\_');
-  const protectedSource = protect(normalized);
+  // 1. Fix double backslashes (e.g. \\frac -> \frac)
+  text = text.replace(/\\\\/g, '\\');
+
+  // 2. Revert \dfrac back to \frac to keep fractions inline-sized
+  text = text.replace(/(^|[^\\])(?:d|t|c)?frac\{/g, '$1\\frac{');
+  text = text.replace(/(^|[^\\])rac\{/g, '$1\\frac{');
+
+  // 3. Fix missing 't' in \text (e.g., 7extcm -> 7\text{cm})
+  text = text.replace(/(^|[^a-zA-Z])ext([a-zA-Z]+)/g, '$1\\text{$2}');
+
+  // 4. Fix literal '\n' typed in the database
+  text = text.replace(/\\n/g, "\n");
+
+  // 5. Fix escaped underscores
+  text = text.replace(/_\(([^)]+)\)_/g, '\\_$1\\_');
+
+  // 6. State machine wrapping
+  const protectedSource = protect(text);
   const converted = normalizeLegacyBareMath(protectedSource.text);
   return restorePlaceholders(converted, protectedSource.restore);
 }
@@ -560,9 +371,7 @@ const VARIANT_CLASS: Record<MarkdownVariant, string> = {
 
 export function Markdown({ children, className, variant = 'explanation' }: MarkdownProps) {
   const source = normalizeExamMarkup(children ?? '');
-  const classes = [styles.md, VARIANT_CLASS[variant], className]
-    .filter(Boolean)
-    .join(' ');
+  const classes = [styles.md, VARIANT_CLASS[variant], className].filter(Boolean).join(' ');
 
   return (
     <div className={classes} data-markdown-dev={import.meta.env.DEV ? 'true' : 'false'}>
@@ -575,7 +384,7 @@ export function Markdown({ children, className, variant = 'explanation' }: Markd
         rehypePlugins={[
           rehypeRaw,
           [rehypeSanitize, SANITIZE_SCHEMA],
-          [rehypeKatex, { throwOnError: false, strict: 'ignore' }],
+          [rehypeKatex, { throwOnError: false, strict: false, trust: true }],
         ]}
       >
         {source}

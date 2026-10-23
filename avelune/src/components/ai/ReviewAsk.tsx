@@ -39,7 +39,7 @@ export function ReviewAsk({
 
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
-  const [answer, setAnswer] = useState<string | null>(null);
+  const [history, setHistory] = useState<{ role: string; content: string }[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [gate, setGate] = useState<Gate | null>(null);
   const [capOpen, setCapOpen] = useState(false);
@@ -68,7 +68,10 @@ export function ReviewAsk({
     setError(null);
     setAnswer(null);
     try {
-      const result = await askAI({ question_id: questionId, context, message });
+      const currentHistory = history.slice(-8);
+      const newHistory = [...currentHistory, { role: 'user', content: message }];
+      const result = await askAI({ question_id: questionId, context, messages: newHistory });
+      
       if (!result.ok) {
         setError(
           result.reason
@@ -77,7 +80,7 @@ export function ReviewAsk({
         );
         return;
       }
-      setAnswer(result.answer_markdown || 'The answer came back empty.');
+      setHistory([...newHistory, { role: 'assistant', content: result.answer_markdown || '' }]);
       setText('');
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -209,7 +212,25 @@ export function ReviewAsk({
         <span style={{ fontSize: 12, color: '#6b7280' }}>{hint}</span>
       </div>
       {error && <p style={{ color: '#8a4b4b', fontSize: 13 }}>{error}</p>}
-      {answer && <Markdown variant="explanation">{answer}</Markdown>}
+      {history.map((msg, i) => (
+        <div 
+          key={i} 
+          style={{ 
+            marginTop: 12, 
+            padding: 12, 
+            borderRadius: 12, 
+            background: msg.role === 'user' ? 'var(--color-brand-blue-soft)' : 'var(--color-surface)',
+            border: msg.role === 'user' ? 'none' : '1px solid var(--color-border)',
+            alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+            maxWidth: '90%'
+          }}
+        >
+          <div style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--color-text-muted)', fontWeight: 700, marginBottom: 4 }}>
+            {msg.role === 'user' ? 'You' : 'Tutor'}
+          </div>
+          <Markdown variant="explanation">{msg.content}</Markdown>
+        </div>
+      ))}
     </div>
   );
 }

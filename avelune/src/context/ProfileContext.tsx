@@ -106,7 +106,13 @@ export function ProfileProvider({ children }: ProfileProviderProps) {
     [updateProfile],
   );
 
-  const tier: Tier = profile?.tier ?? 'free';
+  // Check if the subscription has expired
+  const isExpired = profile?.tier_expires_at
+    ? new Date(profile.tier_expires_at).getTime() < Date.now()
+    : false;
+
+  // If expired, force them back to free
+  const tier: Tier = isExpired ? 'free' : (profile?.tier ?? 'free');
   const limits = useMemo<TierLimits>(() => limitFor(tier), [tier]);
 
   const value = useMemo<ProfileContextValue>(

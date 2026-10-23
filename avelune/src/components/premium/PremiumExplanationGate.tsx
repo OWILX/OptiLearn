@@ -149,6 +149,16 @@ export function PremiumExplanationGate({
     );
   }
 
+  // If the tier gives unlimited access, show premium immediately on the first render.
+  // This prevents the standard explanation from flashing for a split second.
+  if (limits.premiumExplanations.kind === 'unlimited') {
+    return (
+      <Markdown variant={variant} className={className}>
+        {premiumExplanation}
+      </Markdown>
+    );
+  }
+
   if (view === 'checking') {
     return (
       <Markdown variant={variant} className={className}>

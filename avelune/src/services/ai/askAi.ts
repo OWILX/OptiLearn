@@ -8,7 +8,7 @@ export type AskAIContext =
 export interface AskAIRequest {
   question_id: number;
   context: AskAIContext;
-  message: string;
+  messages: { role: string; content: string }[];
 }
 
 export interface AskAIResponse {
